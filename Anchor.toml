@@ -7,7 +7,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-jupiter_delegate = "99wACTD1Eoifq2FtTvRvC6Etk1bwcZF19BuvGC1W6Tjm"
+jupiter_delegate = "9PbaG6L6be2QsLEUSgfJfpEcFD7mSFsQkcLTwW7V5ZU2"
 
 [registry]
 url = "https://api.apr.dev"
@@ -17,6 +17,9 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
+create-lookup-table = "yarn run ts-node app/create-lookup-table.ts"
+grant-access = "yarn run ts-node app/grant-access.ts"
+init-config = "yarn run ts-node app/init-config.ts"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 trade = "yarn run ts-node app/trade.ts"
 
@@ -32,6 +35,11 @@ program = "tests/genesis/token.so"
 [[test.genesis]]
 address = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
 program = "tests/genesis/jupiter.so"
+
+[test.validator]
+bind_address = "0.0.0.0"
+ledger = ".anchor/test-ledger"
+rpc_port = 8899
 
 [[test.validator.account]]
 address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"

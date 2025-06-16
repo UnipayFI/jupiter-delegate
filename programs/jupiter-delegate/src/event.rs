@@ -20,13 +20,6 @@ pub struct RevokeAccessEvent {
 }
 
 #[event]
-pub struct SwapEvent {
-    pub user: Pubkey,
-    pub user_output_token_account: Pubkey,
-    pub amount: u64,
-}
-
-#[event]
 pub struct AdminTransferProposedEvent {
     pub config: Pubkey,
     pub current_admin: Pubkey,
@@ -44,4 +37,10 @@ pub struct AdminTransferCompletedEvent {
 pub struct ModifyCooldownDurationEvent {
     pub config: Pubkey,
     pub cooldown_duration: i64,
+}
+
+#[event]
+pub struct PauseEvent {
+    pub config: Pubkey,
+    pub toggle: bool,
 }

@@ -8,6 +8,7 @@ pub struct Config {
     pub pending_admin: Pubkey,
     pub last_trade_timestamp: i64, // last trade timestamp
     pub is_initialized: bool,
+    pub is_paused: bool,
     pub cooldown_duration: i64, // cooldown duration in seconds
     pub bump: u8,
 }

@@ -19,6 +19,8 @@ pub enum ErrorCode {
     ConfigAlreadyInitialized,
     #[msg("Invalid cooldown duration")]
     InvalidCooldownDuration,
+    #[msg("Config is paused")]
+    ConfigPaused,
 
     // Swap
     #[msg("Swap too frequent")]
@@ -51,8 +53,14 @@ pub enum ErrorCode {
     NewAdminProposed,
     #[msg("No new admin proposed")]
     NoNewAdminProposed,
-    #[msg("Vault has not been delegated authority")]
-    DelegateNotApproved,
     #[msg("Delegated amount is insufficient")]
     InsufficientDelegatedAmount,
+
+    // Delegate
+    #[msg("Vault has not been delegated authority")]
+    DelegateNotApproved,
+    #[msg("Invalid delegate token account")]
+    InvalidDelegateTokenAccount,
+    #[msg("Receiver token account not found in remaining accounts")]
+    ReceiverTokenAccountNotFound,
 }

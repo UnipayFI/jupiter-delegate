@@ -22,8 +22,12 @@ pub fn jupiter_program_id() -> Pubkey {
 pub mod jupiter_delegate {
     use super::*;
 
-    pub fn init_config(ctx: Context<InitConfig>, cooldown_duration: i64) -> Result<()> {
-        process_init_config(ctx, cooldown_duration)
+    pub fn init_config(
+        ctx: Context<InitConfig>,
+        operator: Pubkey,
+        cooldown_duration: i64,
+    ) -> Result<()> {
+        process_init_config(ctx, operator, cooldown_duration)
     }
 
     pub fn grant_access(ctx: Context<GrantAccess>, user: Pubkey) -> Result<()> {

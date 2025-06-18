@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct Config {
     pub admin: Pubkey,
+    pub operator: Pubkey,
     pub vault: Pubkey,
     pub pending_admin: Pubkey,
     pub last_trade_timestamp: i64, // last trade timestamp

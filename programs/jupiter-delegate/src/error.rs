@@ -27,6 +27,8 @@ pub enum ErrorCode {
     SwapTooFrequent,
     #[msg("Swap failed")]
     SwapFailed,
+    #[msg("Invalid operator")]
+    InvalidOperator,
 
     // Admin
     #[msg("Only admin can propose new admin")]

@@ -27,7 +27,11 @@ pub struct InitConfig<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn process_init_config(ctx: Context<InitConfig>, cooldown_duration: i64) -> Result<()> {
+pub fn process_init_config(
+    ctx: Context<InitConfig>,
+    operator: Pubkey,
+    cooldown_duration: i64,
+) -> Result<()> {
     let config = &mut ctx.accounts.config;
     require!(!config.is_initialized, ErrorCode::ConfigAlreadyInitialized);
     require!(
@@ -36,6 +40,7 @@ pub fn process_init_config(ctx: Context<InitConfig>, cooldown_duration: i64) -> 
     );
     config.admin = ctx.accounts.admin.key();
     config.vault = ctx.accounts.vault.key();
+    config.operator = operator;
     config.pending_admin = Pubkey::default();
     config.last_trade_timestamp = 0;
     config.cooldown_duration = cooldown_duration;

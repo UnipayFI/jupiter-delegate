@@ -29,6 +29,8 @@ pub struct Swap<'info> {
     pub output_mint: InterfaceAccount<'info, Mint>,
     pub output_mint_program: Interface<'info, TokenInterface>,
 
+    #[account(mut)]
+    pub operator: Signer<'info>,
     #[account(
         mut,
         seeds=[VAULT_SEED.as_bytes()],
@@ -61,6 +63,11 @@ pub fn process_swap(
     ctx: Context<Swap>,
     params: SwapParams,
 ) -> Result<()> {
+    require!(
+        ctx.accounts.operator.key() == ctx.accounts.config.operator ||
+        ctx.accounts.operator.key() == ctx.accounts.config.admin,
+        ErrorCode::InvalidOperator
+    );
     require!(
         ctx.accounts.config.is_initialized,
         ErrorCode::ConfigNotInitialized

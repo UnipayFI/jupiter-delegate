@@ -7,7 +7,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-jupiter_delegate = "9PbaG6L6be2QsLEUSgfJfpEcFD7mSFsQkcLTwW7V5ZU2"
+jupiter_delegate = "66LUuou5irvF3zgbJSMZbpPaCTiTuB5RCnBHHa1LihB2"
 
 [registry]
 url = "https://api.apr.dev"

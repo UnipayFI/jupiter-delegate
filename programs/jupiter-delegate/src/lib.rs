@@ -12,7 +12,7 @@ pub use state::*;
 use anchor_lang::prelude::*;
 use std::str::FromStr;
 
-declare_id!("66LUuou5irvF3zgbJSMZbpPaCTiTuB5RCnBHHa1LihB2");
+declare_id!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");
 
 pub fn jupiter_program_id() -> Pubkey {
     Pubkey::from_str("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4").unwrap()

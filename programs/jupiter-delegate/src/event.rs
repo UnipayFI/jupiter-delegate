@@ -40,6 +40,12 @@ pub struct ModifyCooldownDurationEvent {
 }
 
 #[event]
+pub struct ModifyOperatorEvent {
+    pub config: Pubkey,
+    pub operator: Pubkey,
+}
+
+#[event]
 pub struct PauseEvent {
     pub config: Pubkey,
     pub toggle: bool,

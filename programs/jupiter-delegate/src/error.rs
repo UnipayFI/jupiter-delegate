@@ -45,6 +45,10 @@ pub enum ErrorCode {
     // Modify config
     #[msg("Only admin can modify cooldown duration")]
     OnlyAdminCanModifyCooldownDuration,
+    #[msg("Only admin can modify operator")]
+    OnlyAdminCanModifyOperator,
+    #[msg("Only admin can pause")]
+    OnlyAdminCanPause,
 
     // New variants
     #[msg("Swap amount is too small")]

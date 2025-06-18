@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::constants::{CONFIG_SEED, MINIMUM_TRADE_INTERVAL};
 use crate::error::ErrorCode;
-use crate::event::{ModifyCooldownDurationEvent, PauseEvent};
+use crate::event::{ModifyCooldownDurationEvent, ModifyOperatorEvent, PauseEvent};
 use crate::state::Config;
 
 #[derive(Accounts)]
@@ -31,10 +31,39 @@ pub fn process_modify_cooldown_duration(ctx: Context<ModifyCooldownDuration>, co
 }
 
 #[derive(Accounts)]
+pub struct ModifyOperator<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+    #[account(
+        mut,
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump,
+        constraint = config.admin == admin.key() @ ErrorCode::OnlyAdminCanModifyOperator,
+    )]
+    pub config: Account<'info, Config>,
+}
+
+pub fn process_modify_operator(ctx: Context<ModifyOperator>, operator: Pubkey) -> Result<()> {
+    let config = &mut ctx.accounts.config;
+    config.operator = operator;
+    emit!(ModifyOperatorEvent {
+        config: config.key(),
+        operator,
+    });
+    Ok(())
+}
+
+
+#[derive(Accounts)]
 pub struct Pause<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump,
+        constraint = config.admin == admin.key() @ ErrorCode::OnlyAdminCanPause,
+    )]
     pub config: Account<'info, Config>,
     pub system_program: Program<'info, System>,
 }

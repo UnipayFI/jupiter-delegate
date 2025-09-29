@@ -6,14 +6,17 @@ use anchor_spl::{
     associated_token::get_associated_token_address,
     token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
 };
-use jupiter_override::program::Jupiter;
+use jupiter_aggregator::program::Jupiter;
 
-declare_program!(jupiter_override);
+declare_program!(jupiter_aggregator);
 
-use crate::{constants::{ACCESS_SEED, VAULT_SEED}, Access};
 use crate::error::ErrorCode;
-use crate::state::Config;
 use crate::jupiter_program_id;
+use crate::state::Config;
+use crate::{
+    constants::{ACCESS_SEED, VAULT_SEED},
+    Access,
+};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct SwapParams {
@@ -59,25 +62,22 @@ pub struct Swap<'info> {
     pub jupiter_program: Program<'info, Jupiter>,
 }
 
-pub fn process_swap(
-    ctx: Context<Swap>,
-    params: SwapParams,
-) -> Result<()> {
+pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
     require!(
-        ctx.accounts.operator.key() == ctx.accounts.config.operator ||
-        ctx.accounts.operator.key() == ctx.accounts.config.admin,
+        ctx.accounts.operator.key() == ctx.accounts.config.operator
+            || ctx.accounts.operator.key() == ctx.accounts.config.admin,
         ErrorCode::InvalidOperator
     );
     require!(
         ctx.accounts.config.is_initialized,
         ErrorCode::ConfigNotInitialized
     );
+    require!(!ctx.accounts.config.is_paused, ErrorCode::ConfigPaused);
     require!(
-        !ctx.accounts.config.is_paused,
-        ErrorCode::ConfigPaused
-    );
-    require!(
-        ctx.accounts.delegate_input_token_account.delegate.contains(&ctx.accounts.vault.key()),
+        ctx.accounts
+            .delegate_input_token_account
+            .delegate
+            .contains(&ctx.accounts.vault.key()),
         ErrorCode::DelegateNotApproved
     );
     require!(
@@ -85,18 +85,13 @@ pub fn process_swap(
         ErrorCode::InsufficientDelegatedAmount
     );
     require_keys_eq!(
-        get_associated_token_address(
-            &params.delegate,
-            &ctx.accounts.input_mint.key()
-        ),
+        get_associated_token_address(&params.delegate, &ctx.accounts.input_mint.key()),
         ctx.accounts.delegate_input_token_account.key(),
         ErrorCode::InvalidDelegateTokenAccount
     );
 
-    let receiver_output_token_account = get_associated_token_address(
-        &ctx.accounts.user.key(),
-        &ctx.accounts.output_mint.key()
-    );
+    let receiver_output_token_account =
+        get_associated_token_address(&ctx.accounts.user.key(), &ctx.accounts.output_mint.key());
     let config = &mut ctx.accounts.config;
     let now = Clock::get()?.unix_timestamp;
     require!(

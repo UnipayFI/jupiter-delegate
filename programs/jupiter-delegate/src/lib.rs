@@ -18,6 +18,10 @@ pub fn jupiter_program_id() -> Pubkey {
     Pubkey::from_str("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4").unwrap()
 }
 
+pub fn jupiter_order_engine_program_id() -> Pubkey {
+    Pubkey::from_str("61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH").unwrap()
+}
+
 #[program]
 pub mod jupiter_delegate {
     use super::*;
@@ -42,6 +46,13 @@ pub mod jupiter_delegate {
         process_swap(ctx, params)
     }
 
+    pub fn fill_order_engine(
+        ctx: Context<FillOrderEngine>,
+        params: OrderEngineParams,
+    ) -> Result<()> {
+        process_fill_order_engine(ctx, params)
+    }
+
     pub fn propose_new_admin(ctx: Context<ProposeNewAdmin>) -> Result<()> {
         process_propose_new_admin(ctx)
     }
@@ -50,7 +61,10 @@ pub mod jupiter_delegate {
         process_accept_admin_transfer(ctx)
     }
 
-    pub fn modify_cooldown_duration(ctx: Context<ModifyCooldownDuration>, cooldown_duration: i64) -> Result<()> {
+    pub fn modify_cooldown_duration(
+        ctx: Context<ModifyCooldownDuration>,
+        cooldown_duration: i64,
+    ) -> Result<()> {
         process_modify_cooldown_duration(ctx, cooldown_duration)
     }
 

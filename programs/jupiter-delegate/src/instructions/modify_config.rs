@@ -19,9 +19,15 @@ pub struct ModifyCooldownDuration<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn process_modify_cooldown_duration(ctx: Context<ModifyCooldownDuration>, cooldown_duration: i64) -> Result<()> {
+pub fn process_modify_cooldown_duration(
+    ctx: Context<ModifyCooldownDuration>,
+    cooldown_duration: i64,
+) -> Result<()> {
     let config = &mut ctx.accounts.config;
-    require!(cooldown_duration >= MINIMUM_TRADE_INTERVAL, ErrorCode::InvalidCooldownDuration);
+    require!(
+        cooldown_duration >= MINIMUM_TRADE_INTERVAL,
+        ErrorCode::InvalidCooldownDuration
+    );
     config.cooldown_duration = cooldown_duration;
     emit!(ModifyCooldownDurationEvent {
         config: config.key(),
@@ -52,7 +58,6 @@ pub fn process_modify_operator(ctx: Context<ModifyOperator>, operator: Pubkey) -
     });
     Ok(())
 }
-
 
 #[derive(Accounts)]
 pub struct Pause<'info> {

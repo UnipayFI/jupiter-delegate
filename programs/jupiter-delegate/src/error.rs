@@ -69,4 +69,8 @@ pub enum ErrorCode {
     InvalidDelegateTokenAccount,
     #[msg("Receiver token account not found in remaining accounts")]
     ReceiverTokenAccountNotFound,
+
+    // Order Engine
+    #[msg("Order engine failed")]
+    OrderEngineFailed,
 }

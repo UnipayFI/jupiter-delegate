@@ -169,6 +169,26 @@ pub fn process_fill_order_engine(
         jupiter_order_engine_program_id()
     );
 
+    // Verify instruction data
+    /*
+        "name":"fill",
+        "discriminator":[
+            168,
+            96,
+            183,
+            163,
+            92,
+            10,
+            40,
+            160
+        ],
+    */
+    require!(
+        &params.data[0..8] == [168, 96, 183, 163, 92, 10, 40, 160],
+        ErrorCode::InvalidOrderEngineData
+    );
+    require!(params.data.len() >= 32, ErrorCode::InvalidOrderEngineData);
+
     let ix = Instruction {
         program_id: ctx.accounts.order_engine_program.key(),
         accounts: vec![

@@ -73,4 +73,6 @@ pub enum ErrorCode {
     // Order Engine
     #[msg("Order engine failed")]
     OrderEngineFailed,
+    #[msg("Invalid order engine data")]
+    InvalidOrderEngineData,
 }

@@ -23,6 +23,7 @@ grant-access = "yarn run ts-node app/grant-access.ts"
 init-config = "yarn run ts-node app/init-config.ts"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 trade = "yarn run ts-node app/trade.ts"
+ultra = "yarn run ts-node app/ultra.ts"
 
 [test]
 startup_wait = 60000

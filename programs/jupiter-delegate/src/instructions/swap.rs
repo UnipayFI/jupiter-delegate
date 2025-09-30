@@ -1,20 +1,19 @@
+use super::declare::jupiter_aggregator::program::Jupiter;
 use anchor_lang::{
     prelude::*,
     solana_program::{instruction::Instruction, program::invoke_signed},
 };
 use anchor_spl::{
     associated_token::get_associated_token_address,
-    token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
+    token_interface::{Mint, TokenAccount, TokenInterface},
 };
-use jupiter_aggregator::program::Jupiter;
 
-declare_program!(jupiter_aggregator);
-
-use crate::error::ErrorCode;
-use crate::jupiter_program_id;
-use crate::state::Config;
+use super::{check_and_transfer, check_receiver_token_account, prepare_cpi_accounts};
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
+    error::ErrorCode,
+    jupiter_program_id,
+    state::Config,
     Access,
 };
 
@@ -63,98 +62,34 @@ pub struct Swap<'info> {
 }
 
 pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
-    require!(
-        ctx.accounts.operator.key() == ctx.accounts.config.operator
-            || ctx.accounts.operator.key() == ctx.accounts.config.admin,
-        ErrorCode::InvalidOperator
-    );
-    require!(
-        ctx.accounts.config.is_initialized,
-        ErrorCode::ConfigNotInitialized
-    );
-    require!(!ctx.accounts.config.is_paused, ErrorCode::ConfigPaused);
-    require!(
-        ctx.accounts
-            .delegate_input_token_account
-            .delegate
-            .contains(&ctx.accounts.vault.key()),
-        ErrorCode::DelegateNotApproved
-    );
-    require!(
-        ctx.accounts.delegate_input_token_account.delegated_amount >= params.in_amount,
-        ErrorCode::InsufficientDelegatedAmount
-    );
-    require_keys_eq!(
-        get_associated_token_address(&params.delegate, &ctx.accounts.input_mint.key()),
-        ctx.accounts.delegate_input_token_account.key(),
-        ErrorCode::InvalidDelegateTokenAccount
-    );
-
-    let receiver_output_token_account =
-        get_associated_token_address(&ctx.accounts.user.key(), &ctx.accounts.output_mint.key());
-    let config = &mut ctx.accounts.config;
-    let now = Clock::get()?.unix_timestamp;
-    require!(
-        config
-            .last_trade_timestamp
-            .checked_add(config.cooldown_duration)
-            .expect("overflow")
-            < now,
-        ErrorCode::SwapTooFrequent
-    );
-    config.last_trade_timestamp = now;
-
-    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
-    // 1. Transfer from delegate to vault, using the vault's delegated authority
-    transfer_checked(
-        CpiContext::new_with_signer(
-            ctx.accounts.input_mint_program.to_account_info(),
-            TransferChecked {
-                from: ctx.accounts.delegate_input_token_account.to_account_info(),
-                to: ctx.accounts.vault_input_token_account.to_account_info(),
-                authority: ctx.accounts.vault.to_account_info(),
-                mint: ctx.accounts.input_mint.to_account_info(),
-            },
-            &[signed_seeds],
-        ),
+    // 1. 通用检查和转账
+    check_and_transfer(
+        &ctx.accounts.operator.to_account_info(),
+        &mut ctx.accounts.config,
+        &ctx.accounts.vault.to_account_info(),
+        ctx.bumps.vault,
+        &ctx.accounts.delegate_input_token_account.to_account_info(),
+        &ctx.accounts.input_mint.to_account_info(),
+        &ctx.accounts.input_mint_program.to_account_info(),
+        &ctx.accounts.vault_input_token_account.to_account_info(),
         params.in_amount,
         ctx.accounts.input_mint.decimals,
     )?;
 
-    // 2. CPI to Jupiter
+    // 2. 检查 Jupiter 程序 ID
     require_keys_eq!(*ctx.accounts.jupiter_program.key, jupiter_program_id());
 
-    // Security check: Ensure the intended receiver's token account is present in the remaining_accounts
-    // that will be passed to Jupiter. This prevents a malicious client from omitting or changing
-    // the destination account.
-    let is_receiver_ata_found = ctx
-        .remaining_accounts
-        .iter()
-        .any(|acc| acc.key == &receiver_output_token_account);
-    require!(
-        is_receiver_ata_found,
-        ErrorCode::ReceiverTokenAccountNotFound
-    );
+    // 3. 检查接收者的代币账户
+    let receiver_output_token_account =
+        get_associated_token_address(&ctx.accounts.user.key(), &ctx.accounts.output_mint.key());
+    check_receiver_token_account(ctx.remaining_accounts, &receiver_output_token_account)?;
 
-    let accounts: Vec<AccountMeta> = ctx
-        .remaining_accounts
-        .iter()
-        .map(|acc| {
-            let is_signer = acc.key == &ctx.accounts.vault.key();
-            AccountMeta {
-                pubkey: *acc.key,
-                is_signer,
-                is_writable: acc.is_writable,
-            }
-        })
-        .collect();
+    // 4. 准备 CPI 账户
+    let (accounts, accounts_infos) =
+        prepare_cpi_accounts(ctx.remaining_accounts, &ctx.accounts.vault.key());
 
-    let accounts_infos: Vec<AccountInfo> = ctx
-        .remaining_accounts
-        .iter()
-        .map(|acc| AccountInfo { ..acc.clone() })
-        .collect();
-
+    // 5. 调用 Jupiter
+    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
     invoke_signed(
         &Instruction {
             program_id: ctx.accounts.jupiter_program.key(),

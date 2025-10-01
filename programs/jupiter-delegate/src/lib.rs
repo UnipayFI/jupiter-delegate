@@ -46,8 +46,8 @@ pub mod jupiter_delegate {
         process_swap(ctx, params)
     }
 
-    pub fn fill_order_engine(
-        ctx: Context<FillOrderEngine>,
+    pub fn fill_order_engine<'a>(
+        ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
         params: FillOrderEngineParams,
     ) -> Result<()> {
         process_fill_order_engine(ctx, params)

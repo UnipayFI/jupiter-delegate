@@ -16,6 +16,7 @@ pub struct JupiterAggregatorParams {
     pub data: Vec<u8>,
     pub in_amount: u64,
     pub instruction_name: String,
+    pub delegate: Pubkey,
 }
 
 #[derive(Accounts)]
@@ -95,6 +96,7 @@ pub fn process_jupiter_aggregator<'a>(
         &ctx.accounts.vault_input_token_account.to_account_info(),
         args.in_amount,
         ctx.accounts.input_mint.decimals,
+        &args.delegate,
     )?;
 
     // 2. CPI

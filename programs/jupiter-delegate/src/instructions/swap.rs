@@ -73,6 +73,7 @@ pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
         &ctx.accounts.vault_input_token_account.to_account_info(),
         params.in_amount,
         ctx.accounts.input_mint.decimals,
+        &params.delegate,
     )?;
 
     // 2. 验证接收者代币账户存在

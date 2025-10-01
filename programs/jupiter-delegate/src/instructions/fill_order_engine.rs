@@ -88,6 +88,7 @@ pub fn process_fill_order_engine<'a>(
         &ctx.accounts.vault_input_token_account.to_account_info(),
         params.in_amount,
         ctx.accounts.input_mint.decimals,
+        &params.delegate,
     )?;
 
     // 2. CPI

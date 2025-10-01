@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{instruction::Instruction, program::invoke_signed};
-use anchor_spl::token_interface::{
-    transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked,
+use anchor_spl::{
+    associated_token::get_associated_token_address,
+    token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
 };
 
 use crate::{constants::VAULT_SEED, error::ErrorCode, state::Config};
@@ -17,6 +18,7 @@ pub fn validate_and_transfer_input<'info>(
     vault_input_token_account: &AccountInfo<'info>,
     in_amount: u64,
     decimal: u8,
+    delegate_pubkey: &Pubkey,
 ) -> Result<()> {
     // 1. 基本检查
     require!(
@@ -26,7 +28,24 @@ pub fn validate_and_transfer_input<'info>(
     require!(config.is_initialized, ErrorCode::ConfigNotInitialized);
     require!(!config.is_paused, ErrorCode::ConfigPaused);
 
-    // 2. 检查冷却时间
+    // 2. 验证委托账户
+    let delegate_account_data = delegate_input_token_account.try_borrow_data()?;
+    let delegate_token_account = TokenAccount::try_deserialize(&mut &delegate_account_data[..])?;
+    require!(
+        delegate_token_account.delegate.contains(&vault.key()),
+        ErrorCode::DelegateNotApproved
+    );
+    require!(
+        delegate_token_account.delegated_amount >= in_amount,
+        ErrorCode::InsufficientDelegatedAmount
+    );
+    require_keys_eq!(
+        get_associated_token_address(delegate_pubkey, input_mint.key),
+        delegate_input_token_account.key(),
+        ErrorCode::InvalidDelegateTokenAccount
+    );
+
+    // 3. 检查冷却时间
     let now = Clock::get()?.unix_timestamp;
     require!(
         config
@@ -38,7 +57,7 @@ pub fn validate_and_transfer_input<'info>(
     );
     config.last_trade_timestamp = now;
 
-    // 3. 从 delegate 转账到 vault
+    // 4. 从 delegate 转账到 vault
     let signed_seeds = &[VAULT_SEED.as_bytes(), &[vault_bump]];
     transfer_checked(
         CpiContext::new_with_signer(

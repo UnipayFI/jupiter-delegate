@@ -53,11 +53,11 @@ pub mod jupiter_delegate {
         process_fill_order_engine(ctx, params)
     }
 
-    pub fn shared_accounts_route_v2(
-        ctx: Context<SharedAccountsRouteV2>,
-        params: SharedAccountsRouteV2Args,
+    pub fn jupiter_aggregator<'a>(
+        ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
+        params: JupiterAggregatorParams,
     ) -> Result<()> {
-        process_shared_accounts_route_v2(ctx, params)
+        process_jupiter_aggregator(ctx, params)
     }
 
     pub fn propose_new_admin(ctx: Context<ProposeNewAdmin>) -> Result<()> {

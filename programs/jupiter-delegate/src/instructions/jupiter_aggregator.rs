@@ -1,29 +1,25 @@
-use super::declare::jupiter_aggregator::program::Jupiter;
-use anchor_lang::{
-    prelude::*,
-    solana_program::{instruction::Instruction, program::invoke_signed},
-};
+use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
-use super::{check_and_transfer, check_receiver_token_account, prepare_cpi_accounts};
+use super::aggregator::{execute_cross_program_invocation, validate_and_transfer_input};
+use super::declare::jupiter_aggregator::program::Jupiter;
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
     error::ErrorCode,
     jupiter_program_id,
     state::Config,
-    Access,
+    Access, JupiterAggregatorEvent,
 };
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct SharedAccountsRouteV2Args {
+pub struct JupiterAggregatorParams {
     pub data: Vec<u8>,
     pub in_amount: u64,
-    pub out_amount: u64,
-    pub delegate: Pubkey,
+    pub instruction_name: String,
 }
 
 #[derive(Accounts)]
-pub struct SharedAccountsRouteV2<'info> {
+pub struct JupiterAggregator<'info> {
     pub input_mint: InterfaceAccount<'info, Mint>,
     pub input_mint_program: Interface<'info, TokenInterface>,
     pub output_mint: InterfaceAccount<'info, Mint>,
@@ -50,6 +46,14 @@ pub struct SharedAccountsRouteV2<'info> {
     )]
     pub vault_input_token_account: InterfaceAccount<'info, TokenAccount>,
 
+    #[account(
+        mut,
+        associated_token::mint = output_mint,
+        associated_token::authority = vault,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
     #[account(mut)]
     pub config: Box<Account<'info, Config>>,
 
@@ -75,12 +79,12 @@ pub struct SharedAccountsRouteV2<'info> {
     pub jupiter_program: Program<'info, Jupiter>,
 }
 
-pub fn process_shared_accounts_route_v2(
-    ctx: Context<SharedAccountsRouteV2>,
-    args: SharedAccountsRouteV2Args,
+pub fn process_jupiter_aggregator<'info>(
+    ctx: Context<'_, '_, '_, 'info, JupiterAggregator<'info>>,
+    args: JupiterAggregatorParams,
 ) -> Result<()> {
-    // 1. 通用检查和转账
-    check_and_transfer(
+    // 1. 验证并转移输入代币
+    validate_and_transfer_input(
         &ctx.accounts.operator.to_account_info(),
         &mut ctx.accounts.config,
         &ctx.accounts.vault.to_account_info(),
@@ -93,30 +97,30 @@ pub fn process_shared_accounts_route_v2(
         ctx.accounts.input_mint.decimals,
     )?;
 
-    // 2. 检查 Jupiter 程序 ID
-    require_keys_eq!(*ctx.accounts.jupiter_program.key, jupiter_program_id());
-
-    // 3. 检查接收者的代币账户
-    check_receiver_token_account(
+    // 2. CPI
+    execute_cross_program_invocation(
+        ctx.accounts.jupiter_program.key,
+        &jupiter_program_id(),
         ctx.remaining_accounts,
-        &ctx.accounts.receiver_output_token_account.key(),
+        &ctx.accounts.vault.key(),
+        ctx.bumps.vault,
+        args.data,
+        Some(&ctx.accounts.vault_output_token_account),
+        Some(&ctx.accounts.receiver_output_token_account),
+        Some(&ctx.accounts.output_mint),
+        Some(&ctx.accounts.output_mint_program),
+        Some(&ctx.accounts.vault),
     )?;
 
-    // 4. 准备 CPI 账户
-    let (accounts, accounts_infos) =
-        prepare_cpi_accounts(ctx.remaining_accounts, &ctx.accounts.vault.key());
-
-    // 5. 调用 Jupiter
-    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
-    invoke_signed(
-        &Instruction {
-            program_id: ctx.accounts.jupiter_program.key(),
-            accounts,
-            data: args.data,
-        },
-        &accounts_infos,
-        &[signed_seeds],
-    )?;
+    // 3. emit event
+    emit!(JupiterAggregatorEvent {
+        user: ctx.accounts.user.key(),
+        input_mint: ctx.accounts.input_mint.key(),
+        output_mint: ctx.accounts.output_mint.key(),
+        input_amount: args.in_amount,
+        instruction_name: args.instruction_name,
+        operator: ctx.accounts.operator.key(),
+    });
 
     Ok(())
 }

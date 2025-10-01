@@ -50,3 +50,31 @@ pub struct PauseEvent {
     pub config: Pubkey,
     pub toggle: bool,
 }
+
+#[event]
+pub struct SwapEvent {
+    pub user: Pubkey,
+    pub input_mint: Pubkey,
+    pub output_mint: Pubkey,
+    pub input_amount: u64,
+    pub operator: Pubkey,
+}
+
+#[event]
+pub struct JupiterAggregatorEvent {
+    pub user: Pubkey,
+    pub input_mint: Pubkey,
+    pub output_mint: Pubkey,
+    pub input_amount: u64,
+    pub instruction_name: String,
+    pub operator: Pubkey,
+}
+
+#[event]
+pub struct FillOrderEngineEvent {
+    pub user: Pubkey,
+    pub input_mint: Pubkey,
+    pub output_mint: Pubkey,
+    pub input_amount: u64,
+    pub operator: Pubkey,
+}

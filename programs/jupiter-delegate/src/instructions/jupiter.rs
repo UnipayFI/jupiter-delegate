@@ -79,8 +79,8 @@ pub struct JupiterAggregator<'info> {
     pub jupiter_program: Program<'info, Jupiter>,
 }
 
-pub fn process_jupiter_aggregator<'info>(
-    ctx: Context<'_, '_, '_, 'info, JupiterAggregator<'info>>,
+pub fn process_jupiter_aggregator<'a>(
+    ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
     args: JupiterAggregatorParams,
 ) -> Result<()> {
     // 1. 验证并转移输入代币

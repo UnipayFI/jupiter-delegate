@@ -22,6 +22,14 @@ pub fn jupiter_order_engine_program_id() -> Pubkey {
     Pubkey::from_str("61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH").unwrap()
 }
 
+pub fn dflow_program_id() -> Pubkey {
+    Pubkey::from_str("DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH").unwrap()
+}
+
+pub fn okx_program_id() -> Pubkey {
+    Pubkey::from_str("6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma").unwrap()
+}
+
 #[program]
 pub mod jupiter_delegate {
     use super::*;
@@ -46,18 +54,32 @@ pub mod jupiter_delegate {
         process_swap(ctx, params)
     }
 
-    pub fn fill_order_engine(
-        ctx: Context<FillOrderEngine>,
+    pub fn fill_order_engine<'a>(
+        ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
         params: FillOrderEngineParams,
     ) -> Result<()> {
         process_fill_order_engine(ctx, params)
     }
 
-    pub fn shared_accounts_route_v2(
-        ctx: Context<SharedAccountsRouteV2>,
-        params: SharedAccountsRouteV2Args,
+    pub fn jupiter_aggregator<'a>(
+        ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
+        params: JupiterAggregatorParams,
     ) -> Result<()> {
-        process_shared_accounts_route_v2(ctx, params)
+        process_jupiter_aggregator(ctx, params)
+    }
+
+    pub fn dflow_aggregator<'a>(
+        ctx: Context<'_, '_, '_, 'a, DflowAggregator<'a>>,
+        params: DflowAggregatorParams,
+    ) -> Result<()> {
+        process_dflow_aggregator(ctx, params)
+    }
+
+    pub fn okx_aggregator<'a>(
+        ctx: Context<'_, '_, '_, 'a, OkxAggregator<'a>>,
+        params: OkxAggregatorParams,
+    ) -> Result<()> {
+        process_okx_aggregator(ctx, params)
     }
 
     pub fn propose_new_admin(ctx: Context<ProposeNewAdmin>) -> Result<()> {

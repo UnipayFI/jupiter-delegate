@@ -1,20 +1,14 @@
-use super::declare::jupiter_order_engine::program::OrderEngine;
-use anchor_lang::{
-    prelude::*,
-    solana_program::{instruction::Instruction, program::invoke_signed},
-};
-use anchor_spl::{
-    associated_token::get_associated_token_address,
-    token_interface::{Mint, TokenAccount, TokenInterface},
-};
+use anchor_lang::prelude::*;
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
-use super::{check_and_transfer, check_receiver_token_account, prepare_cpi_accounts};
+use super::aggregator::{execute_cross_program_invocation, validate_and_transfer_input};
+use super::declare::jupiter_order_engine::program::OrderEngine;
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
     error::ErrorCode,
     jupiter_order_engine_program_id,
     state::Config,
-    Access,
+    Access, FillOrderEngineEvent,
 };
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
@@ -46,6 +40,13 @@ pub struct FillOrderEngine<'info> {
         associated_token::token_program = input_mint_program,
     )]
     pub vault_input_token_account: InterfaceAccount<'info, TokenAccount>,
+    #[account(
+        mut,
+        associated_token::mint = output_mint,
+        associated_token::authority = vault,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
     #[account(mut)]
     pub config: Box<Account<'info, Config>>,
     #[account(mut)]
@@ -58,15 +59,25 @@ pub struct FillOrderEngine<'info> {
     pub access: Account<'info, Access>,
     /// CHECK: This is the user's account
     pub user: UncheckedAccount<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = output_mint,
+        associated_token::authority = user,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: Jupiter Order Engine program
     pub jupiter_order_engine_program: Program<'info, OrderEngine>,
 }
 
-pub fn process_fill_order_engine(
-    ctx: Context<FillOrderEngine>,
+pub fn process_fill_order_engine<'a>(
+    ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
     params: FillOrderEngineParams,
 ) -> Result<()> {
-    // 1. 通用检查和转账
-    check_and_transfer(
+    // 1. 验证并转移输入代币
+    validate_and_transfer_input(
         &ctx.accounts.operator.to_account_info(),
         &mut ctx.accounts.config,
         &ctx.accounts.vault.to_account_info(),
@@ -79,32 +90,29 @@ pub fn process_fill_order_engine(
         ctx.accounts.input_mint.decimals,
     )?;
 
-    // 2. 检查 Jupiter Order Engine 程序 ID
-    require_keys_eq!(
-        *ctx.accounts.jupiter_order_engine_program.key,
-        jupiter_order_engine_program_id()
-    );
-
-    // 3. 检查接收者的代币账户
-    let receiver_output_token_account =
-        get_associated_token_address(&ctx.accounts.user.key(), &ctx.accounts.output_mint.key());
-    check_receiver_token_account(ctx.remaining_accounts, &receiver_output_token_account)?;
-
-    // 4. 准备 CPI 账户
-    let (accounts, accounts_infos) =
-        prepare_cpi_accounts(ctx.remaining_accounts, &ctx.accounts.vault.key());
-
-    // 5. 调用 Jupiter Order Engine
-    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
-    invoke_signed(
-        &Instruction {
-            program_id: ctx.accounts.jupiter_order_engine_program.key(),
-            accounts,
-            data: params.data,
-        },
-        &accounts_infos,
-        &[signed_seeds],
+    // 2. CPI
+    execute_cross_program_invocation(
+        ctx.accounts.jupiter_order_engine_program.key,
+        &jupiter_order_engine_program_id(),
+        ctx.remaining_accounts,
+        &ctx.accounts.vault.key(),
+        ctx.bumps.vault,
+        params.data,
+        Some(&ctx.accounts.vault_output_token_account),
+        Some(&ctx.accounts.receiver_output_token_account),
+        Some(&ctx.accounts.output_mint),
+        Some(&ctx.accounts.output_mint_program),
+        Some(&ctx.accounts.vault),
     )?;
+
+    // 3. emit event
+    emit!(FillOrderEngineEvent {
+        user: ctx.accounts.user.key(),
+        input_mint: ctx.accounts.input_mint.key(),
+        output_mint: ctx.accounts.output_mint.key(),
+        input_amount: params.in_amount,
+        operator: ctx.accounts.operator.key(),
+    });
 
     Ok(())
 }

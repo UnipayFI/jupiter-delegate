@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{instruction::Instruction, program::invoke_signed};
 use anchor_spl::{
@@ -12,7 +13,7 @@ pub fn validate_and_transfer_input<'info>(
     config: &mut Account<'info, Config>,
     vault: &AccountInfo<'info>,
     vault_bump: u8,
-    delegate_input_token_account: &AccountInfo<'info>,
+    delegate_input_token_account: &InterfaceAccount<'info, TokenAccount>,
     input_mint: &AccountInfo<'info>,
     input_mint_program: &AccountInfo<'info>,
     vault_input_token_account: &AccountInfo<'info>,
@@ -29,14 +30,12 @@ pub fn validate_and_transfer_input<'info>(
     require!(!config.is_paused, ErrorCode::ConfigPaused);
 
     // 2. 验证委托账户
-    let delegate_account_data = delegate_input_token_account.try_borrow_data()?;
-    let delegate_token_account = TokenAccount::try_deserialize(&mut &delegate_account_data[..])?;
     require!(
-        delegate_token_account.delegate.contains(&vault.key()),
+        delegate_input_token_account.delegate.contains(&vault.key()),
         ErrorCode::DelegateNotApproved
     );
     require!(
-        delegate_token_account.delegated_amount >= in_amount,
+        delegate_input_token_account.delegated_amount >= in_amount,
         ErrorCode::InsufficientDelegatedAmount
     );
     require_keys_eq!(
@@ -93,9 +92,11 @@ pub fn prepare_cross_program_accounts<'info>(
         })
         .collect();
 
+    let mut seen = HashSet::new();
     let accounts_infos: Vec<AccountInfo> = remaining_accounts
         .iter()
         .map(|acc| AccountInfo { ..acc.clone() })
+        .filter(|acc| seen.insert(*acc.key))
         .collect();
 
     (accounts, accounts_infos)
@@ -126,6 +127,10 @@ pub fn transfer_output_tokens<'info>(
 ) -> Result<()> {
     if let Some(receiver_token_account) = receiver_output_token_account {
         let output_token_balance_delta = vault_output_token_account.amount - initial_output_balance;
+        
+        msg!("Debug: initial_output_balance: {}", initial_output_balance);
+        msg!("Debug: vault_output_token_account.amount: {}", vault_output_token_account.amount);
+        msg!("Debug: output_token_balance_delta: {}", output_token_balance_delta);
 
         if output_token_balance_delta > 0 {
             let signed_seeds = &[VAULT_SEED.as_bytes(), &[vault_bump]];
@@ -155,7 +160,7 @@ pub fn execute_cross_program_invocation<'info>(
     vault_key: &Pubkey,
     vault_bump: u8,
     instruction_data: Vec<u8>,
-    vault_output_token_account: Option<&InterfaceAccount<'info, TokenAccount>>,
+    vault_output_token_account: Option<&mut InterfaceAccount<'info, TokenAccount>>,
     receiver_output_token_account: Option<&InterfaceAccount<'info, TokenAccount>>,
     output_mint: Option<&InterfaceAccount<'info, Mint>>,
     output_mint_program: Option<&Interface<'info, TokenInterface>>,
@@ -169,7 +174,7 @@ pub fn execute_cross_program_invocation<'info>(
         prepare_cross_program_accounts(remaining_accounts, vault_key);
 
     // 3. 记录输出代币余额
-    let initial_output_balance = if let Some(vault_output_account) = vault_output_token_account {
+    let initial_output_balance = if let Some(ref vault_output_account) = vault_output_token_account {
         vault_output_account.amount
     } else {
         0
@@ -201,6 +206,8 @@ pub fn execute_cross_program_invocation<'info>(
         output_mint_program,
         vault,
     ) {
+        vault_output_account.reload()?;
+        
         transfer_output_tokens(
             vault_output_account,
             Some(receiver),

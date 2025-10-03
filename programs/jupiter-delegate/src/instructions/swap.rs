@@ -67,7 +67,7 @@ pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
         &mut ctx.accounts.config,
         &ctx.accounts.vault.to_account_info(),
         ctx.bumps.vault,
-        &ctx.accounts.delegate_input_token_account.to_account_info(),
+        &ctx.accounts.delegate_input_token_account,
         &ctx.accounts.input_mint.to_account_info(),
         &ctx.accounts.input_mint_program.to_account_info(),
         &ctx.accounts.vault_input_token_account.to_account_info(),

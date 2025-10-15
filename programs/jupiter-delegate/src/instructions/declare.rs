@@ -4,3 +4,4 @@ declare_program!(jupiter_aggregator);
 declare_program!(jupiter_order_engine);
 declare_program!(dflow_aggregator);
 declare_program!(okx_aggregator);
+declare_program!(jupiter_perpetuals);

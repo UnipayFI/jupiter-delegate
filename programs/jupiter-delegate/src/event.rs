@@ -98,3 +98,13 @@ pub struct OkxAggregatorEvent {
     pub instruction_name: String,
     pub operator: Pubkey,
 }
+
+#[event]
+pub struct JupiterPerpetualsEvent {
+    pub user: Pubkey,
+    pub input_mint: Pubkey,
+    pub output_mint: Pubkey,
+    pub input_amount: u64,
+    pub action: String,
+    pub operator: Pubkey,
+}

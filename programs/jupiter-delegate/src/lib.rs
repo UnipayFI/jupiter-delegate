@@ -10,6 +10,7 @@ pub use instructions::*;
 pub use state::*;
 
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::pubkey::pubkey;
 use std::str::FromStr;
 
 declare_id!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");
@@ -29,6 +30,8 @@ pub fn dflow_program_id() -> Pubkey {
 pub fn okx_program_id() -> Pubkey {
     Pubkey::from_str("6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma").unwrap()
 }
+
+pub const PERPETUALS_PROGRAM_ID: Pubkey = pubkey!("PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu");
 
 #[program]
 pub mod jupiter_delegate {
@@ -66,6 +69,13 @@ pub mod jupiter_delegate {
         params: JupiterAggregatorParams,
     ) -> Result<()> {
         process_jupiter_aggregator(ctx, params)
+    }
+
+    pub fn jupiter_perpetuals<'a>(
+        ctx: Context<'_, '_, '_, 'a, JupiterPerpetuals<'a>>,
+        params: JupiterPerpetualsParams,
+    ) -> Result<()> {
+        process_jupiter_perpetuals(ctx, params)
     }
 
     pub fn dflow_aggregator<'a>(

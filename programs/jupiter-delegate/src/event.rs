@@ -52,7 +52,7 @@ pub struct PauseEvent {
 }
 
 #[event]
-pub struct SwapEvent {
+pub struct JupiterSwapEvent {
     pub user: Pubkey,
     pub input_mint: Pubkey,
     pub output_mint: Pubkey,

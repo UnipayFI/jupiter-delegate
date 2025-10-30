@@ -1,18 +1,18 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
-use super::aggregator::{execute_cross_program_invocation, validate_and_transfer_input};
-use super::declare::dflow_aggregator::program::SwapOrchestrator;
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
-    dflow_program_id,
     error::ErrorCode,
+    execute_cross_program_invocation,
+    okx_aggregator::program::DexSolana,
+    okx_program_id,
     state::Config,
-    Access, DflowAggregatorEvent,
+    validate_and_transfer_input, Access, OkxAggregatorEvent,
 };
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct DflowAggregatorParams {
+pub struct OkxAggregatorParams {
     pub data: Vec<u8>,
     pub in_amount: u64,
     pub instruction_name: String,
@@ -20,7 +20,7 @@ pub struct DflowAggregatorParams {
 }
 
 #[derive(Accounts)]
-pub struct DflowAggregator<'info> {
+pub struct OkxAggregator<'info> {
     pub input_mint: InterfaceAccount<'info, Mint>,
     pub input_mint_program: Interface<'info, TokenInterface>,
     pub output_mint: InterfaceAccount<'info, Mint>,
@@ -77,12 +77,12 @@ pub struct DflowAggregator<'info> {
     )]
     pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
 
-    pub dflow_program: Program<'info, SwapOrchestrator>,
+    pub okx_program: Program<'info, DexSolana>,
 }
 
-pub fn process_dflow_aggregator<'info>(
-    ctx: Context<'_, '_, '_, 'info, DflowAggregator<'info>>,
-    args: DflowAggregatorParams,
+pub fn process_okx_aggregator<'info>(
+    ctx: Context<'_, '_, '_, 'info, OkxAggregator<'info>>,
+    args: OkxAggregatorParams,
 ) -> Result<()> {
     // 1. 验证并转移输入代币
     validate_and_transfer_input(
@@ -101,8 +101,8 @@ pub fn process_dflow_aggregator<'info>(
 
     // 2. CPI
     execute_cross_program_invocation(
-        ctx.accounts.dflow_program.key,
-        &dflow_program_id(),
+        ctx.accounts.okx_program.key,
+        &okx_program_id(),
         ctx.remaining_accounts,
         &ctx.accounts.vault.key(),
         ctx.bumps.vault,
@@ -115,7 +115,7 @@ pub fn process_dflow_aggregator<'info>(
     )?;
 
     // 3. emit event
-    emit!(DflowAggregatorEvent {
+    emit!(OkxAggregatorEvent {
         user: ctx.accounts.user.key(),
         input_mint: ctx.accounts.input_mint.key(),
         output_mint: ctx.accounts.output_mint.key(),

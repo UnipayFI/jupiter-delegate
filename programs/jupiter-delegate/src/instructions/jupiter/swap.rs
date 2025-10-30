@@ -4,27 +4,25 @@ use anchor_spl::{
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
 
-use super::aggregator::{
-    execute_cross_program_invocation, validate_and_transfer_input, validate_receiver_token_account,
-};
-use super::declare::jupiter_aggregator::program::Jupiter;
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
     error::ErrorCode,
+    execute_cross_program_invocation,
+    jupiter_aggregator::program::Jupiter,
     jupiter_program_id,
     state::Config,
-    Access, SwapEvent,
+    validate_and_transfer_input, validate_receiver_token_account, Access, JupiterSwapEvent,
 };
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct SwapParams {
+pub struct JupiterSwapParams {
     pub data: Vec<u8>,
     pub in_amount: u64,
     pub delegate: Pubkey,
 }
 
 #[derive(Accounts)]
-pub struct Swap<'info> {
+pub struct JupiterSwap<'info> {
     pub input_mint: InterfaceAccount<'info, Mint>,
     pub input_mint_program: Interface<'info, TokenInterface>,
     pub output_mint: InterfaceAccount<'info, Mint>,
@@ -60,7 +58,7 @@ pub struct Swap<'info> {
     pub jupiter_program: Program<'info, Jupiter>,
 }
 
-pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
+pub fn process_jupiter_swap(ctx: Context<JupiterSwap>, params: JupiterSwapParams) -> Result<()> {
     // 1. 验证并转移输入代币
     validate_and_transfer_input(
         &ctx.accounts.operator.to_account_info(),
@@ -97,7 +95,7 @@ pub fn process_swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
     )?;
 
     // 4. emit event
-    emit!(SwapEvent {
+    emit!(JupiterSwapEvent {
         user: ctx.accounts.user.key(),
         input_mint: ctx.accounts.input_mint.key(),
         output_mint: ctx.accounts.output_mint.key(),

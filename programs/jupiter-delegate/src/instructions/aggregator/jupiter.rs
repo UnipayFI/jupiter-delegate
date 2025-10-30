@@ -1,25 +1,26 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
-use super::aggregator::{execute_cross_program_invocation, validate_and_transfer_input};
-use super::declare::jupiter_order_engine::program::OrderEngine;
 use crate::{
     constants::{ACCESS_SEED, VAULT_SEED},
     error::ErrorCode,
-    jupiter_order_engine_program_id,
+    execute_cross_program_invocation,
+    jupiter_aggregator::program::Jupiter,
+    jupiter_program_id,
     state::Config,
-    Access, FillOrderEngineEvent,
+    validate_and_transfer_input, Access, JupiterAggregatorEvent,
 };
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct FillOrderEngineParams {
+pub struct JupiterAggregatorParams {
     pub data: Vec<u8>,
     pub in_amount: u64,
+    pub instruction_name: String,
     pub delegate: Pubkey,
 }
 
 #[derive(Accounts)]
-pub struct FillOrderEngine<'info> {
+pub struct JupiterAggregator<'info> {
     pub input_mint: InterfaceAccount<'info, Mint>,
     pub input_mint_program: Interface<'info, TokenInterface>,
     pub output_mint: InterfaceAccount<'info, Mint>,
@@ -27,12 +28,17 @@ pub struct FillOrderEngine<'info> {
 
     #[account(mut)]
     pub operator: Signer<'info>,
+
     #[account(
         mut,
         seeds=[VAULT_SEED.as_bytes()],
         bump
     )]
     pub vault: SystemAccount<'info>,
+
+    #[account(mut)]
+    pub delegate_input_token_account: InterfaceAccount<'info, TokenAccount>,
+
     #[account(
         mut,
         associated_token::mint = input_mint,
@@ -40,6 +46,7 @@ pub struct FillOrderEngine<'info> {
         associated_token::token_program = input_mint_program,
     )]
     pub vault_input_token_account: InterfaceAccount<'info, TokenAccount>,
+
     #[account(
         mut,
         associated_token::mint = output_mint,
@@ -47,19 +54,21 @@ pub struct FillOrderEngine<'info> {
         associated_token::token_program = output_mint_program,
     )]
     pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
     #[account(mut)]
     pub config: Box<Account<'info, Config>>,
-    #[account(mut)]
-    pub delegate_input_token_account: InterfaceAccount<'info, TokenAccount>,
+
     #[account(
         seeds = [ACCESS_SEED.as_bytes(), user.key().as_ref()],
         bump,
         constraint = access.is_granted @ ErrorCode::AccessNotGranted
     )]
     pub access: Account<'info, Access>,
+
     /// CHECK: This is the user's account
     pub user: UncheckedAccount<'info>,
 
+    /// CHECK: Receiver output token account
     #[account(
         mut,
         associated_token::mint = output_mint,
@@ -68,13 +77,12 @@ pub struct FillOrderEngine<'info> {
     )]
     pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
 
-    /// CHECK: Jupiter Order Engine program
-    pub jupiter_order_engine_program: Program<'info, OrderEngine>,
+    pub jupiter_program: Program<'info, Jupiter>,
 }
 
-pub fn process_fill_order_engine<'a>(
-    ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
-    params: FillOrderEngineParams,
+pub fn process_jupiter_aggregator<'a>(
+    ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
+    args: JupiterAggregatorParams,
 ) -> Result<()> {
     // 1. 验证并转移输入代币
     validate_and_transfer_input(
@@ -86,19 +94,19 @@ pub fn process_fill_order_engine<'a>(
         &ctx.accounts.input_mint.to_account_info(),
         &ctx.accounts.input_mint_program.to_account_info(),
         &ctx.accounts.vault_input_token_account.to_account_info(),
-        params.in_amount,
+        args.in_amount,
         ctx.accounts.input_mint.decimals,
-        &params.delegate,
+        &args.delegate,
     )?;
 
     // 2. CPI
     execute_cross_program_invocation(
-        ctx.accounts.jupiter_order_engine_program.key,
-        &jupiter_order_engine_program_id(),
+        ctx.accounts.jupiter_program.key,
+        &jupiter_program_id(),
         ctx.remaining_accounts,
         &ctx.accounts.vault.key(),
         ctx.bumps.vault,
-        params.data,
+        args.data,
         Some(&mut ctx.accounts.vault_output_token_account),
         Some(&ctx.accounts.receiver_output_token_account),
         Some(&ctx.accounts.output_mint),
@@ -107,11 +115,12 @@ pub fn process_fill_order_engine<'a>(
     )?;
 
     // 3. emit event
-    emit!(FillOrderEngineEvent {
+    emit!(JupiterAggregatorEvent {
         user: ctx.accounts.user.key(),
         input_mint: ctx.accounts.input_mint.key(),
         output_mint: ctx.accounts.output_mint.key(),
-        input_amount: params.in_amount,
+        input_amount: args.in_amount,
+        instruction_name: args.instruction_name,
         operator: ctx.accounts.operator.key(),
     });
 

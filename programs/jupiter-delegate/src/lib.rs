@@ -11,27 +11,28 @@ pub use state::*;
 
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::pubkey::pubkey;
-use std::str::FromStr;
 
 declare_id!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");
 
 pub fn jupiter_program_id() -> Pubkey {
-    Pubkey::from_str("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4").unwrap()
+    pubkey!("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4")
 }
 
 pub fn jupiter_order_engine_program_id() -> Pubkey {
-    Pubkey::from_str("61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH").unwrap()
+    pubkey!("61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH")
 }
 
 pub fn dflow_program_id() -> Pubkey {
-    Pubkey::from_str("DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH").unwrap()
+    pubkey!("DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH")
 }
 
 pub fn okx_program_id() -> Pubkey {
-    Pubkey::from_str("6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma").unwrap()
+    pubkey!("6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma")
 }
 
-pub const PERPETUALS_PROGRAM_ID: Pubkey = pubkey!("PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu");
+pub fn jupiter_perpetuals_program_id() -> Pubkey {
+    pubkey!("PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu")
+}
 
 #[program]
 pub mod jupiter_delegate {
@@ -53,8 +54,8 @@ pub mod jupiter_delegate {
         process_revoke_access(ctx, user)
     }
 
-    pub fn swap(ctx: Context<Swap>, params: SwapParams) -> Result<()> {
-        process_swap(ctx, params)
+    pub fn swap(ctx: Context<JupiterSwap>, params: JupiterSwapParams) -> Result<()> {
+        process_jupiter_swap(ctx, params)
     }
 
     pub fn fill_order_engine<'a>(
@@ -73,7 +74,7 @@ pub mod jupiter_delegate {
 
     pub fn jupiter_perpetuals<'a>(
         ctx: Context<'_, '_, '_, 'a, JupiterPerpetuals<'a>>,
-        params: JupiterPerpetualsParams,
+        params: JupiterLiquidityParams,
     ) -> Result<()> {
         process_jupiter_perpetuals(ctx, params)
     }

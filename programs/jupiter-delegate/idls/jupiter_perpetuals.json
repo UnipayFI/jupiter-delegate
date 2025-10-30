@@ -522,6 +522,240 @@
       "args": []
     },
     {
+      "name": "create_and_delegate_stake_account",
+      "discriminator": [
+        98,
+        209,
+        122,
+        27,
+        222,
+        137,
+        94,
+        134
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "custody",
+          "writable": true
+        },
+        {
+          "name": "custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "transfer_authority"
+        },
+        {
+          "name": "stake_account",
+          "writable": true
+        },
+        {
+          "name": "stake_info",
+          "writable": true
+        },
+        {
+          "name": "validator_vote_account"
+        },
+        {
+          "name": "stake_config"
+        },
+        {
+          "name": "wsol_mint"
+        },
+        {
+          "name": "temp_wsol_account",
+          "writable": true
+        },
+        {
+          "name": "rent"
+        },
+        {
+          "name": "clock"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "CreateAndDelegateStakeAccountParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "unstake",
+      "discriminator": [
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "operator",
+          "signer": true
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool"
+        },
+        {
+          "name": "custody"
+        },
+        {
+          "name": "transfer_authority"
+        },
+        {
+          "name": "stake_account",
+          "writable": true
+        },
+        {
+          "name": "stake_info",
+          "writable": true
+        },
+        {
+          "name": "clock"
+        },
+        {
+          "name": "stake_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw_stake",
+      "discriminator": [
+        153,
+        8,
+        22,
+        138,
+        105,
+        176,
+        87,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "custody",
+          "writable": true
+        },
+        {
+          "name": "custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "transfer_authority",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "writable": true
+        },
+        {
+          "name": "stake_info",
+          "writable": true
+        },
+        {
+          "name": "clock"
+        },
+        {
+          "name": "stake_history"
+        },
+        {
+          "name": "stake_program"
+        },
+        {
+          "name": "system_program"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "redeem_stake",
+      "discriminator": [
+        178,
+        203,
+        250,
+        105,
+        133,
+        118,
+        255,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "signer": true
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "custody",
+          "writable": true
+        },
+        {
+          "name": "stake_account"
+        },
+        {
+          "name": "stake_info",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "operator_set_custody_config",
       "discriminator": [
         166,
@@ -772,6 +1006,171 @@
           "type": {
             "defined": {
               "name": "Swap2Params"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "swap_with_token_ledger",
+      "discriminator": [
+        139,
+        141,
+        238,
+        197,
+        41,
+        211,
+        172,
+        19
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "funding_account",
+          "writable": true
+        },
+        {
+          "name": "receiving_account",
+          "writable": true
+        },
+        {
+          "name": "transfer_authority"
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "receiving_custody",
+          "writable": true
+        },
+        {
+          "name": "receiving_custody_doves_price_account"
+        },
+        {
+          "name": "receiving_custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "dispensing_custody",
+          "writable": true
+        },
+        {
+          "name": "dispensing_custody_doves_price_account"
+        },
+        {
+          "name": "dispensing_custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_ledger"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "instruction"
+        },
+        {
+          "name": "event_authority"
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "SwapWithTokenLedgerParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "instant_increase_position_pre_swap",
+      "discriminator": [
+        197,
+        38,
+        86,
+        165,
+        199,
+        23,
+        38,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "funding_account",
+          "writable": true
+        },
+        {
+          "name": "receiving_account",
+          "writable": true
+        },
+        {
+          "name": "transfer_authority"
+        },
+        {
+          "name": "perpetuals"
+        },
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "receiving_custody",
+          "writable": true
+        },
+        {
+          "name": "receiving_custody_doves_price_account"
+        },
+        {
+          "name": "receiving_custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "dispensing_custody",
+          "writable": true
+        },
+        {
+          "name": "dispensing_custody_doves_price_account"
+        },
+        {
+          "name": "dispensing_custody_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "instruction"
+        },
+        {
+          "name": "event_authority"
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "InstantIncreasePositionPreSwapParams"
             }
           }
         }
@@ -3179,6 +3578,19 @@
       ]
     },
     {
+      "name": "StakeInfo",
+      "discriminator": [
+        66,
+        62,
+        68,
+        70,
+        108,
+        179,
+        183,
+        235
+      ]
+    },
+    {
       "name": "TokenLedger",
       "discriminator": [
         156,
@@ -3464,6 +3876,45 @@
         192,
         56,
         170
+      ]
+    },
+    {
+      "name": "RedeemStakeEvent",
+      "discriminator": [
+        0,
+        241,
+        84,
+        141,
+        139,
+        170,
+        218,
+        110
+      ]
+    },
+    {
+      "name": "WithdrawStakeEvent",
+      "discriminator": [
+        47,
+        85,
+        239,
+        214,
+        207,
+        29,
+        151,
+        88
+      ]
+    },
+    {
+      "name": "DelegateStakeEvent",
+      "discriminator": [
+        85,
+        135,
+        75,
+        222,
+        168,
+        133,
+        159,
+        212
       ]
     }
   ],
@@ -3787,6 +4238,16 @@
       "code": 6063,
       "name": "CannotLiquidate",
       "msg": "Cannot liquidate"
+    },
+    {
+      "code": 6064,
+      "name": "CannotDelegateStake",
+      "msg": "Cannot delegate stake to deactivated account"
+    },
+    {
+      "code": 6065,
+      "name": "ExceededMaxTotalStakedAmount",
+      "msg": "Max total staked amount exceeded"
     }
   ],
   "types": [
@@ -3954,6 +4415,22 @@
       "name": "ClosePositionRequestParams",
       "type": {
         "kind": "struct"
+      }
+    },
+    {
+      "name": "CreateAndDelegateStakeAccountParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "stake_account_index",
+            "type": "u64"
+          },
+          {
+            "name": "stake_amount_lamports",
+            "type": "u64"
+          }
+        ]
       }
     },
     {
@@ -4347,6 +4824,22 @@
       }
     },
     {
+      "name": "InstantIncreasePositionPreSwapParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount_in",
+            "type": "u64"
+          },
+          {
+            "name": "min_amount_out",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "InstantIncreasePositionParams",
       "type": {
         "kind": "struct",
@@ -4512,6 +5005,14 @@
           {
             "name": "min_interest_fee_grace_period_seconds",
             "type": "u64"
+          },
+          {
+            "name": "max_total_staked_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "external_swap_fee_multiplier_bps",
+            "type": "u64"
           }
         ]
       }
@@ -4540,6 +5041,10 @@
           {
             "name": "max_request_execution_sec",
             "type": "i64"
+          },
+          {
+            "name": "max_trigger_price_diff_bps",
+            "type": "u64"
           }
         ]
       }
@@ -4682,6 +5187,14 @@
           {
             "name": "min_interest_fee_grace_period_seconds",
             "type": "u64"
+          },
+          {
+            "name": "max_total_staked_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "external_swap_fee_multiplier_bps",
+            "type": "u64"
           }
         ]
       }
@@ -4776,6 +5289,10 @@
                 "name": "Secp256k1Pubkey"
               }
             }
+          },
+          {
+            "name": "max_trigger_price_diff_bps",
+            "type": "u64"
           }
         ]
       }
@@ -4801,6 +5318,18 @@
             "name": "amount_in",
             "type": "u64"
           },
+          {
+            "name": "min_amount_out",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SwapWithTokenLedgerParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
             "name": "min_amount_out",
             "type": "u64"
@@ -5602,6 +6131,18 @@
           {
             "name": "min_interest_fee_grace_period_seconds",
             "type": "u64"
+          },
+          {
+            "name": "total_staked_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "max_total_staked_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "external_swap_fee_multiplier_bps",
+            "type": "u64"
           }
         ]
       }
@@ -5714,6 +6255,10 @@
           {
             "name": "aum_usd_updated_at",
             "type": "i64"
+          },
+          {
+            "name": "max_trigger_price_diff_bps",
+            "type": "u64"
           }
         ]
       }
@@ -5899,6 +6444,46 @@
           },
           {
             "name": "locked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StakeInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "current_staked_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "total_staking_rewards_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "last_updated_at",
+            "type": "i64"
+          },
+          {
+            "name": "deactivating",
+            "type": "bool"
+          },
+          {
+            "name": "stake_account_index",
             "type": "u64"
           },
           {
@@ -6174,6 +6759,10 @@
           {
             "name": "amount",
             "type": "u64"
+          },
+          {
+            "name": "open_time",
+            "type": "i64"
           }
         ]
       }
@@ -7194,6 +7783,10 @@
           {
             "name": "update_time",
             "type": "i64"
+          },
+          {
+            "name": "interest",
+            "type": "u128"
           }
         ]
       }
@@ -7249,6 +7842,122 @@
           },
           {
             "name": "liquidation_time",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedeemStakeEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "custody",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_info",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "custody_total_staked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "current_staked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_staking_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "redeem_time",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawStakeEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "custody",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_info",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "custody_total_staked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_staking_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "withdraw_amount",
+            "type": "u64"
+          },
+          {
+            "name": "withdraw_time",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DelegateStakeEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "custody",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "stake_info",
+            "type": "pubkey"
+          },
+          {
+            "name": "custody_total_staked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "stake_amount",
+            "type": "u64"
+          },
+          {
+            "name": "validator_vote_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "delegate_time",
             "type": "i64"
           }
         ]

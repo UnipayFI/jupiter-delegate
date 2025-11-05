@@ -93,6 +93,13 @@ pub mod jupiter_delegate {
         process_okx_aggregator(ctx, params)
     }
 
+    pub fn two_hop<'a>(
+        ctx: Context<'_, '_, '_, 'a, TwoHop<'a>>,
+        params: TwoHopParams,
+    ) -> Result<()> {
+        process_two_hop(ctx, params)
+    }
+
     pub fn propose_new_admin(ctx: Context<ProposeNewAdmin>) -> Result<()> {
         process_propose_new_admin(ctx)
     }

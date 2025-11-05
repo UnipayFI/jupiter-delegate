@@ -1,0 +1,30 @@
+{
+  "idl": "target/idl/jupiter_delegate.json",
+  "before": [],
+  "scripts": {
+    "js": {
+      "from": "@codama/renderers-js",
+      "args": [
+        "clients/js/src/generated",
+        {
+          "deleteFolderBeforeRendering": true,
+          "formatCode": true
+        }
+      ]
+    },
+    "rust": {
+      "from": "@codama/renderers-rust",
+      "args": [
+        "clients/rust/src/generated",
+        {
+          "crateFolder": "clients/rust",
+          "toolchain": "+stable",
+          "deleteFolderBeforeRendering": true,
+          "anchorTraits": false,
+          "traitOptions": {},
+          "formatCode": true
+        }
+      ]
+    }
+  }
+}

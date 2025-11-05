@@ -1,4 +1,4 @@
-mod discriminator;
+pub mod discriminator;
 mod liquidity;
 mod types;
 

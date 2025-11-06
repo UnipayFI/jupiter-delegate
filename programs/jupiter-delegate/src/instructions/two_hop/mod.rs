@@ -3,7 +3,7 @@ pub mod types;
 use super::types::StepAction;
 use crate::{
     error::ErrorCode, execute_cross_program_invocation, transfer_output_tokens,
-    validate_and_transfer_input, Access, Config, ACCESS_SEED, VAULT_SEED,
+    validate_and_transfer_input, Access, Config, TwoHopEvent, ACCESS_SEED, VAULT_SEED,
 };
 use anchor_lang::{prelude::*, solana_program::account_info::next_account_infos};
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
@@ -185,6 +185,21 @@ pub fn process_two_hop<'a>(
             ctx.accounts.vault_input_token_account_one.amount,
         )?;
     }
+
+    emit!(TwoHopEvent {
+        user: ctx.accounts.user.key(),
+        step1_input_mint: ctx.accounts.input_mint_one.key(),
+        step1_output_mint: ctx.accounts.output_mint_one.key(),
+        step1_input_amount: args.step1.amount_in,
+        step1_output_amount: args.step2.expect_amount_out,
+        step1_action: args.step1.action.to_string(),
+        step2_input_mint: ctx.accounts.input_mint_two.key(),
+        step2_output_mint: ctx.accounts.output_mint_two.key(),
+        step2_input_amount: args.step2.amount_in,
+        step2_output_amount: args.step2.expect_amount_out,
+        step2_action: args.step2.action.to_string(),
+        operator: ctx.accounts.operator.key(),
+    });
 
     Ok(())
 }

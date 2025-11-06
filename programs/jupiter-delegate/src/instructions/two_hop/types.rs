@@ -56,3 +56,24 @@ impl StepAction {
         instruction_data
     }
 }
+
+impl ToString for StepAction {
+    fn to_string(&self) -> String {
+        match self {
+            StepAction::JupiterSharedAccountsRoute => "jupiter_shared_accounts_route",
+            StepAction::JupiterSharedAccountsRouteV2 => "jupiter_shared_accounts_route_v2",
+            StepAction::JupiterRoute => "jupiter_route",
+            StepAction::JupiterRouteV2 => "jupiter_route_v2",
+            StepAction::JupiterOrderEngineFill => "jupiter_order_engine_fill",
+            StepAction::OkxSwapTobV3 => "okx_swap_tob_v3",
+            StepAction::OkxSwapV3 => "okx_swap_v3",
+            StepAction::OkxSwapTobV3WithReceiver => "okx_swap_tob_v3_with_receiver",
+            StepAction::OkxSwap => "okx_swap",
+            StepAction::DFlowSwap => "dflow_swap",
+            StepAction::DFlowSwap2 => "dflow_swap2",
+            StepAction::JlpPerpetualsAddLiquidity2 => "jlp_perpetuals_add_liquidity2",
+            StepAction::JlpPerpetualsRemoveLiquidity2 => "jlp_perpetuals_remove_liquidity2",
+        }
+        .to_string()
+    }
+}

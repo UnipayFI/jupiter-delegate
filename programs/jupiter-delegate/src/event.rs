@@ -108,3 +108,19 @@ pub struct JupiterPerpetualsEvent {
     pub action: String,
     pub operator: Pubkey,
 }
+
+#[event]
+pub struct TwoHopEvent {
+    pub user: Pubkey,
+    pub step1_input_mint: Pubkey,
+    pub step1_output_mint: Pubkey,
+    pub step1_input_amount: u64,
+    pub step1_output_amount: u64,
+    pub step1_action: String,
+    pub step2_input_mint: Pubkey,
+    pub step2_output_mint: Pubkey,
+    pub step2_input_amount: u64,
+    pub step2_output_amount: u64,
+    pub step2_action: String,
+    pub operator: Pubkey,
+}

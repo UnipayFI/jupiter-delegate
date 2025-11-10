@@ -75,4 +75,12 @@ pub enum ErrorCode {
     OrderEngineFailed,
     #[msg("Invalid order engine data")]
     InvalidOrderEngineData,
+
+    // Two Hop
+    #[msg("Two hop insufficient input amount")]
+    TwoHopInsufficientInputAmount,
+    #[msg("Two hop max slippage output amount exceeded")]
+    TwoHopMaxSlippageOutputAmountExceeded,
+    #[msg("Two hop invalid intermediate token amount")]
+    TwoHopInvalidIntermediateTokenAmount,
 }

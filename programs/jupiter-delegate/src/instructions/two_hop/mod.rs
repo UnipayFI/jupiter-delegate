@@ -243,7 +243,7 @@ fn process_step<'info>(
             let amount_in_diff =
                 step_in_token_account_one_amount - step_out_token_account_one_amount_after;
             if amount_in_diff > args.amount_in {
-                return Err(ErrorCode::InvalidOperator.into());
+                return Err(ErrorCode::TwoHopInsufficientInputAmount.into());
             }
             amount_in_diff
         } else {
@@ -251,11 +251,11 @@ fn process_step<'info>(
         };
     let amount_out_diff =
         if step_out_token_account_one_amount_after < step_out_token_account_one_amount {
-            return Err(ErrorCode::InvalidOperator.into());
+            return Err(ErrorCode::TwoHopInvalidIntermediateTokenAmount.into());
         } else {
             let diff = step_out_token_account_one_amount_after - step_out_token_account_one_amount;
             if diff < args.expect_amount_out {
-                return Err(ErrorCode::InvalidOperator.into());
+                return Err(ErrorCode::TwoHopMaxSlippageOutputAmountExceeded.into());
             }
             diff
         };

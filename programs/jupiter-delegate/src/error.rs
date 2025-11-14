@@ -83,4 +83,10 @@ pub enum ErrorCode {
     TwoHopMaxSlippageOutputAmountExceeded,
     #[msg("Two hop invalid intermediate token amount")]
     TwoHopInvalidIntermediateTokenAmount,
+
+    // Fund Vault
+    #[msg("Executor output token account is insufficient")]
+    ExecutorOutputTokenAccountIsInsufficient,
+    #[msg("Fund vault output token account not found")]
+    FundVaultOutputTokenAccountNotFound,
 }

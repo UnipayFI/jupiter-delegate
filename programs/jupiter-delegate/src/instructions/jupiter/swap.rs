@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    associated_token::get_associated_token_address,
+    associated_token::get_associated_token_address_with_program_id,
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
 
@@ -75,8 +75,11 @@ pub fn process_jupiter_swap(ctx: Context<JupiterSwap>, params: JupiterSwapParams
     )?;
 
     // 2. 验证接收者代币账户存在
-    let receiver_output_token_account =
-        get_associated_token_address(&ctx.accounts.user.key(), &ctx.accounts.output_mint.key());
+    let receiver_output_token_account = get_associated_token_address_with_program_id(
+        &ctx.accounts.user.key(),
+        &ctx.accounts.output_mint.key(),
+        &ctx.accounts.output_mint_program.key(),
+    );
     validate_receiver_token_account(ctx.remaining_accounts, &receiver_output_token_account)?;
 
     // 3. CPI

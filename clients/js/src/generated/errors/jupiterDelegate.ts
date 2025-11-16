@@ -70,6 +70,18 @@ export const JUPITER_DELEGATE_ERROR__RECEIVER_TOKEN_ACCOUNT_NOT_FOUND = 0x1789; 
 export const JUPITER_DELEGATE_ERROR__ORDER_ENGINE_FAILED = 0x178a; // 6026
 /** InvalidOrderEngineData: Invalid order engine data */
 export const JUPITER_DELEGATE_ERROR__INVALID_ORDER_ENGINE_DATA = 0x178b; // 6027
+/** TwoHopInsufficientInputAmount: Two hop insufficient input amount */
+export const JUPITER_DELEGATE_ERROR__TWO_HOP_INSUFFICIENT_INPUT_AMOUNT = 0x178c; // 6028
+/** TwoHopMaxSlippageOutputAmountExceeded: Two hop max slippage output amount exceeded */
+export const JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED = 0x178d; // 6029
+/** TwoHopInvalidIntermediateTokenAmount: Two hop invalid intermediate token amount */
+export const JUPITER_DELEGATE_ERROR__TWO_HOP_INVALID_INTERMEDIATE_TOKEN_AMOUNT = 0x178e; // 6030
+/** ExecutorOutputTokenAccountIsInsufficient: Executor output token account is insufficient */
+export const JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT = 0x178f; // 6031
+/** FundVaultOutputTokenAccountNotFound: Fund vault output token account not found */
+export const JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND = 0x1790; // 6032
+/** UnsupportedTokenProgram: Unsupported token program */
+export const JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM = 0x1791; // 6033
 
 export type JupiterDelegateError =
   | typeof JUPITER_DELEGATE_ERROR__ACCESS_ALREADY_GRANTED
@@ -79,6 +91,8 @@ export type JupiterDelegateError =
   | typeof JUPITER_DELEGATE_ERROR__CONFIG_NOT_INITIALIZED
   | typeof JUPITER_DELEGATE_ERROR__CONFIG_PAUSED
   | typeof JUPITER_DELEGATE_ERROR__DELEGATE_NOT_APPROVED
+  | typeof JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT
+  | typeof JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND
   | typeof JUPITER_DELEGATE_ERROR__INSUFFICIENT_DELEGATED_AMOUNT
   | typeof JUPITER_DELEGATE_ERROR__INVALID_COOLDOWN_DURATION
   | typeof JUPITER_DELEGATE_ERROR__INVALID_DELEGATE_TOKEN_ACCOUNT
@@ -99,7 +113,11 @@ export type JupiterDelegateError =
   | typeof JUPITER_DELEGATE_ERROR__SWAP_AMOUNT_TOO_SMALL
   | typeof JUPITER_DELEGATE_ERROR__SWAP_FAILED
   | typeof JUPITER_DELEGATE_ERROR__SWAP_TOO_FREQUENT
-  | typeof JUPITER_DELEGATE_ERROR__UNAUTHORIZED;
+  | typeof JUPITER_DELEGATE_ERROR__TWO_HOP_INSUFFICIENT_INPUT_AMOUNT
+  | typeof JUPITER_DELEGATE_ERROR__TWO_HOP_INVALID_INTERMEDIATE_TOKEN_AMOUNT
+  | typeof JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED
+  | typeof JUPITER_DELEGATE_ERROR__UNAUTHORIZED
+  | typeof JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM;
 
 let jupiterDelegateErrorMessages:
   | Record<JupiterDelegateError, string>
@@ -113,6 +131,8 @@ if (process.env.NODE_ENV !== 'production') {
     [JUPITER_DELEGATE_ERROR__CONFIG_NOT_INITIALIZED]: `Config is not initialized`,
     [JUPITER_DELEGATE_ERROR__CONFIG_PAUSED]: `Config is paused`,
     [JUPITER_DELEGATE_ERROR__DELEGATE_NOT_APPROVED]: `Vault has not been delegated authority`,
+    [JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT]: `Executor output token account is insufficient`,
+    [JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND]: `Fund vault output token account not found`,
     [JUPITER_DELEGATE_ERROR__INSUFFICIENT_DELEGATED_AMOUNT]: `Delegated amount is insufficient`,
     [JUPITER_DELEGATE_ERROR__INVALID_COOLDOWN_DURATION]: `Invalid cooldown duration`,
     [JUPITER_DELEGATE_ERROR__INVALID_DELEGATE_TOKEN_ACCOUNT]: `Invalid delegate token account`,
@@ -133,7 +153,11 @@ if (process.env.NODE_ENV !== 'production') {
     [JUPITER_DELEGATE_ERROR__SWAP_AMOUNT_TOO_SMALL]: `Swap amount is too small`,
     [JUPITER_DELEGATE_ERROR__SWAP_FAILED]: `Swap failed`,
     [JUPITER_DELEGATE_ERROR__SWAP_TOO_FREQUENT]: `Swap too frequent`,
+    [JUPITER_DELEGATE_ERROR__TWO_HOP_INSUFFICIENT_INPUT_AMOUNT]: `Two hop insufficient input amount`,
+    [JUPITER_DELEGATE_ERROR__TWO_HOP_INVALID_INTERMEDIATE_TOKEN_AMOUNT]: `Two hop invalid intermediate token amount`,
+    [JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED]: `Two hop max slippage output amount exceeded`,
     [JUPITER_DELEGATE_ERROR__UNAUTHORIZED]: `Unauthorized`,
+    [JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM]: `Unsupported token program`,
   };
 }
 

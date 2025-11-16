@@ -9,6 +9,7 @@
 export * from './acceptAdminTransfer';
 export * from './dflowAggregator';
 export * from './fillOrderEngine';
+export * from './fundVaultTokenReceive';
 export * from './grantAccess';
 export * from './initConfig';
 export * from './jupiterAggregator';

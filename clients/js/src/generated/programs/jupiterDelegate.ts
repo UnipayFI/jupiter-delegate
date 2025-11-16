@@ -17,6 +17,7 @@ import {
   type ParsedAcceptAdminTransferInstruction,
   type ParsedDflowAggregatorInstruction,
   type ParsedFillOrderEngineInstruction,
+  type ParsedFundVaultTokenReceiveInstruction,
   type ParsedGrantAccessInstruction,
   type ParsedInitConfigInstruction,
   type ParsedJupiterAggregatorInstruction,
@@ -73,6 +74,7 @@ export enum JupiterDelegateInstruction {
   AcceptAdminTransfer,
   DflowAggregator,
   FillOrderEngine,
+  FundVaultTokenReceive,
   GrantAccess,
   InitConfig,
   JupiterAggregator,
@@ -122,6 +124,17 @@ export function identifyJupiterDelegateInstruction(
     )
   ) {
     return JupiterDelegateInstruction.FillOrderEngine;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([251, 203, 188, 143, 199, 99, 65, 69])
+      ),
+      0
+    )
+  ) {
+    return JupiterDelegateInstruction.FundVaultTokenReceive;
   }
   if (
     containsBytes(
@@ -261,6 +274,9 @@ export type ParsedJupiterDelegateInstruction<
   | ({
       instructionType: JupiterDelegateInstruction.FillOrderEngine;
     } & ParsedFillOrderEngineInstruction<TProgram>)
+  | ({
+      instructionType: JupiterDelegateInstruction.FundVaultTokenReceive;
+    } & ParsedFundVaultTokenReceiveInstruction<TProgram>)
   | ({
       instructionType: JupiterDelegateInstruction.GrantAccess;
     } & ParsedGrantAccessInstruction<TProgram>)

@@ -8,6 +8,7 @@
 pub(crate) mod r#accept_admin_transfer;
 pub(crate) mod r#dflow_aggregator;
 pub(crate) mod r#fill_order_engine;
+pub(crate) mod r#fund_vault_token_receive;
 pub(crate) mod r#grant_access;
 pub(crate) mod r#init_config;
 pub(crate) mod r#jupiter_aggregator;
@@ -23,6 +24,7 @@ pub(crate) mod r#two_hop;
 pub use self::r#accept_admin_transfer::*;
 pub use self::r#dflow_aggregator::*;
 pub use self::r#fill_order_engine::*;
+pub use self::r#fund_vault_token_receive::*;
 pub use self::r#grant_access::*;
 pub use self::r#init_config::*;
 pub use self::r#jupiter_aggregator::*;

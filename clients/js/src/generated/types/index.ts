@@ -22,3 +22,4 @@ export * from './pauseEvent';
 export * from './revokeAccessEvent';
 export * from './stepAction';
 export * from './stepParams';
+export * from './twoHopEvent';

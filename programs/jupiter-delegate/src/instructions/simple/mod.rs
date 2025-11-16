@@ -1,11 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::program::invoke;
-use anchor_lang::solana_program::system_instruction::transfer;
-use anchor_lang::solana_program::sysvar::rent::Rent;
 use anchor_spl::associated_token::get_associated_token_address_with_program_id;
 use anchor_spl::token_interface::{
-    close_account, transfer_checked, CloseAccount, Mint, TokenAccount, TokenInterface,
-    TransferChecked,
+    transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked,
 };
 
 use crate::error::ErrorCode;
@@ -34,9 +30,6 @@ pub struct FundVaultTokenReceive<'info> {
     /// CHECK: This is the fund vault account
     #[account(mut, address=pubkey!("EjwCRUh3HhBaR7vaTrFzuNpDAnTX9h3ddZuiQgKqCadz"))]
     pub fund_vault: UncheckedAccount<'info>,
-    /// CHECK: This is the delegate payer account
-    #[account(mut, address=pubkey!("rnGWyLQNimbB6QAyJQg8q9XqXw2ajb4gqYixAvcDqSE"))]
-    pub delegate_payer: UncheckedAccount<'info>,
 }
 
 pub fn process_fund_vault_token_receive(ctx: Context<FundVaultTokenReceive>) -> Result<()> {
@@ -68,34 +61,6 @@ pub fn process_fund_vault_token_receive(ctx: Context<FundVaultTokenReceive>) -> 
         ),
         ctx.accounts.executor_output_token_account.amount,
         ctx.accounts.output_mint.decimals,
-    )?;
-
-    // 3. 关闭 executor 的 output token account 和 account
-    close_account(CpiContext::new(
-        ctx.accounts.output_mint_program.to_account_info(),
-        CloseAccount {
-            account: ctx.accounts.executor_output_token_account.to_account_info(),
-            destination: ctx.accounts.delegate_payer.to_account_info(),
-            authority: ctx.accounts.executor.to_account_info(),
-        },
-    ))?;
-
-    // 4. 转移 executor 的 sol 到 delegate_payer
-    let executor_lamports = ctx.accounts.executor.lamports();
-    let rent_exempt_minimum = Rent::get()?.minimum_balance(ctx.accounts.executor.data_len());
-    if executor_lamports <= rent_exempt_minimum {
-        return Ok(());
-    }
-    invoke(
-        &transfer(
-            &ctx.accounts.executor.key(),
-            &ctx.accounts.delegate_payer.key(),
-            executor_lamports.saturating_sub(rent_exempt_minimum),
-        ),
-        &[
-            ctx.accounts.executor.to_account_info(),
-            ctx.accounts.delegate_payer.to_account_info(),
-        ],
     )?;
 
     Ok(())

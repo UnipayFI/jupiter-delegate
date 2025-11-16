@@ -21,6 +21,7 @@ pub(crate) mod r#pause_event;
 pub(crate) mod r#revoke_access_event;
 pub(crate) mod r#step_action;
 pub(crate) mod r#step_params;
+pub(crate) mod r#two_hop_event;
 
 pub use self::r#admin_transfer_completed_event::*;
 pub use self::r#admin_transfer_proposed_event::*;
@@ -38,3 +39,4 @@ pub use self::r#pause_event::*;
 pub use self::r#revoke_access_event::*;
 pub use self::r#step_action::*;
 pub use self::r#step_params::*;
+pub use self::r#two_hop_event::*;

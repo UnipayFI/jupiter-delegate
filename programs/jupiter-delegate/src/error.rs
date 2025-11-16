@@ -89,4 +89,6 @@ pub enum ErrorCode {
     ExecutorOutputTokenAccountIsInsufficient,
     #[msg("Fund vault output token account not found")]
     FundVaultOutputTokenAccountNotFound,
+    #[msg("Unsupported token program")]
+    UnsupportedTokenProgram,
 }

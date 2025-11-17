@@ -8,11 +8,11 @@
 use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 
-pub const FUND_VAULT_TOKEN_RECEIVE_DISCRIMINATOR: [u8; 8] = [251, 203, 188, 143, 199, 99, 65, 69];
+pub const TOKEN_RECEIVE_DISCRIMINATOR: [u8; 8] = [53, 89, 50, 230, 122, 75, 217, 28];
 
 /// Accounts.
 #[derive(Debug)]
-pub struct FundVaultTokenReceive {
+pub struct TokenReceive {
     pub output_mint: solana_pubkey::Pubkey,
 
     pub output_mint_program: solana_pubkey::Pubkey,
@@ -21,12 +21,12 @@ pub struct FundVaultTokenReceive {
 
     pub executor_output_token_account: solana_pubkey::Pubkey,
 
-    pub vault_output_token_account: solana_pubkey::Pubkey,
+    pub receiver_output_token_account: solana_pubkey::Pubkey,
 
-    pub fund_vault: solana_pubkey::Pubkey,
+    pub receiver: solana_pubkey::Pubkey,
 }
 
-impl FundVaultTokenReceive {
+impl TokenReceive {
     pub fn instruction(&self) -> solana_instruction::Instruction {
         self.instruction_with_remaining_accounts(&[])
     }
@@ -51,14 +51,12 @@ impl FundVaultTokenReceive {
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
-            self.vault_output_token_account,
+            self.receiver_output_token_account,
             false,
         ));
-        accounts.push(solana_instruction::AccountMeta::new(self.fund_vault, false));
+        accounts.push(solana_instruction::AccountMeta::new(self.receiver, false));
         accounts.extend_from_slice(remaining_accounts);
-        let data = FundVaultTokenReceiveInstructionData::new()
-            .try_to_vec()
-            .unwrap();
+        let data = TokenReceiveInstructionData::new().try_to_vec().unwrap();
 
         solana_instruction::Instruction {
             program_id: crate::JUPITER_DELEGATE_ID,
@@ -70,14 +68,14 @@ impl FundVaultTokenReceive {
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct FundVaultTokenReceiveInstructionData {
+pub struct TokenReceiveInstructionData {
     discriminator: [u8; 8],
 }
 
-impl FundVaultTokenReceiveInstructionData {
+impl TokenReceiveInstructionData {
     pub fn new() -> Self {
         Self {
-            discriminator: [251, 203, 188, 143, 199, 99, 65, 69],
+            discriminator: [53, 89, 50, 230, 122, 75, 217, 28],
         }
     }
 
@@ -86,13 +84,13 @@ impl FundVaultTokenReceiveInstructionData {
     }
 }
 
-impl Default for FundVaultTokenReceiveInstructionData {
+impl Default for TokenReceiveInstructionData {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// Instruction builder for `FundVaultTokenReceive`.
+/// Instruction builder for `TokenReceive`.
 ///
 /// ### Accounts:
 ///
@@ -100,20 +98,20 @@ impl Default for FundVaultTokenReceiveInstructionData {
 ///   1. `[]` output_mint_program
 ///   2. `[writable, signer]` executor
 ///   3. `[writable]` executor_output_token_account
-///   4. `[writable]` vault_output_token_account
-///   5. `[writable]` fund_vault
+///   4. `[writable]` receiver_output_token_account
+///   5. `[writable]` receiver
 #[derive(Clone, Debug, Default)]
-pub struct FundVaultTokenReceiveBuilder {
+pub struct TokenReceiveBuilder {
     output_mint: Option<solana_pubkey::Pubkey>,
     output_mint_program: Option<solana_pubkey::Pubkey>,
     executor: Option<solana_pubkey::Pubkey>,
     executor_output_token_account: Option<solana_pubkey::Pubkey>,
-    vault_output_token_account: Option<solana_pubkey::Pubkey>,
-    fund_vault: Option<solana_pubkey::Pubkey>,
+    receiver_output_token_account: Option<solana_pubkey::Pubkey>,
+    receiver: Option<solana_pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_instruction::AccountMeta>,
 }
 
-impl FundVaultTokenReceiveBuilder {
+impl TokenReceiveBuilder {
     pub fn new() -> Self {
         Self::default()
     }
@@ -141,16 +139,16 @@ impl FundVaultTokenReceiveBuilder {
         self
     }
     #[inline(always)]
-    pub fn vault_output_token_account(
+    pub fn receiver_output_token_account(
         &mut self,
-        vault_output_token_account: solana_pubkey::Pubkey,
+        receiver_output_token_account: solana_pubkey::Pubkey,
     ) -> &mut Self {
-        self.vault_output_token_account = Some(vault_output_token_account);
+        self.receiver_output_token_account = Some(receiver_output_token_account);
         self
     }
     #[inline(always)]
-    pub fn fund_vault(&mut self, fund_vault: solana_pubkey::Pubkey) -> &mut Self {
-        self.fund_vault = Some(fund_vault);
+    pub fn receiver(&mut self, receiver: solana_pubkey::Pubkey) -> &mut Self {
+        self.receiver = Some(receiver);
         self
     }
     /// Add an additional account to the instruction.
@@ -170,7 +168,7 @@ impl FundVaultTokenReceiveBuilder {
     }
     #[allow(clippy::clone_on_copy)]
     pub fn instruction(&self) -> solana_instruction::Instruction {
-        let accounts = FundVaultTokenReceive {
+        let accounts = TokenReceive {
             output_mint: self.output_mint.expect("output_mint is not set"),
             output_mint_program: self
                 .output_mint_program
@@ -179,18 +177,18 @@ impl FundVaultTokenReceiveBuilder {
             executor_output_token_account: self
                 .executor_output_token_account
                 .expect("executor_output_token_account is not set"),
-            vault_output_token_account: self
-                .vault_output_token_account
-                .expect("vault_output_token_account is not set"),
-            fund_vault: self.fund_vault.expect("fund_vault is not set"),
+            receiver_output_token_account: self
+                .receiver_output_token_account
+                .expect("receiver_output_token_account is not set"),
+            receiver: self.receiver.expect("receiver is not set"),
         };
 
         accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
     }
 }
 
-/// `fund_vault_token_receive` CPI accounts.
-pub struct FundVaultTokenReceiveCpiAccounts<'a, 'b> {
+/// `token_receive` CPI accounts.
+pub struct TokenReceiveCpiAccounts<'a, 'b> {
     pub output_mint: &'b solana_account_info::AccountInfo<'a>,
 
     pub output_mint_program: &'b solana_account_info::AccountInfo<'a>,
@@ -199,13 +197,13 @@ pub struct FundVaultTokenReceiveCpiAccounts<'a, 'b> {
 
     pub executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
-    pub vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+    pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
-    pub fund_vault: &'b solana_account_info::AccountInfo<'a>,
+    pub receiver: &'b solana_account_info::AccountInfo<'a>,
 }
 
-/// `fund_vault_token_receive` CPI instruction.
-pub struct FundVaultTokenReceiveCpi<'a, 'b> {
+/// `token_receive` CPI instruction.
+pub struct TokenReceiveCpi<'a, 'b> {
     /// The program to invoke.
     pub __program: &'b solana_account_info::AccountInfo<'a>,
 
@@ -217,15 +215,15 @@ pub struct FundVaultTokenReceiveCpi<'a, 'b> {
 
     pub executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
-    pub vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+    pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
-    pub fund_vault: &'b solana_account_info::AccountInfo<'a>,
+    pub receiver: &'b solana_account_info::AccountInfo<'a>,
 }
 
-impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
+impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
     pub fn new(
         program: &'b solana_account_info::AccountInfo<'a>,
-        accounts: FundVaultTokenReceiveCpiAccounts<'a, 'b>,
+        accounts: TokenReceiveCpiAccounts<'a, 'b>,
     ) -> Self {
         Self {
             __program: program,
@@ -233,8 +231,8 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
             output_mint_program: accounts.output_mint_program,
             executor: accounts.executor,
             executor_output_token_account: accounts.executor_output_token_account,
-            vault_output_token_account: accounts.vault_output_token_account,
-            fund_vault: accounts.fund_vault,
+            receiver_output_token_account: accounts.receiver_output_token_account,
+            receiver: accounts.receiver,
         }
     }
     #[inline(always)]
@@ -278,11 +276,11 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
-            *self.vault_output_token_account.key,
+            *self.receiver_output_token_account.key,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
-            *self.fund_vault.key,
+            *self.receiver.key,
             false,
         ));
         remaining_accounts.iter().for_each(|remaining_account| {
@@ -292,9 +290,7 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
-        let data = FundVaultTokenReceiveInstructionData::new()
-            .try_to_vec()
-            .unwrap();
+        let data = TokenReceiveInstructionData::new().try_to_vec().unwrap();
 
         let instruction = solana_instruction::Instruction {
             program_id: crate::JUPITER_DELEGATE_ID,
@@ -307,8 +303,8 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
         account_infos.push(self.output_mint_program.clone());
         account_infos.push(self.executor.clone());
         account_infos.push(self.executor_output_token_account.clone());
-        account_infos.push(self.vault_output_token_account.clone());
-        account_infos.push(self.fund_vault.clone());
+        account_infos.push(self.receiver_output_token_account.clone());
+        account_infos.push(self.receiver.clone());
         remaining_accounts
             .iter()
             .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
@@ -321,7 +317,7 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
     }
 }
 
-/// Instruction builder for `FundVaultTokenReceive` via CPI.
+/// Instruction builder for `TokenReceive` via CPI.
 ///
 /// ### Accounts:
 ///
@@ -329,23 +325,23 @@ impl<'a, 'b> FundVaultTokenReceiveCpi<'a, 'b> {
 ///   1. `[]` output_mint_program
 ///   2. `[writable, signer]` executor
 ///   3. `[writable]` executor_output_token_account
-///   4. `[writable]` vault_output_token_account
-///   5. `[writable]` fund_vault
+///   4. `[writable]` receiver_output_token_account
+///   5. `[writable]` receiver
 #[derive(Clone, Debug)]
-pub struct FundVaultTokenReceiveCpiBuilder<'a, 'b> {
-    instruction: Box<FundVaultTokenReceiveCpiBuilderInstruction<'a, 'b>>,
+pub struct TokenReceiveCpiBuilder<'a, 'b> {
+    instruction: Box<TokenReceiveCpiBuilderInstruction<'a, 'b>>,
 }
 
-impl<'a, 'b> FundVaultTokenReceiveCpiBuilder<'a, 'b> {
+impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
     pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
-        let instruction = Box::new(FundVaultTokenReceiveCpiBuilderInstruction {
+        let instruction = Box::new(TokenReceiveCpiBuilderInstruction {
             __program: program,
             output_mint: None,
             output_mint_program: None,
             executor: None,
             executor_output_token_account: None,
-            vault_output_token_account: None,
-            fund_vault: None,
+            receiver_output_token_account: None,
+            receiver: None,
             __remaining_accounts: Vec::new(),
         });
         Self { instruction }
@@ -380,19 +376,16 @@ impl<'a, 'b> FundVaultTokenReceiveCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn vault_output_token_account(
+    pub fn receiver_output_token_account(
         &mut self,
-        vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+        receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
     ) -> &mut Self {
-        self.instruction.vault_output_token_account = Some(vault_output_token_account);
+        self.instruction.receiver_output_token_account = Some(receiver_output_token_account);
         self
     }
     #[inline(always)]
-    pub fn fund_vault(
-        &mut self,
-        fund_vault: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.fund_vault = Some(fund_vault);
+    pub fn receiver(&mut self, receiver: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.receiver = Some(receiver);
         self
     }
     /// Add an additional account to the instruction.
@@ -429,7 +422,7 @@ impl<'a, 'b> FundVaultTokenReceiveCpiBuilder<'a, 'b> {
     #[allow(clippy::clone_on_copy)]
     #[allow(clippy::vec_init_then_push)]
     pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
-        let instruction = FundVaultTokenReceiveCpi {
+        let instruction = TokenReceiveCpi {
             __program: self.instruction.__program,
 
             output_mint: self
@@ -449,12 +442,12 @@ impl<'a, 'b> FundVaultTokenReceiveCpiBuilder<'a, 'b> {
                 .executor_output_token_account
                 .expect("executor_output_token_account is not set"),
 
-            vault_output_token_account: self
+            receiver_output_token_account: self
                 .instruction
-                .vault_output_token_account
-                .expect("vault_output_token_account is not set"),
+                .receiver_output_token_account
+                .expect("receiver_output_token_account is not set"),
 
-            fund_vault: self.instruction.fund_vault.expect("fund_vault is not set"),
+            receiver: self.instruction.receiver.expect("receiver is not set"),
         };
         instruction.invoke_signed_with_remaining_accounts(
             signers_seeds,
@@ -464,14 +457,14 @@ impl<'a, 'b> FundVaultTokenReceiveCpiBuilder<'a, 'b> {
 }
 
 #[derive(Clone, Debug)]
-struct FundVaultTokenReceiveCpiBuilderInstruction<'a, 'b> {
+struct TokenReceiveCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_account_info::AccountInfo<'a>,
     output_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
     output_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
     executor: Option<&'b solana_account_info::AccountInfo<'a>>,
     executor_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
-    vault_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
-    fund_vault: Option<&'b solana_account_info::AccountInfo<'a>>,
+    receiver_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+    receiver: Option<&'b solana_account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
 }

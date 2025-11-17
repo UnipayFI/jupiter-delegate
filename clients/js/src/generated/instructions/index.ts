@@ -9,7 +9,6 @@
 export * from './acceptAdminTransfer';
 export * from './dflowAggregator';
 export * from './fillOrderEngine';
-export * from './fundVaultTokenReceive';
 export * from './grantAccess';
 export * from './initConfig';
 export * from './jupiterAggregator';
@@ -20,4 +19,5 @@ export * from './pause';
 export * from './proposeNewAdmin';
 export * from './revokeAccess';
 export * from './swap';
+export * from './tokenReceive';
 export * from './twoHop';

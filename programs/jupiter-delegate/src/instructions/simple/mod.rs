@@ -7,7 +7,7 @@ use anchor_spl::token_interface::{
 use crate::error::ErrorCode;
 
 #[derive(Accounts)]
-pub struct FundVaultTokenReceive<'info> {
+pub struct TokenReceive<'info> {
     pub output_mint: InterfaceAccount<'info, Mint>,
     pub output_mint_program: Interface<'info, TokenInterface>,
 
@@ -23,28 +23,28 @@ pub struct FundVaultTokenReceive<'info> {
     #[account(
         mut,
         associated_token::mint = output_mint,
-        associated_token::authority = fund_vault,
+        associated_token::authority = receiver,
         associated_token::token_program = output_mint_program,
     )]
-    pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
     /// CHECK: This is the fund vault account
-    #[account(mut, address=pubkey!("EjwCRUh3HhBaR7vaTrFzuNpDAnTX9h3ddZuiQgKqCadz"))]
-    pub fund_vault: UncheckedAccount<'info>,
+    #[account(mut)]
+    pub receiver: UncheckedAccount<'info>,
 }
 
-pub fn process_fund_vault_token_receive(ctx: Context<FundVaultTokenReceive>) -> Result<()> {
+pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
     // 1. 验证接收者代币账户存在
     require!(
         ctx.accounts.executor_output_token_account.amount > 0,
         ErrorCode::ExecutorOutputTokenAccountIsInsufficient
     );
-    let fund_vault_output_token_account = get_associated_token_address_with_program_id(
-        &ctx.accounts.fund_vault.key(),
+    let receiver_output_token_account = get_associated_token_address_with_program_id(
+        &ctx.accounts.receiver.key(),
         &ctx.accounts.output_mint.key(),
         &ctx.accounts.output_mint_program.key(),
     );
     require!(
-        fund_vault_output_token_account == ctx.accounts.vault_output_token_account.key(),
+        receiver_output_token_account == ctx.accounts.receiver_output_token_account.key(),
         ErrorCode::FundVaultOutputTokenAccountNotFound
     );
 
@@ -54,7 +54,7 @@ pub fn process_fund_vault_token_receive(ctx: Context<FundVaultTokenReceive>) -> 
             ctx.accounts.output_mint_program.to_account_info(),
             TransferChecked {
                 from: ctx.accounts.executor_output_token_account.to_account_info(),
-                to: ctx.accounts.vault_output_token_account.to_account_info(),
+                to: ctx.accounts.receiver_output_token_account.to_account_info(),
                 authority: ctx.accounts.executor.to_account_info(),
                 mint: ctx.accounts.output_mint.to_account_info(),
             },

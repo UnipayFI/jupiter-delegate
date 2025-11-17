@@ -17,7 +17,6 @@ import {
   type ParsedAcceptAdminTransferInstruction,
   type ParsedDflowAggregatorInstruction,
   type ParsedFillOrderEngineInstruction,
-  type ParsedFundVaultTokenReceiveInstruction,
   type ParsedGrantAccessInstruction,
   type ParsedInitConfigInstruction,
   type ParsedJupiterAggregatorInstruction,
@@ -28,6 +27,7 @@ import {
   type ParsedProposeNewAdminInstruction,
   type ParsedRevokeAccessInstruction,
   type ParsedSwapInstruction,
+  type ParsedTokenReceiveInstruction,
   type ParsedTwoHopInstruction,
 } from '../instructions';
 
@@ -74,7 +74,6 @@ export enum JupiterDelegateInstruction {
   AcceptAdminTransfer,
   DflowAggregator,
   FillOrderEngine,
-  FundVaultTokenReceive,
   GrantAccess,
   InitConfig,
   JupiterAggregator,
@@ -85,6 +84,7 @@ export enum JupiterDelegateInstruction {
   ProposeNewAdmin,
   RevokeAccess,
   Swap,
+  TokenReceive,
   TwoHop,
 }
 
@@ -124,17 +124,6 @@ export function identifyJupiterDelegateInstruction(
     )
   ) {
     return JupiterDelegateInstruction.FillOrderEngine;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([251, 203, 188, 143, 199, 99, 65, 69])
-      ),
-      0
-    )
-  ) {
-    return JupiterDelegateInstruction.FundVaultTokenReceive;
   }
   if (
     containsBytes(
@@ -250,6 +239,17 @@ export function identifyJupiterDelegateInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([53, 89, 50, 230, 122, 75, 217, 28])
+      ),
+      0
+    )
+  ) {
+    return JupiterDelegateInstruction.TokenReceive;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([82, 39, 54, 208, 18, 205, 214, 218])
       ),
       0
@@ -274,9 +274,6 @@ export type ParsedJupiterDelegateInstruction<
   | ({
       instructionType: JupiterDelegateInstruction.FillOrderEngine;
     } & ParsedFillOrderEngineInstruction<TProgram>)
-  | ({
-      instructionType: JupiterDelegateInstruction.FundVaultTokenReceive;
-    } & ParsedFundVaultTokenReceiveInstruction<TProgram>)
   | ({
       instructionType: JupiterDelegateInstruction.GrantAccess;
     } & ParsedGrantAccessInstruction<TProgram>)
@@ -307,6 +304,9 @@ export type ParsedJupiterDelegateInstruction<
   | ({
       instructionType: JupiterDelegateInstruction.Swap;
     } & ParsedSwapInstruction<TProgram>)
+  | ({
+      instructionType: JupiterDelegateInstruction.TokenReceive;
+    } & ParsedTokenReceiveInstruction<TProgram>)
   | ({
       instructionType: JupiterDelegateInstruction.TwoHop;
     } & ParsedTwoHopInstruction<TProgram>);

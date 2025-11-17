@@ -39,17 +39,17 @@ import {
   type ResolvedAccount,
 } from '../shared';
 
-export const FUND_VAULT_TOKEN_RECEIVE_DISCRIMINATOR = new Uint8Array([
-  251, 203, 188, 143, 199, 99, 65, 69,
+export const TOKEN_RECEIVE_DISCRIMINATOR = new Uint8Array([
+  53, 89, 50, 230, 122, 75, 217, 28,
 ]);
 
-export function getFundVaultTokenReceiveDiscriminatorBytes() {
+export function getTokenReceiveDiscriminatorBytes() {
   return fixEncoderSize(getBytesEncoder(), 8).encode(
-    FUND_VAULT_TOKEN_RECEIVE_DISCRIMINATOR
+    TOKEN_RECEIVE_DISCRIMINATOR
   );
 }
 
-export type FundVaultTokenReceiveInstruction<
+export type TokenReceiveInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
   TAccountOutputMint extends string | AccountMeta<string> = string,
   TAccountOutputMintProgram extends string | AccountMeta<string> = string,
@@ -57,8 +57,10 @@ export type FundVaultTokenReceiveInstruction<
   TAccountExecutorOutputTokenAccount extends
     | string
     | AccountMeta<string> = string,
-  TAccountVaultOutputTokenAccount extends string | AccountMeta<string> = string,
-  TAccountFundVault extends string | AccountMeta<string> = string,
+  TAccountReceiverOutputTokenAccount extends
+    | string
+    | AccountMeta<string> = string,
+  TAccountReceiver extends string | AccountMeta<string> = string,
   TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
@@ -77,91 +79,86 @@ export type FundVaultTokenReceiveInstruction<
       TAccountExecutorOutputTokenAccount extends string
         ? WritableAccount<TAccountExecutorOutputTokenAccount>
         : TAccountExecutorOutputTokenAccount,
-      TAccountVaultOutputTokenAccount extends string
-        ? WritableAccount<TAccountVaultOutputTokenAccount>
-        : TAccountVaultOutputTokenAccount,
-      TAccountFundVault extends string
-        ? WritableAccount<TAccountFundVault>
-        : TAccountFundVault,
+      TAccountReceiverOutputTokenAccount extends string
+        ? WritableAccount<TAccountReceiverOutputTokenAccount>
+        : TAccountReceiverOutputTokenAccount,
+      TAccountReceiver extends string
+        ? WritableAccount<TAccountReceiver>
+        : TAccountReceiver,
       ...TRemainingAccounts,
     ]
   >;
 
-export type FundVaultTokenReceiveInstructionData = {
-  discriminator: ReadonlyUint8Array;
-};
+export type TokenReceiveInstructionData = { discriminator: ReadonlyUint8Array };
 
-export type FundVaultTokenReceiveInstructionDataArgs = {};
+export type TokenReceiveInstructionDataArgs = {};
 
-export function getFundVaultTokenReceiveInstructionDataEncoder(): FixedSizeEncoder<FundVaultTokenReceiveInstructionDataArgs> {
+export function getTokenReceiveInstructionDataEncoder(): FixedSizeEncoder<TokenReceiveInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([['discriminator', fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({
-      ...value,
-      discriminator: FUND_VAULT_TOKEN_RECEIVE_DISCRIMINATOR,
-    })
+    (value) => ({ ...value, discriminator: TOKEN_RECEIVE_DISCRIMINATOR })
   );
 }
 
-export function getFundVaultTokenReceiveInstructionDataDecoder(): FixedSizeDecoder<FundVaultTokenReceiveInstructionData> {
+export function getTokenReceiveInstructionDataDecoder(): FixedSizeDecoder<TokenReceiveInstructionData> {
   return getStructDecoder([
     ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
-export function getFundVaultTokenReceiveInstructionDataCodec(): FixedSizeCodec<
-  FundVaultTokenReceiveInstructionDataArgs,
-  FundVaultTokenReceiveInstructionData
+export function getTokenReceiveInstructionDataCodec(): FixedSizeCodec<
+  TokenReceiveInstructionDataArgs,
+  TokenReceiveInstructionData
 > {
   return combineCodec(
-    getFundVaultTokenReceiveInstructionDataEncoder(),
-    getFundVaultTokenReceiveInstructionDataDecoder()
+    getTokenReceiveInstructionDataEncoder(),
+    getTokenReceiveInstructionDataDecoder()
   );
 }
 
-export type FundVaultTokenReceiveAsyncInput<
+export type TokenReceiveAsyncInput<
   TAccountOutputMint extends string = string,
   TAccountOutputMintProgram extends string = string,
   TAccountExecutor extends string = string,
   TAccountExecutorOutputTokenAccount extends string = string,
-  TAccountVaultOutputTokenAccount extends string = string,
-  TAccountFundVault extends string = string,
+  TAccountReceiverOutputTokenAccount extends string = string,
+  TAccountReceiver extends string = string,
 > = {
   outputMint: Address<TAccountOutputMint>;
   outputMintProgram: Address<TAccountOutputMintProgram>;
   executor: TransactionSigner<TAccountExecutor>;
   executorOutputTokenAccount?: Address<TAccountExecutorOutputTokenAccount>;
-  vaultOutputTokenAccount?: Address<TAccountVaultOutputTokenAccount>;
-  fundVault: Address<TAccountFundVault>;
+  receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
+  receiver: Address<TAccountReceiver>;
 };
 
-export async function getFundVaultTokenReceiveInstructionAsync<
+export async function getTokenReceiveInstructionAsync<
   TAccountOutputMint extends string,
   TAccountOutputMintProgram extends string,
   TAccountExecutor extends string,
   TAccountExecutorOutputTokenAccount extends string,
-  TAccountVaultOutputTokenAccount extends string,
-  TAccountFundVault extends string,
+  TAccountReceiverOutputTokenAccount extends string,
+  TAccountReceiver extends string,
   TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
-  input: FundVaultTokenReceiveAsyncInput<
+  input: TokenReceiveAsyncInput<
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
     TAccountExecutorOutputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountFundVault
+    TAccountReceiverOutputTokenAccount,
+    TAccountReceiver
   >,
   config?: { programAddress?: TProgramAddress }
 ): Promise<
-  FundVaultTokenReceiveInstruction<
+  TokenReceiveInstruction<
     TProgramAddress,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
     TAccountExecutorOutputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountFundVault
+    TAccountReceiverOutputTokenAccount,
+    TAccountReceiver
   >
 > {
   // Program address.
@@ -180,11 +177,11 @@ export async function getFundVaultTokenReceiveInstructionAsync<
       value: input.executorOutputTokenAccount ?? null,
       isWritable: true,
     },
-    vaultOutputTokenAccount: {
-      value: input.vaultOutputTokenAccount ?? null,
+    receiverOutputTokenAccount: {
+      value: input.receiverOutputTokenAccount ?? null,
       isWritable: true,
     },
-    fundVault: { value: input.fundVault ?? null, isWritable: true },
+    receiver: { value: input.receiver ?? null, isWritable: true },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -205,12 +202,12 @@ export async function getFundVaultTokenReceiveInstructionAsync<
       ],
     });
   }
-  if (!accounts.vaultOutputTokenAccount.value) {
-    accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
+  if (!accounts.receiverOutputTokenAccount.value) {
+    accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
         'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
-        getAddressEncoder().encode(expectAddress(accounts.fundVault.value)),
+        getAddressEncoder().encode(expectAddress(accounts.receiver.value)),
         getAddressEncoder().encode(
           expectAddress(accounts.outputMintProgram.value)
         ),
@@ -226,64 +223,64 @@ export async function getFundVaultTokenReceiveInstructionAsync<
       getAccountMeta(accounts.outputMintProgram),
       getAccountMeta(accounts.executor),
       getAccountMeta(accounts.executorOutputTokenAccount),
-      getAccountMeta(accounts.vaultOutputTokenAccount),
-      getAccountMeta(accounts.fundVault),
+      getAccountMeta(accounts.receiverOutputTokenAccount),
+      getAccountMeta(accounts.receiver),
     ],
-    data: getFundVaultTokenReceiveInstructionDataEncoder().encode({}),
+    data: getTokenReceiveInstructionDataEncoder().encode({}),
     programAddress,
-  } as FundVaultTokenReceiveInstruction<
+  } as TokenReceiveInstruction<
     TProgramAddress,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
     TAccountExecutorOutputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountFundVault
+    TAccountReceiverOutputTokenAccount,
+    TAccountReceiver
   >);
 }
 
-export type FundVaultTokenReceiveInput<
+export type TokenReceiveInput<
   TAccountOutputMint extends string = string,
   TAccountOutputMintProgram extends string = string,
   TAccountExecutor extends string = string,
   TAccountExecutorOutputTokenAccount extends string = string,
-  TAccountVaultOutputTokenAccount extends string = string,
-  TAccountFundVault extends string = string,
+  TAccountReceiverOutputTokenAccount extends string = string,
+  TAccountReceiver extends string = string,
 > = {
   outputMint: Address<TAccountOutputMint>;
   outputMintProgram: Address<TAccountOutputMintProgram>;
   executor: TransactionSigner<TAccountExecutor>;
   executorOutputTokenAccount: Address<TAccountExecutorOutputTokenAccount>;
-  vaultOutputTokenAccount: Address<TAccountVaultOutputTokenAccount>;
-  fundVault: Address<TAccountFundVault>;
+  receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
+  receiver: Address<TAccountReceiver>;
 };
 
-export function getFundVaultTokenReceiveInstruction<
+export function getTokenReceiveInstruction<
   TAccountOutputMint extends string,
   TAccountOutputMintProgram extends string,
   TAccountExecutor extends string,
   TAccountExecutorOutputTokenAccount extends string,
-  TAccountVaultOutputTokenAccount extends string,
-  TAccountFundVault extends string,
+  TAccountReceiverOutputTokenAccount extends string,
+  TAccountReceiver extends string,
   TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
-  input: FundVaultTokenReceiveInput<
+  input: TokenReceiveInput<
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
     TAccountExecutorOutputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountFundVault
+    TAccountReceiverOutputTokenAccount,
+    TAccountReceiver
   >,
   config?: { programAddress?: TProgramAddress }
-): FundVaultTokenReceiveInstruction<
+): TokenReceiveInstruction<
   TProgramAddress,
   TAccountOutputMint,
   TAccountOutputMintProgram,
   TAccountExecutor,
   TAccountExecutorOutputTokenAccount,
-  TAccountVaultOutputTokenAccount,
-  TAccountFundVault
+  TAccountReceiverOutputTokenAccount,
+  TAccountReceiver
 > {
   // Program address.
   const programAddress =
@@ -301,11 +298,11 @@ export function getFundVaultTokenReceiveInstruction<
       value: input.executorOutputTokenAccount ?? null,
       isWritable: true,
     },
-    vaultOutputTokenAccount: {
-      value: input.vaultOutputTokenAccount ?? null,
+    receiverOutputTokenAccount: {
+      value: input.receiverOutputTokenAccount ?? null,
       isWritable: true,
     },
-    fundVault: { value: input.fundVault ?? null, isWritable: true },
+    receiver: { value: input.receiver ?? null, isWritable: true },
   };
   const accounts = originalAccounts as Record<
     keyof typeof originalAccounts,
@@ -319,23 +316,23 @@ export function getFundVaultTokenReceiveInstruction<
       getAccountMeta(accounts.outputMintProgram),
       getAccountMeta(accounts.executor),
       getAccountMeta(accounts.executorOutputTokenAccount),
-      getAccountMeta(accounts.vaultOutputTokenAccount),
-      getAccountMeta(accounts.fundVault),
+      getAccountMeta(accounts.receiverOutputTokenAccount),
+      getAccountMeta(accounts.receiver),
     ],
-    data: getFundVaultTokenReceiveInstructionDataEncoder().encode({}),
+    data: getTokenReceiveInstructionDataEncoder().encode({}),
     programAddress,
-  } as FundVaultTokenReceiveInstruction<
+  } as TokenReceiveInstruction<
     TProgramAddress,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
     TAccountExecutorOutputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountFundVault
+    TAccountReceiverOutputTokenAccount,
+    TAccountReceiver
   >);
 }
 
-export type ParsedFundVaultTokenReceiveInstruction<
+export type ParsedTokenReceiveInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
   TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
@@ -345,20 +342,20 @@ export type ParsedFundVaultTokenReceiveInstruction<
     outputMintProgram: TAccountMetas[1];
     executor: TAccountMetas[2];
     executorOutputTokenAccount: TAccountMetas[3];
-    vaultOutputTokenAccount: TAccountMetas[4];
-    fundVault: TAccountMetas[5];
+    receiverOutputTokenAccount: TAccountMetas[4];
+    receiver: TAccountMetas[5];
   };
-  data: FundVaultTokenReceiveInstructionData;
+  data: TokenReceiveInstructionData;
 };
 
-export function parseFundVaultTokenReceiveInstruction<
+export function parseTokenReceiveInstruction<
   TProgram extends string,
   TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>
-): ParsedFundVaultTokenReceiveInstruction<TProgram, TAccountMetas> {
+): ParsedTokenReceiveInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 6) {
     // TODO: Coded error.
     throw new Error('Not enough accounts');
@@ -376,11 +373,9 @@ export function parseFundVaultTokenReceiveInstruction<
       outputMintProgram: getNextAccount(),
       executor: getNextAccount(),
       executorOutputTokenAccount: getNextAccount(),
-      vaultOutputTokenAccount: getNextAccount(),
-      fundVault: getNextAccount(),
+      receiverOutputTokenAccount: getNextAccount(),
+      receiver: getNextAccount(),
     },
-    data: getFundVaultTokenReceiveInstructionDataDecoder().decode(
-      instruction.data
-    ),
+    data: getTokenReceiveInstructionDataDecoder().decode(instruction.data),
   };
 }

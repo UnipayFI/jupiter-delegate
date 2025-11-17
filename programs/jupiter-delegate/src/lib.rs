@@ -119,7 +119,7 @@ pub mod jupiter_delegate {
         process_pause(ctx, toggle)
     }
 
-    pub fn fund_vault_token_receive(ctx: Context<FundVaultTokenReceive>) -> Result<()> {
-        process_fund_vault_token_receive(ctx)
+    pub fn token_receive(ctx: Context<TokenReceive>) -> Result<()> {
+        process_token_receive(ctx)
     }
 }

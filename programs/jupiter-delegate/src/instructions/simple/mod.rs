@@ -4,7 +4,11 @@ use anchor_spl::token_interface::{
     transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked,
 };
 
-use crate::error::ErrorCode;
+use crate::{
+    error::ErrorCode,
+    state::Access,
+    constants::ACCESS_SEED,
+};
 
 #[derive(Accounts)]
 pub struct TokenReceive<'info> {
@@ -30,6 +34,12 @@ pub struct TokenReceive<'info> {
     /// CHECK: This is the fund vault account
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
+    #[account(
+        seeds = [ACCESS_SEED.as_bytes(), receiver.key().as_ref()],
+        bump,
+        constraint = access.is_granted @ ErrorCode::AccessNotGranted
+    )]
+    pub access: Account<'info, Access>,
 }
 
 pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {

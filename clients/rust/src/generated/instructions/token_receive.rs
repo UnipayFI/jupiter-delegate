@@ -24,6 +24,8 @@ pub struct TokenReceive {
     pub receiver_output_token_account: solana_pubkey::Pubkey,
 
     pub receiver: solana_pubkey::Pubkey,
+
+    pub access: solana_pubkey::Pubkey,
 }
 
 impl TokenReceive {
@@ -36,7 +38,7 @@ impl TokenReceive {
         &self,
         remaining_accounts: &[solana_instruction::AccountMeta],
     ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(6 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.output_mint,
             false,
@@ -55,6 +57,10 @@ impl TokenReceive {
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(self.receiver, false));
+        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            self.access,
+            false,
+        ));
         accounts.extend_from_slice(remaining_accounts);
         let data = TokenReceiveInstructionData::new().try_to_vec().unwrap();
 
@@ -100,6 +106,7 @@ impl Default for TokenReceiveInstructionData {
 ///   3. `[writable]` executor_output_token_account
 ///   4. `[writable]` receiver_output_token_account
 ///   5. `[writable]` receiver
+///   6. `[]` access
 #[derive(Clone, Debug, Default)]
 pub struct TokenReceiveBuilder {
     output_mint: Option<solana_pubkey::Pubkey>,
@@ -108,6 +115,7 @@ pub struct TokenReceiveBuilder {
     executor_output_token_account: Option<solana_pubkey::Pubkey>,
     receiver_output_token_account: Option<solana_pubkey::Pubkey>,
     receiver: Option<solana_pubkey::Pubkey>,
+    access: Option<solana_pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_instruction::AccountMeta>,
 }
 
@@ -151,6 +159,11 @@ impl TokenReceiveBuilder {
         self.receiver = Some(receiver);
         self
     }
+    #[inline(always)]
+    pub fn access(&mut self, access: solana_pubkey::Pubkey) -> &mut Self {
+        self.access = Some(access);
+        self
+    }
     /// Add an additional account to the instruction.
     #[inline(always)]
     pub fn add_remaining_account(&mut self, account: solana_instruction::AccountMeta) -> &mut Self {
@@ -181,6 +194,7 @@ impl TokenReceiveBuilder {
                 .receiver_output_token_account
                 .expect("receiver_output_token_account is not set"),
             receiver: self.receiver.expect("receiver is not set"),
+            access: self.access.expect("access is not set"),
         };
 
         accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
@@ -200,6 +214,8 @@ pub struct TokenReceiveCpiAccounts<'a, 'b> {
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
     pub receiver: &'b solana_account_info::AccountInfo<'a>,
+
+    pub access: &'b solana_account_info::AccountInfo<'a>,
 }
 
 /// `token_receive` CPI instruction.
@@ -218,6 +234,8 @@ pub struct TokenReceiveCpi<'a, 'b> {
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
     pub receiver: &'b solana_account_info::AccountInfo<'a>,
+
+    pub access: &'b solana_account_info::AccountInfo<'a>,
 }
 
 impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
@@ -233,6 +251,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             executor_output_token_account: accounts.executor_output_token_account,
             receiver_output_token_account: accounts.receiver_output_token_account,
             receiver: accounts.receiver,
+            access: accounts.access,
         }
     }
     #[inline(always)]
@@ -258,7 +277,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
         remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
     ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(6 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.output_mint.key,
             false,
@@ -283,6 +302,10 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             *self.receiver.key,
             false,
         ));
+        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            *self.access.key,
+            false,
+        ));
         remaining_accounts.iter().for_each(|remaining_account| {
             accounts.push(solana_instruction::AccountMeta {
                 pubkey: *remaining_account.0.key,
@@ -297,7 +320,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(7 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(8 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.output_mint.clone());
         account_infos.push(self.output_mint_program.clone());
@@ -305,6 +328,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
         account_infos.push(self.executor_output_token_account.clone());
         account_infos.push(self.receiver_output_token_account.clone());
         account_infos.push(self.receiver.clone());
+        account_infos.push(self.access.clone());
         remaining_accounts
             .iter()
             .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
@@ -327,6 +351,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
 ///   3. `[writable]` executor_output_token_account
 ///   4. `[writable]` receiver_output_token_account
 ///   5. `[writable]` receiver
+///   6. `[]` access
 #[derive(Clone, Debug)]
 pub struct TokenReceiveCpiBuilder<'a, 'b> {
     instruction: Box<TokenReceiveCpiBuilderInstruction<'a, 'b>>,
@@ -342,6 +367,7 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
             executor_output_token_account: None,
             receiver_output_token_account: None,
             receiver: None,
+            access: None,
             __remaining_accounts: Vec::new(),
         });
         Self { instruction }
@@ -386,6 +412,11 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
     #[inline(always)]
     pub fn receiver(&mut self, receiver: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
         self.instruction.receiver = Some(receiver);
+        self
+    }
+    #[inline(always)]
+    pub fn access(&mut self, access: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.access = Some(access);
         self
     }
     /// Add an additional account to the instruction.
@@ -448,6 +479,8 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
                 .expect("receiver_output_token_account is not set"),
 
             receiver: self.instruction.receiver.expect("receiver is not set"),
+
+            access: self.instruction.access.expect("access is not set"),
         };
         instruction.invoke_signed_with_remaining_accounts(
             signers_seeds,
@@ -465,6 +498,7 @@ struct TokenReceiveCpiBuilderInstruction<'a, 'b> {
     executor_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver: Option<&'b solana_account_info::AccountInfo<'a>>,
+    access: Option<&'b solana_account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
 }

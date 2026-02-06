@@ -12,7 +12,20 @@ pub use state::*;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::pubkey::pubkey;
 
+#[cfg(not(feature = "no-entrypoint"))]
+use solana_security_txt::security_txt;
+
 declare_id!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");
+
+#[cfg(not(feature = "no-entrypoint"))]
+security_txt! {
+    name: "jupiter-delegate",
+    project_url: "https://github.com/UnipayFI/jupiter-delegate",
+    contacts: "link:https://github.com/UnipayFI/jupiter-delegate/issues",
+    policy: "https://github.com/UnipayFI/jupiter-delegate/issues",
+    preferred_languages: "en,zh",
+    source_code: "https://github.com/UnipayFI/jupiter-delegate"
+}
 
 pub fn jupiter_program_id() -> Pubkey {
     pubkey!("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4")

@@ -77,7 +77,6 @@ pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
     )?;
 
     // 3.检查 delegate 是否是 receiver
-    #[cfg(feature = "check-delegate")]
     require!(
         ctx.accounts.delegate.key() == ctx.accounts.receiver.key(),
         ErrorCode::DelegateIsNotReceiver

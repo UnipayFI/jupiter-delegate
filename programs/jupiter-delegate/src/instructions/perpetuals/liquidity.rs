@@ -141,38 +141,38 @@ pub fn process_jupiter_perpetuals<'a>(
     Ok(())
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn test_jupiter_perpetuals_params() {
-//         let args = JupiterLiquidityParams {
-//             delegate: Pubkey::new_unique(),
-//             data: hex::decode("e4a24e1c46db7473809698000000000087991b0000000000010000000000000000")
-//                 .unwrap(),
-//         };
-//         let action = args.get_action();
-//         assert_eq!(action.get_input_amount(), 10000000);
-//         assert_eq!(
-//             action,
-//             JupiterPerpetualsAction::AddLiquidity(AddLiquidity2Params::new(
-//                 10000000,
-//                 1808775,
-//                 Some(0),
-//             ))
-//         );
+    #[test]
+    fn test_jupiter_perpetuals_params() {
+        let args = JupiterLiquidityParams {
+            delegate: Pubkey::new_unique(),
+            data: hex::decode("e4a24e1c46db7473809698000000000087991b0000000000010000000000000000")
+                .unwrap(),
+        };
+        let action = args.get_action();
+        assert_eq!(action.get_input_amount(), 10000000);
+        assert_eq!(
+            action,
+            JupiterPerpetualsAction::AddLiquidity(AddLiquidity2Params::new(
+                10000000,
+                1808775,
+                Some(0),
+            ))
+        );
 
-//         let args = JupiterLiquidityParams {
-//             delegate: Pubkey::new_unique(),
-//             data: hex::decode("e6d7527ff165e392ba061200000000000000000000000000").unwrap(),
-//         };
-//         let action = args.get_action();
-//         assert_eq!(action.get_input_amount(), 1181370);
-//         assert_eq!(
-//             action,
-//             JupiterPerpetualsAction::RemoveLiquidity(RemoveLiquidity2Params::new(1181370, 0,))
-//         );
-//     }
-// }
+        let args = JupiterLiquidityParams {
+            delegate: Pubkey::new_unique(),
+            data: hex::decode("e6d7527ff165e392ba061200000000000000000000000000").unwrap(),
+        };
+        let action = args.get_action();
+        assert_eq!(action.get_input_amount(), 1181370);
+        assert_eq!(
+            action,
+            JupiterPerpetualsAction::RemoveLiquidity(RemoveLiquidity2Params::new(1181370, 0,))
+        );
+    }
+}

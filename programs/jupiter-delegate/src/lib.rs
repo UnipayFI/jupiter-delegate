@@ -54,36 +54,44 @@ pub mod jupiter_delegate {
         process_revoke_access(ctx, user)
     }
 
-    pub fn swap(ctx: Context<JupiterSwap>, params: JupiterSwapParams) -> Result<()> {
-        process_jupiter_swap(ctx, params)
+    pub fn swap(
+        _ctx: Context<JupiterSwap>, 
+        _params: JupiterSwapParams
+    ) -> Result<()> {
+        // process_jupiter_swap(ctx, params)
+        Ok(())
     }
 
     pub fn fill_order_engine<'a>(
-        ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
-        params: FillOrderEngineParams,
+        _ctx: Context<'_, '_, '_, 'a, FillOrderEngine<'a>>,
+        _params: FillOrderEngineParams,
     ) -> Result<()> {
-        process_fill_order_engine(ctx, params)
+        // process_fill_order_engine(ctx, params)
+        Ok(())
     }
 
     pub fn jupiter_aggregator<'a>(
-        ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
-        params: JupiterAggregatorParams,
+        _ctx: Context<'_, '_, '_, 'a, JupiterAggregator<'a>>,
+        _params: JupiterAggregatorParams,
     ) -> Result<()> {
-        process_jupiter_aggregator(ctx, params)
+        // process_jupiter_aggregator(ctx, params)
+        Ok(())
     }
 
     pub fn jupiter_perpetuals<'a>(
-        ctx: Context<'_, '_, '_, 'a, JupiterPerpetuals<'a>>,
-        params: JupiterLiquidityParams,
+        _ctx: Context<'_, '_, '_, 'a, JupiterPerpetuals<'a>>,
+        _params: JupiterLiquidityParams,
     ) -> Result<()> {
-        process_jupiter_perpetuals(ctx, params)
+        // process_jupiter_perpetuals(ctx, params)
+        Ok(())
     }
 
     pub fn dflow_aggregator<'a>(
-        ctx: Context<'_, '_, '_, 'a, DflowAggregator<'a>>,
-        params: DflowAggregatorParams,
+        _ctx: Context<'_, '_, '_, 'a, DflowAggregator<'a>>,
+        _params: DflowAggregatorParams,
     ) -> Result<()> {
-        process_dflow_aggregator(ctx, params)
+        //process_dflow_aggregator(ctx, params)
+        Ok(())
     }
 
     pub fn okx_aggregator<'a>(
@@ -94,10 +102,11 @@ pub mod jupiter_delegate {
     }
 
     pub fn two_hop<'a>(
-        ctx: Context<'_, '_, '_, 'a, TwoHop<'a>>,
-        params: TwoHopParams,
+        _ctx: Context<'_, '_, '_, 'a, TwoHop<'a>>,
+        _params: TwoHopParams,
     ) -> Result<()> {
-        process_two_hop(ctx, params)
+        // process_two_hop(ctx, params)
+        Ok(())
     }
 
     pub fn propose_new_admin(ctx: Context<ProposeNewAdmin>) -> Result<()> {

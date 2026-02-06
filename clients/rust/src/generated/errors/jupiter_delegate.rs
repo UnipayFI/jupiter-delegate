@@ -112,6 +112,9 @@ pub enum JupiterDelegateError {
     /// 6033 - Unsupported token program
     #[error("Unsupported token program")]
     UnsupportedTokenProgram = 0x1791,
+    /// 6034 - Delegate is not receiver
+    #[error("Delegate is not receiver")]
+    DelegateIsNotReceiver = 0x1792,
 }
 
 impl From<JupiterDelegateError> for solana_program_error::ProgramError {

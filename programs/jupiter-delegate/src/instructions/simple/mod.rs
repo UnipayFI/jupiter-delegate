@@ -31,7 +31,10 @@ pub struct TokenReceive<'info> {
         associated_token::token_program = output_mint_program,
     )]
     pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
-    /// CHECK: This is the fund vault account
+    /// CHECK: This is the delegate account
+    #[account(mut)]
+    pub delegate: UncheckedAccount<'info>,
+    /// CHECK: This is the receiver account
     #[account(mut)]
     pub receiver: UncheckedAccount<'info>,
     #[account(
@@ -72,6 +75,13 @@ pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
         ctx.accounts.executor_output_token_account.amount,
         ctx.accounts.output_mint.decimals,
     )?;
+
+    // 3.检查 delegate 是否是 receiver
+    #[cfg(feature = "check-delegate")]
+    require!(
+        ctx.accounts.delegate.key() == ctx.accounts.receiver.key(),
+        ErrorCode::DelegateIsNotReceiver
+    );
 
     Ok(())
 }

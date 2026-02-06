@@ -23,6 +23,8 @@ pub struct TokenReceive {
 
     pub receiver_output_token_account: solana_pubkey::Pubkey,
 
+    pub delegate: solana_pubkey::Pubkey,
+
     pub receiver: solana_pubkey::Pubkey,
 
     pub access: solana_pubkey::Pubkey,
@@ -38,7 +40,7 @@ impl TokenReceive {
         &self,
         remaining_accounts: &[solana_instruction::AccountMeta],
     ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(8 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.output_mint,
             false,
@@ -56,6 +58,7 @@ impl TokenReceive {
             self.receiver_output_token_account,
             false,
         ));
+        accounts.push(solana_instruction::AccountMeta::new(self.delegate, false));
         accounts.push(solana_instruction::AccountMeta::new(self.receiver, false));
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.access,
@@ -105,8 +108,9 @@ impl Default for TokenReceiveInstructionData {
 ///   2. `[writable, signer]` executor
 ///   3. `[writable]` executor_output_token_account
 ///   4. `[writable]` receiver_output_token_account
-///   5. `[writable]` receiver
-///   6. `[]` access
+///   5. `[writable]` delegate
+///   6. `[writable]` receiver
+///   7. `[]` access
 #[derive(Clone, Debug, Default)]
 pub struct TokenReceiveBuilder {
     output_mint: Option<solana_pubkey::Pubkey>,
@@ -114,6 +118,7 @@ pub struct TokenReceiveBuilder {
     executor: Option<solana_pubkey::Pubkey>,
     executor_output_token_account: Option<solana_pubkey::Pubkey>,
     receiver_output_token_account: Option<solana_pubkey::Pubkey>,
+    delegate: Option<solana_pubkey::Pubkey>,
     receiver: Option<solana_pubkey::Pubkey>,
     access: Option<solana_pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_instruction::AccountMeta>,
@@ -155,6 +160,11 @@ impl TokenReceiveBuilder {
         self
     }
     #[inline(always)]
+    pub fn delegate(&mut self, delegate: solana_pubkey::Pubkey) -> &mut Self {
+        self.delegate = Some(delegate);
+        self
+    }
+    #[inline(always)]
     pub fn receiver(&mut self, receiver: solana_pubkey::Pubkey) -> &mut Self {
         self.receiver = Some(receiver);
         self
@@ -193,6 +203,7 @@ impl TokenReceiveBuilder {
             receiver_output_token_account: self
                 .receiver_output_token_account
                 .expect("receiver_output_token_account is not set"),
+            delegate: self.delegate.expect("delegate is not set"),
             receiver: self.receiver.expect("receiver is not set"),
             access: self.access.expect("access is not set"),
         };
@@ -212,6 +223,8 @@ pub struct TokenReceiveCpiAccounts<'a, 'b> {
     pub executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+
+    pub delegate: &'b solana_account_info::AccountInfo<'a>,
 
     pub receiver: &'b solana_account_info::AccountInfo<'a>,
 
@@ -233,6 +246,8 @@ pub struct TokenReceiveCpi<'a, 'b> {
 
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
+    pub delegate: &'b solana_account_info::AccountInfo<'a>,
+
     pub receiver: &'b solana_account_info::AccountInfo<'a>,
 
     pub access: &'b solana_account_info::AccountInfo<'a>,
@@ -250,6 +265,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             executor: accounts.executor,
             executor_output_token_account: accounts.executor_output_token_account,
             receiver_output_token_account: accounts.receiver_output_token_account,
+            delegate: accounts.delegate,
             receiver: accounts.receiver,
             access: accounts.access,
         }
@@ -277,7 +293,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
         remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
     ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(8 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.output_mint.key,
             false,
@@ -296,6 +312,10 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
         ));
         accounts.push(solana_instruction::AccountMeta::new(
             *self.receiver_output_token_account.key,
+            false,
+        ));
+        accounts.push(solana_instruction::AccountMeta::new(
+            *self.delegate.key,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
@@ -320,13 +340,14 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(8 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(9 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.output_mint.clone());
         account_infos.push(self.output_mint_program.clone());
         account_infos.push(self.executor.clone());
         account_infos.push(self.executor_output_token_account.clone());
         account_infos.push(self.receiver_output_token_account.clone());
+        account_infos.push(self.delegate.clone());
         account_infos.push(self.receiver.clone());
         account_infos.push(self.access.clone());
         remaining_accounts
@@ -350,8 +371,9 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
 ///   2. `[writable, signer]` executor
 ///   3. `[writable]` executor_output_token_account
 ///   4. `[writable]` receiver_output_token_account
-///   5. `[writable]` receiver
-///   6. `[]` access
+///   5. `[writable]` delegate
+///   6. `[writable]` receiver
+///   7. `[]` access
 #[derive(Clone, Debug)]
 pub struct TokenReceiveCpiBuilder<'a, 'b> {
     instruction: Box<TokenReceiveCpiBuilderInstruction<'a, 'b>>,
@@ -366,6 +388,7 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
             executor: None,
             executor_output_token_account: None,
             receiver_output_token_account: None,
+            delegate: None,
             receiver: None,
             access: None,
             __remaining_accounts: Vec::new(),
@@ -407,6 +430,11 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
         receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.receiver_output_token_account = Some(receiver_output_token_account);
+        self
+    }
+    #[inline(always)]
+    pub fn delegate(&mut self, delegate: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.delegate = Some(delegate);
         self
     }
     #[inline(always)]
@@ -478,6 +506,8 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
                 .receiver_output_token_account
                 .expect("receiver_output_token_account is not set"),
 
+            delegate: self.instruction.delegate.expect("delegate is not set"),
+
             receiver: self.instruction.receiver.expect("receiver is not set"),
 
             access: self.instruction.access.expect("access is not set"),
@@ -497,6 +527,7 @@ struct TokenReceiveCpiBuilderInstruction<'a, 'b> {
     executor: Option<&'b solana_account_info::AccountInfo<'a>>,
     executor_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+    delegate: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver: Option<&'b solana_account_info::AccountInfo<'a>>,
     access: Option<&'b solana_account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.

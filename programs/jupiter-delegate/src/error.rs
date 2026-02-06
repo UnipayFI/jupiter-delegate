@@ -91,4 +91,8 @@ pub enum ErrorCode {
     FundVaultOutputTokenAccountNotFound,
     #[msg("Unsupported token program")]
     UnsupportedTokenProgram,
+
+    // DelegateIsNotReceiver
+    #[msg("Delegate is not receiver")]
+    DelegateIsNotReceiver,
 }

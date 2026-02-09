@@ -16,7 +16,7 @@ import {
   type ProgramDerivedAddress,
   type TransactionSigner,
   upgradeRoleToSigner,
-} from "@solana/kit";
+} from '@solana/kit';
 
 /**
  * Asserts that the given value is not null or undefined.
@@ -24,7 +24,7 @@ import {
  */
 export function expectSome<T>(value: T | null | undefined): T {
   if (value === null || value === undefined) {
-    throw new Error("Expected a value but received null or undefined.");
+    throw new Error('Expected a value but received null or undefined.');
   }
   return value;
 }
@@ -42,9 +42,9 @@ export function expectAddress<T extends string = string>(
     | undefined
 ): Address<T> {
   if (!value) {
-    throw new Error("Expected a Address.");
+    throw new Error('Expected a Address.');
   }
-  if (typeof value === "object" && "address" in value) {
+  if (typeof value === 'object' && 'address' in value) {
     return value.address;
   }
   if (Array.isArray(value)) {
@@ -66,7 +66,7 @@ export function expectProgramDerivedAddress<T extends string = string>(
     | undefined
 ): ProgramDerivedAddress<T> {
   if (!value || !Array.isArray(value) || !isProgramDerivedAddress(value)) {
-    throw new Error("Expected a ProgramDerivedAddress.");
+    throw new Error('Expected a ProgramDerivedAddress.');
   }
   return value;
 }
@@ -84,7 +84,7 @@ export function expectTransactionSigner<T extends string = string>(
     | undefined
 ): TransactionSigner<T> {
   if (!value || !isTransactionSigner(value)) {
-    throw new Error("Expected a TransactionSigner.");
+    throw new Error('Expected a TransactionSigner.');
   }
   return value;
 }
@@ -99,7 +99,11 @@ export type ResolvedAccount<
     | Address<T>
     | ProgramDerivedAddress<T>
     | TransactionSigner<T>
-    | null = Address<T> | ProgramDerivedAddress<T> | TransactionSigner<T> | null
+    | null =
+    | Address<T>
+    | ProgramDerivedAddress<T>
+    | TransactionSigner<T>
+    | null,
 > = {
   isWritable: boolean;
   value: U;
@@ -119,13 +123,13 @@ export type InstructionWithByteDelta = {
  */
 export function getAccountMetaFactory(
   programAddress: Address,
-  optionalAccountStrategy: "omitted" | "programId"
+  optionalAccountStrategy: 'omitted' | 'programId'
 ) {
   return (
     account: ResolvedAccount
   ): AccountMeta | AccountSignerMeta | undefined => {
     if (!account.value) {
-      if (optionalAccountStrategy === "omitted") return;
+      if (optionalAccountStrategy === 'omitted') return;
       return Object.freeze({
         address: programAddress,
         role: AccountRole.READONLY,
@@ -153,8 +157,8 @@ export function isTransactionSigner<TAddress extends string = string>(
 ): value is TransactionSigner<TAddress> {
   return (
     !!value &&
-    typeof value === "object" &&
-    "address" in value &&
+    typeof value === 'object' &&
+    'address' in value &&
     kitIsTransactionSigner(value)
   );
 }

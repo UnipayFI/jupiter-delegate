@@ -33,13 +33,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from "../shared";
+} from '../shared';
 
 export const TRANSFER_OUT_DISCRIMINATOR = new Uint8Array([
   202, 137, 44, 229, 158, 255, 205, 174,
@@ -54,7 +54,6 @@ export function getTransferOutDiscriminatorBytes() {
 export type TransferOutInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
   TAccountOperator extends string | AccountMeta<string> = string,
-  TAccountPayer extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountVault extends string | AccountMeta<string> = string,
   TAccountTokenMint extends string | AccountMeta<string> = string,
@@ -62,11 +61,11 @@ export type TransferOutInstruction<
   TAccountToTokenAccount extends string | AccountMeta<string> = string,
   TAccountTokenProgram extends
     | string
-    | AccountMeta<string> = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    | AccountMeta<string> = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
   TAccountAssociatedTokenProgram extends
     | string
-    | AccountMeta<string> = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -75,10 +74,6 @@ export type TransferOutInstruction<
         ? WritableSignerAccount<TAccountOperator> &
             AccountSignerMeta<TAccountOperator>
         : TAccountOperator,
-      TAccountPayer extends string
-        ? WritableSignerAccount<TAccountPayer> &
-            AccountSignerMeta<TAccountPayer>
-        : TAccountPayer,
       TAccountConfig extends string
         ? WritableAccount<TAccountConfig>
         : TAccountConfig,
@@ -100,7 +95,7 @@ export type TransferOutInstruction<
       TAccountAssociatedTokenProgram extends string
         ? ReadonlyAccount<TAccountAssociatedTokenProgram>
         : TAccountAssociatedTokenProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -114,8 +109,8 @@ export type TransferOutInstructionDataArgs = { amounts: number | bigint };
 export function getTransferOutInstructionDataEncoder(): FixedSizeEncoder<TransferOutInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["amounts", getU64Encoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['amounts', getU64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: TRANSFER_OUT_DISCRIMINATOR })
   );
@@ -123,8 +118,8 @@ export function getTransferOutInstructionDataEncoder(): FixedSizeEncoder<Transfe
 
 export function getTransferOutInstructionDataDecoder(): FixedSizeDecoder<TransferOutInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["amounts", getU64Decoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['amounts', getU64Decoder()],
   ]);
 }
 
@@ -140,17 +135,15 @@ export function getTransferOutInstructionDataCodec(): FixedSizeCodec<
 
 export type TransferOutAsyncInput<
   TAccountOperator extends string = string,
-  TAccountPayer extends string = string,
   TAccountConfig extends string = string,
   TAccountVault extends string = string,
   TAccountTokenMint extends string = string,
   TAccountFromTokenAccount extends string = string,
   TAccountToTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string
+  TAccountAssociatedTokenProgram extends string = string,
 > = {
   operator: TransactionSigner<TAccountOperator>;
-  payer: TransactionSigner<TAccountPayer>;
   config: Address<TAccountConfig>;
   vault?: Address<TAccountVault>;
   tokenMint: Address<TAccountTokenMint>;
@@ -158,12 +151,11 @@ export type TransferOutAsyncInput<
   toTokenAccount: Address<TAccountToTokenAccount>;
   tokenProgram?: Address<TAccountTokenProgram>;
   associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
-  amounts: TransferOutInstructionDataArgs["amounts"];
+  amounts: TransferOutInstructionDataArgs['amounts'];
 };
 
 export async function getTransferOutInstructionAsync<
   TAccountOperator extends string,
-  TAccountPayer extends string,
   TAccountConfig extends string,
   TAccountVault extends string,
   TAccountTokenMint extends string,
@@ -171,11 +163,10 @@ export async function getTransferOutInstructionAsync<
   TAccountToTokenAccount extends string,
   TAccountTokenProgram extends string,
   TAccountAssociatedTokenProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: TransferOutAsyncInput<
     TAccountOperator,
-    TAccountPayer,
     TAccountConfig,
     TAccountVault,
     TAccountTokenMint,
@@ -189,7 +180,6 @@ export async function getTransferOutInstructionAsync<
   TransferOutInstruction<
     TProgramAddress,
     TAccountOperator,
-    TAccountPayer,
     TAccountConfig,
     TAccountVault,
     TAccountTokenMint,
@@ -206,7 +196,6 @@ export async function getTransferOutInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     operator: { value: input.operator ?? null, isWritable: true },
-    payer: { value: input.payer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: true },
     vault: { value: input.vault ?? null, isWritable: true },
     tokenMint: { value: input.tokenMint ?? null, isWritable: false },
@@ -245,12 +234,12 @@ export async function getTransferOutInstructionAsync<
   }
   if (!accounts.tokenProgram.value) {
     accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+      'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' as Address<'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'>;
   }
   if (!accounts.fromTokenAccount.value) {
     accounts.fromTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(expectAddress(accounts.tokenProgram.value)),
@@ -260,14 +249,13 @@ export async function getTransferOutInstructionAsync<
   }
   if (!accounts.associatedTokenProgram.value) {
     accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
+      'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.operator),
-      getAccountMeta(accounts.payer),
       getAccountMeta(accounts.config),
       getAccountMeta(accounts.vault),
       getAccountMeta(accounts.tokenMint),
@@ -280,22 +268,30 @@ export async function getTransferOutInstructionAsync<
       args as TransferOutInstructionDataArgs
     ),
     programAddress,
-  } as TransferOutInstruction<TProgramAddress, TAccountOperator, TAccountPayer, TAccountConfig, TAccountVault, TAccountTokenMint, TAccountFromTokenAccount, TAccountToTokenAccount, TAccountTokenProgram, TAccountAssociatedTokenProgram>);
+  } as TransferOutInstruction<
+    TProgramAddress,
+    TAccountOperator,
+    TAccountConfig,
+    TAccountVault,
+    TAccountTokenMint,
+    TAccountFromTokenAccount,
+    TAccountToTokenAccount,
+    TAccountTokenProgram,
+    TAccountAssociatedTokenProgram
+  >);
 }
 
 export type TransferOutInput<
   TAccountOperator extends string = string,
-  TAccountPayer extends string = string,
   TAccountConfig extends string = string,
   TAccountVault extends string = string,
   TAccountTokenMint extends string = string,
   TAccountFromTokenAccount extends string = string,
   TAccountToTokenAccount extends string = string,
   TAccountTokenProgram extends string = string,
-  TAccountAssociatedTokenProgram extends string = string
+  TAccountAssociatedTokenProgram extends string = string,
 > = {
   operator: TransactionSigner<TAccountOperator>;
-  payer: TransactionSigner<TAccountPayer>;
   config: Address<TAccountConfig>;
   vault: Address<TAccountVault>;
   tokenMint: Address<TAccountTokenMint>;
@@ -303,12 +299,11 @@ export type TransferOutInput<
   toTokenAccount: Address<TAccountToTokenAccount>;
   tokenProgram?: Address<TAccountTokenProgram>;
   associatedTokenProgram?: Address<TAccountAssociatedTokenProgram>;
-  amounts: TransferOutInstructionDataArgs["amounts"];
+  amounts: TransferOutInstructionDataArgs['amounts'];
 };
 
 export function getTransferOutInstruction<
   TAccountOperator extends string,
-  TAccountPayer extends string,
   TAccountConfig extends string,
   TAccountVault extends string,
   TAccountTokenMint extends string,
@@ -316,11 +311,10 @@ export function getTransferOutInstruction<
   TAccountToTokenAccount extends string,
   TAccountTokenProgram extends string,
   TAccountAssociatedTokenProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: TransferOutInput<
     TAccountOperator,
-    TAccountPayer,
     TAccountConfig,
     TAccountVault,
     TAccountTokenMint,
@@ -333,7 +327,6 @@ export function getTransferOutInstruction<
 ): TransferOutInstruction<
   TProgramAddress,
   TAccountOperator,
-  TAccountPayer,
   TAccountConfig,
   TAccountVault,
   TAccountTokenMint,
@@ -349,7 +342,6 @@ export function getTransferOutInstruction<
   // Original accounts.
   const originalAccounts = {
     operator: { value: input.operator ?? null, isWritable: true },
-    payer: { value: input.payer ?? null, isWritable: true },
     config: { value: input.config ?? null, isWritable: true },
     vault: { value: input.vault ?? null, isWritable: true },
     tokenMint: { value: input.tokenMint ?? null, isWritable: false },
@@ -375,18 +367,17 @@ export function getTransferOutInstruction<
   // Resolve default values.
   if (!accounts.tokenProgram.value) {
     accounts.tokenProgram.value =
-      "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" as Address<"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA">;
+      'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' as Address<'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'>;
   }
   if (!accounts.associatedTokenProgram.value) {
     accounts.associatedTokenProgram.value =
-      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">;
+      'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.operator),
-      getAccountMeta(accounts.payer),
       getAccountMeta(accounts.config),
       getAccountMeta(accounts.vault),
       getAccountMeta(accounts.tokenMint),
@@ -399,39 +390,48 @@ export function getTransferOutInstruction<
       args as TransferOutInstructionDataArgs
     ),
     programAddress,
-  } as TransferOutInstruction<TProgramAddress, TAccountOperator, TAccountPayer, TAccountConfig, TAccountVault, TAccountTokenMint, TAccountFromTokenAccount, TAccountToTokenAccount, TAccountTokenProgram, TAccountAssociatedTokenProgram>);
+  } as TransferOutInstruction<
+    TProgramAddress,
+    TAccountOperator,
+    TAccountConfig,
+    TAccountVault,
+    TAccountTokenMint,
+    TAccountFromTokenAccount,
+    TAccountToTokenAccount,
+    TAccountTokenProgram,
+    TAccountAssociatedTokenProgram
+  >);
 }
 
 export type ParsedTransferOutInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
     operator: TAccountMetas[0];
-    payer: TAccountMetas[1];
-    config: TAccountMetas[2];
-    vault: TAccountMetas[3];
-    tokenMint: TAccountMetas[4];
-    fromTokenAccount: TAccountMetas[5];
-    toTokenAccount: TAccountMetas[6];
-    tokenProgram: TAccountMetas[7];
-    associatedTokenProgram: TAccountMetas[8];
+    config: TAccountMetas[1];
+    vault: TAccountMetas[2];
+    tokenMint: TAccountMetas[3];
+    fromTokenAccount: TAccountMetas[4];
+    toTokenAccount: TAccountMetas[5];
+    tokenProgram: TAccountMetas[6];
+    associatedTokenProgram: TAccountMetas[7];
   };
   data: TransferOutInstructionData;
 };
 
 export function parseTransferOutInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>
 ): ParsedTransferOutInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 9) {
+  if (instruction.accounts.length < 8) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {
@@ -443,7 +443,6 @@ export function parseTransferOutInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       operator: getNextAccount(),
-      payer: getNextAccount(),
       config: getNextAccount(),
       vault: getNextAccount(),
       tokenMint: getNextAccount(),

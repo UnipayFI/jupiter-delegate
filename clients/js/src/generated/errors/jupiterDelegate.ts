@@ -11,8 +11,8 @@ import {
   type Address,
   type SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM,
   type SolanaError,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
 
 /** Unauthorized: Unauthorized */
 export const JUPITER_DELEGATE_ERROR__UNAUTHORIZED = 0x1770; // 6000
@@ -76,8 +76,8 @@ export const JUPITER_DELEGATE_ERROR__TWO_HOP_INSUFFICIENT_INPUT_AMOUNT = 0x178c;
 export const JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED = 0x178d; // 6029
 /** TwoHopInvalidIntermediateTokenAmount: Two hop invalid intermediate token amount */
 export const JUPITER_DELEGATE_ERROR__TWO_HOP_INVALID_INTERMEDIATE_TOKEN_AMOUNT = 0x178e; // 6030
-/** ExecutorOutputTokenAccountIsInsufficient: Executor output token account is insufficient */
-export const JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT = 0x178f; // 6031
+/** VaultOutputTokenAccountIsInsufficient: Vault output token account is insufficient */
+export const JUPITER_DELEGATE_ERROR__VAULT_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT = 0x178f; // 6031
 /** FundVaultOutputTokenAccountNotFound: Fund vault output token account not found */
 export const JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND = 0x1790; // 6032
 /** UnsupportedTokenProgram: Unsupported token program */
@@ -98,7 +98,6 @@ export type JupiterDelegateError =
   | typeof JUPITER_DELEGATE_ERROR__CONFIG_PAUSED
   | typeof JUPITER_DELEGATE_ERROR__DELEGATE_IS_NOT_RECEIVER
   | typeof JUPITER_DELEGATE_ERROR__DELEGATE_NOT_APPROVED
-  | typeof JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT
   | typeof JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND
   | typeof JUPITER_DELEGATE_ERROR__INSUFFICIENT_DELEGATED_AMOUNT
   | typeof JUPITER_DELEGATE_ERROR__INSUFFICIENT_FUNDS
@@ -126,12 +125,13 @@ export type JupiterDelegateError =
   | typeof JUPITER_DELEGATE_ERROR__TWO_HOP_INVALID_INTERMEDIATE_TOKEN_AMOUNT
   | typeof JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED
   | typeof JUPITER_DELEGATE_ERROR__UNAUTHORIZED
-  | typeof JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM;
+  | typeof JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM
+  | typeof JUPITER_DELEGATE_ERROR__VAULT_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT;
 
 let jupiterDelegateErrorMessages:
   | Record<JupiterDelegateError, string>
   | undefined;
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   jupiterDelegateErrorMessages = {
     [JUPITER_DELEGATE_ERROR__ACCESS_ALREADY_GRANTED]: `Access is already granted`,
     [JUPITER_DELEGATE_ERROR__ACCESS_NOT_GRANTED]: `Access is not granted`,
@@ -141,7 +141,6 @@ if (process.env.NODE_ENV !== "production") {
     [JUPITER_DELEGATE_ERROR__CONFIG_PAUSED]: `Config is paused`,
     [JUPITER_DELEGATE_ERROR__DELEGATE_IS_NOT_RECEIVER]: `Delegate is not receiver`,
     [JUPITER_DELEGATE_ERROR__DELEGATE_NOT_APPROVED]: `Vault has not been delegated authority`,
-    [JUPITER_DELEGATE_ERROR__EXECUTOR_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT]: `Executor output token account is insufficient`,
     [JUPITER_DELEGATE_ERROR__FUND_VAULT_OUTPUT_TOKEN_ACCOUNT_NOT_FOUND]: `Fund vault output token account not found`,
     [JUPITER_DELEGATE_ERROR__INSUFFICIENT_DELEGATED_AMOUNT]: `Delegated amount is insufficient`,
     [JUPITER_DELEGATE_ERROR__INSUFFICIENT_FUNDS]: `Insufficient funds`,
@@ -170,23 +169,24 @@ if (process.env.NODE_ENV !== "production") {
     [JUPITER_DELEGATE_ERROR__TWO_HOP_MAX_SLIPPAGE_OUTPUT_AMOUNT_EXCEEDED]: `Two hop max slippage output amount exceeded`,
     [JUPITER_DELEGATE_ERROR__UNAUTHORIZED]: `Unauthorized`,
     [JUPITER_DELEGATE_ERROR__UNSUPPORTED_TOKEN_PROGRAM]: `Unsupported token program`,
+    [JUPITER_DELEGATE_ERROR__VAULT_OUTPUT_TOKEN_ACCOUNT_IS_INSUFFICIENT]: `Vault output token account is insufficient`,
   };
 }
 
 export function getJupiterDelegateErrorMessage(
   code: JupiterDelegateError
 ): string {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     return (
       jupiterDelegateErrorMessages as Record<JupiterDelegateError, string>
     )[code];
   }
 
-  return "Error message not available in production bundles.";
+  return 'Error message not available in production bundles.';
 }
 
 export function isJupiterDelegateError<
-  TProgramErrorCode extends JupiterDelegateError
+  TProgramErrorCode extends JupiterDelegateError,
 >(
   error: unknown,
   transactionMessage: {

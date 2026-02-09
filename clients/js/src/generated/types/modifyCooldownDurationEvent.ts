@@ -18,7 +18,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export type ModifyCooldownDurationEvent = {
   config: Address;
@@ -32,15 +32,15 @@ export type ModifyCooldownDurationEventArgs = {
 
 export function getModifyCooldownDurationEventEncoder(): FixedSizeEncoder<ModifyCooldownDurationEventArgs> {
   return getStructEncoder([
-    ["config", getAddressEncoder()],
-    ["cooldownDuration", getI64Encoder()],
+    ['config', getAddressEncoder()],
+    ['cooldownDuration', getI64Encoder()],
   ]);
 }
 
 export function getModifyCooldownDurationEventDecoder(): FixedSizeDecoder<ModifyCooldownDurationEvent> {
   return getStructDecoder([
-    ["config", getAddressDecoder()],
-    ["cooldownDuration", getI64Decoder()],
+    ['config', getAddressDecoder()],
+    ['cooldownDuration', getI64Decoder()],
   ]);
 }
 

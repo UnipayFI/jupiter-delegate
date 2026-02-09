@@ -85,8 +85,8 @@ pub enum ErrorCode {
     TwoHopInvalidIntermediateTokenAmount,
 
     // Fund Vault
-    #[msg("Executor output token account is insufficient")]
-    ExecutorOutputTokenAccountIsInsufficient,
+    #[msg("Vault output token account is insufficient")]
+    VaultOutputTokenAccountIsInsufficient,
     #[msg("Fund vault output token account not found")]
     FundVaultOutputTokenAccountNotFound,
     #[msg("Unsupported token program")]

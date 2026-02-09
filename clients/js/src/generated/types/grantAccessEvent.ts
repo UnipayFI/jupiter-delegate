@@ -16,7 +16,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export type GrantAccessEvent = { user: Address; access: Address };
 
@@ -24,15 +24,15 @@ export type GrantAccessEventArgs = GrantAccessEvent;
 
 export function getGrantAccessEventEncoder(): FixedSizeEncoder<GrantAccessEventArgs> {
   return getStructEncoder([
-    ["user", getAddressEncoder()],
-    ["access", getAddressEncoder()],
+    ['user', getAddressEncoder()],
+    ['access', getAddressEncoder()],
   ]);
 }
 
 export function getGrantAccessEventDecoder(): FixedSizeDecoder<GrantAccessEvent> {
   return getStructDecoder([
-    ["user", getAddressDecoder()],
-    ["access", getAddressDecoder()],
+    ['user', getAddressDecoder()],
+    ['access', getAddressDecoder()],
   ]);
 }
 

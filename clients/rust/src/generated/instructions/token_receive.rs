@@ -21,9 +21,11 @@ pub struct TokenReceive {
 
     pub executor: solana_pubkey::Pubkey,
 
-    pub executor_output_token_account: solana_pubkey::Pubkey,
-
     pub receiver_output_token_account: solana_pubkey::Pubkey,
+
+    pub vault: solana_pubkey::Pubkey,
+
+    pub vault_output_token_account: solana_pubkey::Pubkey,
 
     pub delegate: solana_pubkey::Pubkey,
 
@@ -42,7 +44,7 @@ impl TokenReceive {
         &self,
         remaining_accounts: &[solana_instruction::AccountMeta],
     ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(10 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.config,
             false,
@@ -57,11 +59,12 @@ impl TokenReceive {
         ));
         accounts.push(solana_instruction::AccountMeta::new(self.executor, true));
         accounts.push(solana_instruction::AccountMeta::new(
-            self.executor_output_token_account,
+            self.receiver_output_token_account,
             false,
         ));
+        accounts.push(solana_instruction::AccountMeta::new(self.vault, false));
         accounts.push(solana_instruction::AccountMeta::new(
-            self.receiver_output_token_account,
+            self.vault_output_token_account,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(self.delegate, false));
@@ -113,19 +116,21 @@ impl Default for TokenReceiveInstructionData {
 ///   1. `[]` output_mint
 ///   2. `[]` output_mint_program
 ///   3. `[writable, signer]` executor
-///   4. `[writable]` executor_output_token_account
-///   5. `[writable]` receiver_output_token_account
-///   6. `[writable]` delegate
-///   7. `[writable]` receiver
-///   8. `[]` access
+///   4. `[writable]` receiver_output_token_account
+///   5. `[writable]` vault
+///   6. `[writable]` vault_output_token_account
+///   7. `[writable]` delegate
+///   8. `[writable]` receiver
+///   9. `[]` access
 #[derive(Clone, Debug, Default)]
 pub struct TokenReceiveBuilder {
     config: Option<solana_pubkey::Pubkey>,
     output_mint: Option<solana_pubkey::Pubkey>,
     output_mint_program: Option<solana_pubkey::Pubkey>,
     executor: Option<solana_pubkey::Pubkey>,
-    executor_output_token_account: Option<solana_pubkey::Pubkey>,
     receiver_output_token_account: Option<solana_pubkey::Pubkey>,
+    vault: Option<solana_pubkey::Pubkey>,
+    vault_output_token_account: Option<solana_pubkey::Pubkey>,
     delegate: Option<solana_pubkey::Pubkey>,
     receiver: Option<solana_pubkey::Pubkey>,
     access: Option<solana_pubkey::Pubkey>,
@@ -157,19 +162,24 @@ impl TokenReceiveBuilder {
         self
     }
     #[inline(always)]
-    pub fn executor_output_token_account(
-        &mut self,
-        executor_output_token_account: solana_pubkey::Pubkey,
-    ) -> &mut Self {
-        self.executor_output_token_account = Some(executor_output_token_account);
-        self
-    }
-    #[inline(always)]
     pub fn receiver_output_token_account(
         &mut self,
         receiver_output_token_account: solana_pubkey::Pubkey,
     ) -> &mut Self {
         self.receiver_output_token_account = Some(receiver_output_token_account);
+        self
+    }
+    #[inline(always)]
+    pub fn vault(&mut self, vault: solana_pubkey::Pubkey) -> &mut Self {
+        self.vault = Some(vault);
+        self
+    }
+    #[inline(always)]
+    pub fn vault_output_token_account(
+        &mut self,
+        vault_output_token_account: solana_pubkey::Pubkey,
+    ) -> &mut Self {
+        self.vault_output_token_account = Some(vault_output_token_account);
         self
     }
     #[inline(always)]
@@ -211,12 +221,13 @@ impl TokenReceiveBuilder {
                 .output_mint_program
                 .expect("output_mint_program is not set"),
             executor: self.executor.expect("executor is not set"),
-            executor_output_token_account: self
-                .executor_output_token_account
-                .expect("executor_output_token_account is not set"),
             receiver_output_token_account: self
                 .receiver_output_token_account
                 .expect("receiver_output_token_account is not set"),
+            vault: self.vault.expect("vault is not set"),
+            vault_output_token_account: self
+                .vault_output_token_account
+                .expect("vault_output_token_account is not set"),
             delegate: self.delegate.expect("delegate is not set"),
             receiver: self.receiver.expect("receiver is not set"),
             access: self.access.expect("access is not set"),
@@ -236,9 +247,11 @@ pub struct TokenReceiveCpiAccounts<'a, 'b> {
 
     pub executor: &'b solana_account_info::AccountInfo<'a>,
 
-    pub executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
-
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+
+    pub vault: &'b solana_account_info::AccountInfo<'a>,
+
+    pub vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
     pub delegate: &'b solana_account_info::AccountInfo<'a>,
 
@@ -260,9 +273,11 @@ pub struct TokenReceiveCpi<'a, 'b> {
 
     pub executor: &'b solana_account_info::AccountInfo<'a>,
 
-    pub executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
-
     pub receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+
+    pub vault: &'b solana_account_info::AccountInfo<'a>,
+
+    pub vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
 
     pub delegate: &'b solana_account_info::AccountInfo<'a>,
 
@@ -282,8 +297,9 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             output_mint: accounts.output_mint,
             output_mint_program: accounts.output_mint_program,
             executor: accounts.executor,
-            executor_output_token_account: accounts.executor_output_token_account,
             receiver_output_token_account: accounts.receiver_output_token_account,
+            vault: accounts.vault,
+            vault_output_token_account: accounts.vault_output_token_account,
             delegate: accounts.delegate,
             receiver: accounts.receiver,
             access: accounts.access,
@@ -312,7 +328,7 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
         remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
     ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(10 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.config.key,
             false,
@@ -330,11 +346,12 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             true,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
-            *self.executor_output_token_account.key,
+            *self.receiver_output_token_account.key,
             false,
         ));
+        accounts.push(solana_instruction::AccountMeta::new(*self.vault.key, false));
         accounts.push(solana_instruction::AccountMeta::new(
-            *self.receiver_output_token_account.key,
+            *self.vault_output_token_account.key,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
@@ -363,14 +380,15 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(10 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(11 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.output_mint.clone());
         account_infos.push(self.output_mint_program.clone());
         account_infos.push(self.executor.clone());
-        account_infos.push(self.executor_output_token_account.clone());
         account_infos.push(self.receiver_output_token_account.clone());
+        account_infos.push(self.vault.clone());
+        account_infos.push(self.vault_output_token_account.clone());
         account_infos.push(self.delegate.clone());
         account_infos.push(self.receiver.clone());
         account_infos.push(self.access.clone());
@@ -394,11 +412,12 @@ impl<'a, 'b> TokenReceiveCpi<'a, 'b> {
 ///   1. `[]` output_mint
 ///   2. `[]` output_mint_program
 ///   3. `[writable, signer]` executor
-///   4. `[writable]` executor_output_token_account
-///   5. `[writable]` receiver_output_token_account
-///   6. `[writable]` delegate
-///   7. `[writable]` receiver
-///   8. `[]` access
+///   4. `[writable]` receiver_output_token_account
+///   5. `[writable]` vault
+///   6. `[writable]` vault_output_token_account
+///   7. `[writable]` delegate
+///   8. `[writable]` receiver
+///   9. `[]` access
 #[derive(Clone, Debug)]
 pub struct TokenReceiveCpiBuilder<'a, 'b> {
     instruction: Box<TokenReceiveCpiBuilderInstruction<'a, 'b>>,
@@ -412,8 +431,9 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
             output_mint: None,
             output_mint_program: None,
             executor: None,
-            executor_output_token_account: None,
             receiver_output_token_account: None,
+            vault: None,
+            vault_output_token_account: None,
             delegate: None,
             receiver: None,
             access: None,
@@ -448,19 +468,24 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn executor_output_token_account(
-        &mut self,
-        executor_output_token_account: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.executor_output_token_account = Some(executor_output_token_account);
-        self
-    }
-    #[inline(always)]
     pub fn receiver_output_token_account(
         &mut self,
         receiver_output_token_account: &'b solana_account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.receiver_output_token_account = Some(receiver_output_token_account);
+        self
+    }
+    #[inline(always)]
+    pub fn vault(&mut self, vault: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.vault = Some(vault);
+        self
+    }
+    #[inline(always)]
+    pub fn vault_output_token_account(
+        &mut self,
+        vault_output_token_account: &'b solana_account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.vault_output_token_account = Some(vault_output_token_account);
         self
     }
     #[inline(always)]
@@ -529,15 +554,17 @@ impl<'a, 'b> TokenReceiveCpiBuilder<'a, 'b> {
 
             executor: self.instruction.executor.expect("executor is not set"),
 
-            executor_output_token_account: self
-                .instruction
-                .executor_output_token_account
-                .expect("executor_output_token_account is not set"),
-
             receiver_output_token_account: self
                 .instruction
                 .receiver_output_token_account
                 .expect("receiver_output_token_account is not set"),
+
+            vault: self.instruction.vault.expect("vault is not set"),
+
+            vault_output_token_account: self
+                .instruction
+                .vault_output_token_account
+                .expect("vault_output_token_account is not set"),
 
             delegate: self.instruction.delegate.expect("delegate is not set"),
 
@@ -559,8 +586,9 @@ struct TokenReceiveCpiBuilderInstruction<'a, 'b> {
     output_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
     output_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
     executor: Option<&'b solana_account_info::AccountInfo<'a>>,
-    executor_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+    vault: Option<&'b solana_account_info::AccountInfo<'a>>,
+    vault_output_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     delegate: Option<&'b solana_account_info::AccountInfo<'a>>,
     receiver: Option<&'b solana_account_info::AccountInfo<'a>>,
     access: Option<&'b solana_account_info::AccountInfo<'a>>,

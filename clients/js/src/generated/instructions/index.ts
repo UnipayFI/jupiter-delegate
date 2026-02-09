@@ -6,20 +6,20 @@
  * @see https://github.com/codama-idl/codama
  */
 
-export * from "./acceptAdminTransfer";
-export * from "./dflowAggregator";
-export * from "./fillOrderEngine";
-export * from "./grantAccess";
-export * from "./initConfig";
-export * from "./jupiterAggregator";
-export * from "./jupiterPerpetuals";
-export * from "./modifyCooldownDuration";
-export * from "./okxAggregator";
-export * from "./pause";
-export * from "./proposeNewAdmin";
-export * from "./revokeAccess";
-export * from "./swap";
-export * from "./tokenReceive";
-export * from "./transferIn";
-export * from "./transferOut";
-export * from "./twoHop";
+export * from './acceptAdminTransfer';
+export * from './dflowAggregator';
+export * from './fillOrderEngine';
+export * from './grantAccess';
+export * from './initConfig';
+export * from './jupiterAggregator';
+export * from './jupiterPerpetuals';
+export * from './modifyCooldownDuration';
+export * from './okxAggregator';
+export * from './pause';
+export * from './proposeNewAdmin';
+export * from './revokeAccess';
+export * from './swap';
+export * from './tokenReceive';
+export * from './transferIn';
+export * from './transferOut';
+export * from './twoHop';

@@ -16,7 +16,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export type RevokeAccessEvent = { user: Address; access: Address };
 
@@ -24,15 +24,15 @@ export type RevokeAccessEventArgs = RevokeAccessEvent;
 
 export function getRevokeAccessEventEncoder(): FixedSizeEncoder<RevokeAccessEventArgs> {
   return getStructEncoder([
-    ["user", getAddressEncoder()],
-    ["access", getAddressEncoder()],
+    ['user', getAddressEncoder()],
+    ['access', getAddressEncoder()],
   ]);
 }
 
 export function getRevokeAccessEventDecoder(): FixedSizeDecoder<RevokeAccessEvent> {
   return getStructDecoder([
-    ["user", getAddressDecoder()],
-    ["access", getAddressDecoder()],
+    ['user', getAddressDecoder()],
+    ['access', getAddressDecoder()],
   ]);
 }
 

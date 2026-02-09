@@ -103,9 +103,9 @@ pub enum JupiterDelegateError {
     /// 6030 - Two hop invalid intermediate token amount
     #[error("Two hop invalid intermediate token amount")]
     TwoHopInvalidIntermediateTokenAmount = 0x178E,
-    /// 6031 - Executor output token account is insufficient
-    #[error("Executor output token account is insufficient")]
-    ExecutorOutputTokenAccountIsInsufficient = 0x178F,
+    /// 6031 - Vault output token account is insufficient
+    #[error("Vault output token account is insufficient")]
+    VaultOutputTokenAccountIsInsufficient = 0x178F,
     /// 6032 - Fund vault output token account not found
     #[error("Fund vault output token account not found")]
     FundVaultOutputTokenAccountNotFound = 0x1790,

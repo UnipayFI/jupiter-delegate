@@ -39,7 +39,7 @@ import {
   type MaybeAccount,
   type MaybeEncodedAccount,
   type ReadonlyUint8Array,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export const CONFIG_DISCRIMINATOR = new Uint8Array([
   155, 12, 170, 224, 30, 250, 204, 130,
@@ -77,16 +77,16 @@ export type ConfigArgs = {
 export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["admin", getAddressEncoder()],
-      ["operator", getAddressEncoder()],
-      ["vault", getAddressEncoder()],
-      ["pendingAdmin", getAddressEncoder()],
-      ["lastTradeTimestamp", getI64Encoder()],
-      ["isInitialized", getBooleanEncoder()],
-      ["isPaused", getBooleanEncoder()],
-      ["cooldownDuration", getI64Encoder()],
-      ["bump", getU8Encoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['admin', getAddressEncoder()],
+      ['operator', getAddressEncoder()],
+      ['vault', getAddressEncoder()],
+      ['pendingAdmin', getAddressEncoder()],
+      ['lastTradeTimestamp', getI64Encoder()],
+      ['isInitialized', getBooleanEncoder()],
+      ['isPaused', getBooleanEncoder()],
+      ['cooldownDuration', getI64Encoder()],
+      ['bump', getU8Encoder()],
     ]),
     (value) => ({ ...value, discriminator: CONFIG_DISCRIMINATOR })
   );
@@ -94,16 +94,16 @@ export function getConfigEncoder(): FixedSizeEncoder<ConfigArgs> {
 
 export function getConfigDecoder(): FixedSizeDecoder<Config> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["admin", getAddressDecoder()],
-    ["operator", getAddressDecoder()],
-    ["vault", getAddressDecoder()],
-    ["pendingAdmin", getAddressDecoder()],
-    ["lastTradeTimestamp", getI64Decoder()],
-    ["isInitialized", getBooleanDecoder()],
-    ["isPaused", getBooleanDecoder()],
-    ["cooldownDuration", getI64Decoder()],
-    ["bump", getU8Decoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['admin', getAddressDecoder()],
+    ['operator', getAddressDecoder()],
+    ['vault', getAddressDecoder()],
+    ['pendingAdmin', getAddressDecoder()],
+    ['lastTradeTimestamp', getI64Decoder()],
+    ['isInitialized', getBooleanDecoder()],
+    ['isPaused', getBooleanDecoder()],
+    ['cooldownDuration', getI64Decoder()],
+    ['bump', getU8Decoder()],
   ]);
 }
 

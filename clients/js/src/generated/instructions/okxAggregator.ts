@@ -40,13 +40,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from "../shared";
+} from '../shared';
 
 export const OKX_AGGREGATOR_DISCRIMINATOR = new Uint8Array([
   185, 20, 46, 22, 67, 154, 193, 188,
@@ -79,8 +79,8 @@ export type OkxAggregatorInstruction<
     | AccountMeta<string> = string,
   TAccountOkxProgram extends
     | string
-    | AccountMeta<string> = "6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = '6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -128,7 +128,7 @@ export type OkxAggregatorInstruction<
       TAccountOkxProgram extends string
         ? ReadonlyAccount<TAccountOkxProgram>
         : TAccountOkxProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -150,14 +150,14 @@ export type OkxAggregatorInstructionDataArgs = {
 export function getOkxAggregatorInstructionDataEncoder(): Encoder<OkxAggregatorInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-      ["inAmount", getU64Encoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ['inAmount', getU64Encoder()],
       [
-        "instructionName",
+        'instructionName',
         addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
       ],
-      ["delegate", getAddressEncoder()],
+      ['delegate', getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: OKX_AGGREGATOR_DISCRIMINATOR })
   );
@@ -165,14 +165,14 @@ export function getOkxAggregatorInstructionDataEncoder(): Encoder<OkxAggregatorI
 
 export function getOkxAggregatorInstructionDataDecoder(): Decoder<OkxAggregatorInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ["inAmount", getU64Decoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ['inAmount', getU64Decoder()],
     [
-      "instructionName",
+      'instructionName',
       addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder()),
     ],
-    ["delegate", getAddressDecoder()],
+    ['delegate', getAddressDecoder()],
   ]);
 }
 
@@ -200,7 +200,7 @@ export type OkxAggregatorAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountOkxProgram extends string = string
+  TAccountOkxProgram extends string = string,
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -216,10 +216,10 @@ export type OkxAggregatorAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
   okxProgram?: Address<TAccountOkxProgram>;
-  data: OkxAggregatorInstructionDataArgs["data"];
-  inAmount: OkxAggregatorInstructionDataArgs["inAmount"];
-  instructionName: OkxAggregatorInstructionDataArgs["instructionName"];
-  delegate: OkxAggregatorInstructionDataArgs["delegate"];
+  data: OkxAggregatorInstructionDataArgs['data'];
+  inAmount: OkxAggregatorInstructionDataArgs['inAmount'];
+  instructionName: OkxAggregatorInstructionDataArgs['instructionName'];
+  delegate: OkxAggregatorInstructionDataArgs['delegate'];
 };
 
 export async function getOkxAggregatorInstructionAsync<
@@ -237,7 +237,7 @@ export async function getOkxAggregatorInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountOkxProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: OkxAggregatorAsyncInput<
     TAccountInputMint,
@@ -339,7 +339,7 @@ export async function getOkxAggregatorInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -352,7 +352,7 @@ export async function getOkxAggregatorInstructionAsync<
   if (!accounts.vaultOutputTokenAccount.value) {
     accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -379,7 +379,7 @@ export async function getOkxAggregatorInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.user.value)),
         getAddressEncoder().encode(
@@ -391,10 +391,10 @@ export async function getOkxAggregatorInstructionAsync<
   }
   if (!accounts.okxProgram.value) {
     accounts.okxProgram.value =
-      "6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma" as Address<"6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma">;
+      '6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma' as Address<'6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -416,7 +416,23 @@ export async function getOkxAggregatorInstructionAsync<
       args as OkxAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as OkxAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountOkxProgram>);
+  } as OkxAggregatorInstruction<
+    TProgramAddress,
+    TAccountInputMint,
+    TAccountInputMintProgram,
+    TAccountOutputMint,
+    TAccountOutputMintProgram,
+    TAccountOperator,
+    TAccountVault,
+    TAccountDelegateInputTokenAccount,
+    TAccountVaultInputTokenAccount,
+    TAccountVaultOutputTokenAccount,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountUser,
+    TAccountReceiverOutputTokenAccount,
+    TAccountOkxProgram
+  >);
 }
 
 export type OkxAggregatorInput<
@@ -433,7 +449,7 @@ export type OkxAggregatorInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountOkxProgram extends string = string
+  TAccountOkxProgram extends string = string,
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -449,10 +465,10 @@ export type OkxAggregatorInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
   okxProgram?: Address<TAccountOkxProgram>;
-  data: OkxAggregatorInstructionDataArgs["data"];
-  inAmount: OkxAggregatorInstructionDataArgs["inAmount"];
-  instructionName: OkxAggregatorInstructionDataArgs["instructionName"];
-  delegate: OkxAggregatorInstructionDataArgs["delegate"];
+  data: OkxAggregatorInstructionDataArgs['data'];
+  inAmount: OkxAggregatorInstructionDataArgs['inAmount'];
+  instructionName: OkxAggregatorInstructionDataArgs['instructionName'];
+  delegate: OkxAggregatorInstructionDataArgs['delegate'];
 };
 
 export function getOkxAggregatorInstruction<
@@ -470,7 +486,7 @@ export function getOkxAggregatorInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountOkxProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: OkxAggregatorInput<
     TAccountInputMint,
@@ -556,10 +572,10 @@ export function getOkxAggregatorInstruction<
   // Resolve default values.
   if (!accounts.okxProgram.value) {
     accounts.okxProgram.value =
-      "6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma" as Address<"6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma">;
+      '6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma' as Address<'6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -581,12 +597,28 @@ export function getOkxAggregatorInstruction<
       args as OkxAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as OkxAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountOkxProgram>);
+  } as OkxAggregatorInstruction<
+    TProgramAddress,
+    TAccountInputMint,
+    TAccountInputMintProgram,
+    TAccountOutputMint,
+    TAccountOutputMintProgram,
+    TAccountOperator,
+    TAccountVault,
+    TAccountDelegateInputTokenAccount,
+    TAccountVaultInputTokenAccount,
+    TAccountVaultOutputTokenAccount,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountUser,
+    TAccountReceiverOutputTokenAccount,
+    TAccountOkxProgram
+  >);
 }
 
 export type ParsedOkxAggregatorInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -610,7 +642,7 @@ export type ParsedOkxAggregatorInstruction<
 
 export function parseOkxAggregatorInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -618,7 +650,7 @@ export function parseOkxAggregatorInstruction<
 ): ParsedOkxAggregatorInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {

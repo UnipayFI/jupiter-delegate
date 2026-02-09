@@ -5,7 +5,7 @@ use anchor_spl::token_interface::{
 };
 
 use crate::{
-    constants::ACCESS_SEED,
+    constants::{ACCESS_SEED, VAULT_SEED},
     error::ErrorCode,
     state::{Access, Config},
 };
@@ -21,17 +21,26 @@ pub struct TokenReceive<'info> {
     #[account(
         mut,
         associated_token::mint = output_mint,
-        associated_token::authority = executor,
-        associated_token::token_program = output_mint_program,
-    )]
-    pub executor_output_token_account: InterfaceAccount<'info, TokenAccount>,
-    #[account(
-        mut,
-        associated_token::mint = output_mint,
         associated_token::authority = receiver,
         associated_token::token_program = output_mint_program,
     )]
     pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        seeds=[VAULT_SEED.as_bytes()],
+        bump
+    )]
+    pub vault: SystemAccount<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = output_mint,
+        associated_token::authority = vault,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
     /// CHECK: This is the delegate account
     #[account(mut)]
     pub delegate: UncheckedAccount<'info>,
@@ -60,8 +69,8 @@ pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
     require!(!ctx.accounts.config.is_paused, ErrorCode::ConfigPaused);
     // 1. 验证接收者代币账户存在
     require!(
-        ctx.accounts.executor_output_token_account.amount > 0,
-        ErrorCode::ExecutorOutputTokenAccountIsInsufficient
+        ctx.accounts.vault_output_token_account.amount > 0,
+        ErrorCode::VaultOutputTokenAccountIsInsufficient
     );
     let receiver_output_token_account = get_associated_token_address_with_program_id(
         &ctx.accounts.receiver.key(),
@@ -73,18 +82,22 @@ pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
         ErrorCode::FundVaultOutputTokenAccountNotFound
     );
 
-    // 2. 转移代币
+    let amounts = ctx.accounts.vault_output_token_account.amount;
+
+    // 2. vault 转移代币到 receiver
+    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
     transfer_checked(
-        CpiContext::new(
+        CpiContext::new_with_signer(
             ctx.accounts.output_mint_program.to_account_info(),
             TransferChecked {
-                from: ctx.accounts.executor_output_token_account.to_account_info(),
+                from: ctx.accounts.vault_output_token_account.to_account_info(),
                 to: ctx.accounts.receiver_output_token_account.to_account_info(),
-                authority: ctx.accounts.executor.to_account_info(),
+                authority: ctx.accounts.vault.to_account_info(),
                 mint: ctx.accounts.output_mint.to_account_info(),
             },
+            &[signed_seeds],
         ),
-        ctx.accounts.executor_output_token_account.amount,
+        amounts,
         ctx.accounts.output_mint.decimals,
     )?;
 

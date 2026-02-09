@@ -32,13 +32,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
 import {
   expectSome,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from "../shared";
+} from '../shared';
 
 export const REVOKE_ACCESS_DISCRIMINATOR = new Uint8Array([
   106, 128, 38, 169, 103, 238, 102, 147,
@@ -57,11 +57,11 @@ export type RevokeAccessInstruction<
   TAccountAccess extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
+    | AccountMeta<string> = '11111111111111111111111111111111',
   TAccountRent extends
     | string
-    | AccountMeta<string> = "SysvarRent111111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = 'SysvarRent111111111111111111111111111111111',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -82,7 +82,7 @@ export type RevokeAccessInstruction<
       TAccountRent extends string
         ? ReadonlyAccount<TAccountRent>
         : TAccountRent,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -96,8 +96,8 @@ export type RevokeAccessInstructionDataArgs = { user: Address };
 export function getRevokeAccessInstructionDataEncoder(): FixedSizeEncoder<RevokeAccessInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["user", getAddressEncoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['user', getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: REVOKE_ACCESS_DISCRIMINATOR })
   );
@@ -105,8 +105,8 @@ export function getRevokeAccessInstructionDataEncoder(): FixedSizeEncoder<Revoke
 
 export function getRevokeAccessInstructionDataDecoder(): FixedSizeDecoder<RevokeAccessInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["user", getAddressDecoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['user', getAddressDecoder()],
   ]);
 }
 
@@ -125,14 +125,14 @@ export type RevokeAccessAsyncInput<
   TAccountConfig extends string = string,
   TAccountAccess extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string
+  TAccountRent extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   access?: Address<TAccountAccess>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  user: RevokeAccessInstructionDataArgs["user"];
+  user: RevokeAccessInstructionDataArgs['user'];
 };
 
 export async function getRevokeAccessInstructionAsync<
@@ -141,7 +141,7 @@ export async function getRevokeAccessInstructionAsync<
   TAccountAccess extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: RevokeAccessAsyncInput<
     TAccountAdmin,
@@ -198,14 +198,14 @@ export async function getRevokeAccessInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
+      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -218,7 +218,14 @@ export async function getRevokeAccessInstructionAsync<
       args as RevokeAccessInstructionDataArgs
     ),
     programAddress,
-  } as RevokeAccessInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountAccess, TAccountSystemProgram, TAccountRent>);
+  } as RevokeAccessInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountSystemProgram,
+    TAccountRent
+  >);
 }
 
 export type RevokeAccessInput<
@@ -226,14 +233,14 @@ export type RevokeAccessInput<
   TAccountConfig extends string = string,
   TAccountAccess extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string
+  TAccountRent extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   access: Address<TAccountAccess>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  user: RevokeAccessInstructionDataArgs["user"];
+  user: RevokeAccessInstructionDataArgs['user'];
 };
 
 export function getRevokeAccessInstruction<
@@ -242,7 +249,7 @@ export function getRevokeAccessInstruction<
   TAccountAccess extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: RevokeAccessInput<
     TAccountAdmin,
@@ -283,14 +290,14 @@ export function getRevokeAccessInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
+      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -303,12 +310,19 @@ export function getRevokeAccessInstruction<
       args as RevokeAccessInstructionDataArgs
     ),
     programAddress,
-  } as RevokeAccessInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountAccess, TAccountSystemProgram, TAccountRent>);
+  } as RevokeAccessInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountSystemProgram,
+    TAccountRent
+  >);
 }
 
 export type ParsedRevokeAccessInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -323,7 +337,7 @@ export type ParsedRevokeAccessInstruction<
 
 export function parseRevokeAccessInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -331,7 +345,7 @@ export function parseRevokeAccessInstruction<
 ): ParsedRevokeAccessInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {

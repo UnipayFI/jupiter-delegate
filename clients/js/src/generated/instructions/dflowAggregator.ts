@@ -40,13 +40,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from "../shared";
+} from '../shared';
 
 export const DFLOW_AGGREGATOR_DISCRIMINATOR = new Uint8Array([
   194, 62, 157, 224, 247, 118, 23, 65,
@@ -79,8 +79,8 @@ export type DflowAggregatorInstruction<
     | AccountMeta<string> = string,
   TAccountDflowProgram extends
     | string
-    | AccountMeta<string> = "DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = 'DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -128,7 +128,7 @@ export type DflowAggregatorInstruction<
       TAccountDflowProgram extends string
         ? ReadonlyAccount<TAccountDflowProgram>
         : TAccountDflowProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -150,14 +150,14 @@ export type DflowAggregatorInstructionDataArgs = {
 export function getDflowAggregatorInstructionDataEncoder(): Encoder<DflowAggregatorInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-      ["inAmount", getU64Encoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ['inAmount', getU64Encoder()],
       [
-        "instructionName",
+        'instructionName',
         addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
       ],
-      ["delegate", getAddressEncoder()],
+      ['delegate', getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: DFLOW_AGGREGATOR_DISCRIMINATOR })
   );
@@ -165,14 +165,14 @@ export function getDflowAggregatorInstructionDataEncoder(): Encoder<DflowAggrega
 
 export function getDflowAggregatorInstructionDataDecoder(): Decoder<DflowAggregatorInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ["inAmount", getU64Decoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ['inAmount', getU64Decoder()],
     [
-      "instructionName",
+      'instructionName',
       addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder()),
     ],
-    ["delegate", getAddressDecoder()],
+    ['delegate', getAddressDecoder()],
   ]);
 }
 
@@ -200,7 +200,7 @@ export type DflowAggregatorAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountDflowProgram extends string = string
+  TAccountDflowProgram extends string = string,
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -216,10 +216,10 @@ export type DflowAggregatorAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
   dflowProgram?: Address<TAccountDflowProgram>;
-  data: DflowAggregatorInstructionDataArgs["data"];
-  inAmount: DflowAggregatorInstructionDataArgs["inAmount"];
-  instructionName: DflowAggregatorInstructionDataArgs["instructionName"];
-  delegate: DflowAggregatorInstructionDataArgs["delegate"];
+  data: DflowAggregatorInstructionDataArgs['data'];
+  inAmount: DflowAggregatorInstructionDataArgs['inAmount'];
+  instructionName: DflowAggregatorInstructionDataArgs['instructionName'];
+  delegate: DflowAggregatorInstructionDataArgs['delegate'];
 };
 
 export async function getDflowAggregatorInstructionAsync<
@@ -237,7 +237,7 @@ export async function getDflowAggregatorInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountDflowProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: DflowAggregatorAsyncInput<
     TAccountInputMint,
@@ -339,7 +339,7 @@ export async function getDflowAggregatorInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -352,7 +352,7 @@ export async function getDflowAggregatorInstructionAsync<
   if (!accounts.vaultOutputTokenAccount.value) {
     accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -379,7 +379,7 @@ export async function getDflowAggregatorInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.user.value)),
         getAddressEncoder().encode(
@@ -391,10 +391,10 @@ export async function getDflowAggregatorInstructionAsync<
   }
   if (!accounts.dflowProgram.value) {
     accounts.dflowProgram.value =
-      "DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH" as Address<"DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH">;
+      'DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH' as Address<'DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -416,7 +416,23 @@ export async function getDflowAggregatorInstructionAsync<
       args as DflowAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as DflowAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountDflowProgram>);
+  } as DflowAggregatorInstruction<
+    TProgramAddress,
+    TAccountInputMint,
+    TAccountInputMintProgram,
+    TAccountOutputMint,
+    TAccountOutputMintProgram,
+    TAccountOperator,
+    TAccountVault,
+    TAccountDelegateInputTokenAccount,
+    TAccountVaultInputTokenAccount,
+    TAccountVaultOutputTokenAccount,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountUser,
+    TAccountReceiverOutputTokenAccount,
+    TAccountDflowProgram
+  >);
 }
 
 export type DflowAggregatorInput<
@@ -433,7 +449,7 @@ export type DflowAggregatorInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountDflowProgram extends string = string
+  TAccountDflowProgram extends string = string,
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -449,10 +465,10 @@ export type DflowAggregatorInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
   dflowProgram?: Address<TAccountDflowProgram>;
-  data: DflowAggregatorInstructionDataArgs["data"];
-  inAmount: DflowAggregatorInstructionDataArgs["inAmount"];
-  instructionName: DflowAggregatorInstructionDataArgs["instructionName"];
-  delegate: DflowAggregatorInstructionDataArgs["delegate"];
+  data: DflowAggregatorInstructionDataArgs['data'];
+  inAmount: DflowAggregatorInstructionDataArgs['inAmount'];
+  instructionName: DflowAggregatorInstructionDataArgs['instructionName'];
+  delegate: DflowAggregatorInstructionDataArgs['delegate'];
 };
 
 export function getDflowAggregatorInstruction<
@@ -470,7 +486,7 @@ export function getDflowAggregatorInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountDflowProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: DflowAggregatorInput<
     TAccountInputMint,
@@ -556,10 +572,10 @@ export function getDflowAggregatorInstruction<
   // Resolve default values.
   if (!accounts.dflowProgram.value) {
     accounts.dflowProgram.value =
-      "DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH" as Address<"DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH">;
+      'DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH' as Address<'DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -581,12 +597,28 @@ export function getDflowAggregatorInstruction<
       args as DflowAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as DflowAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountDflowProgram>);
+  } as DflowAggregatorInstruction<
+    TProgramAddress,
+    TAccountInputMint,
+    TAccountInputMintProgram,
+    TAccountOutputMint,
+    TAccountOutputMintProgram,
+    TAccountOperator,
+    TAccountVault,
+    TAccountDelegateInputTokenAccount,
+    TAccountVaultInputTokenAccount,
+    TAccountVaultOutputTokenAccount,
+    TAccountConfig,
+    TAccountAccess,
+    TAccountUser,
+    TAccountReceiverOutputTokenAccount,
+    TAccountDflowProgram
+  >);
 }
 
 export type ParsedDflowAggregatorInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -610,7 +642,7 @@ export type ParsedDflowAggregatorInstruction<
 
 export function parseDflowAggregatorInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -618,7 +650,7 @@ export function parseDflowAggregatorInstruction<
 ): ParsedDflowAggregatorInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {

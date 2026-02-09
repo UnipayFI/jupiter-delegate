@@ -30,9 +30,9 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 
 export const ACCEPT_ADMIN_TRANSFER_DISCRIMINATOR = new Uint8Array([
   89, 211, 96, 212, 233, 0, 251, 7,
@@ -50,8 +50,8 @@ export type AcceptAdminTransferInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = '11111111111111111111111111111111',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -66,7 +66,7 @@ export type AcceptAdminTransferInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -78,7 +78,7 @@ export type AcceptAdminTransferInstructionDataArgs = {};
 
 export function getAcceptAdminTransferInstructionDataEncoder(): FixedSizeEncoder<AcceptAdminTransferInstructionDataArgs> {
   return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+    getStructEncoder([['discriminator', fixEncoderSize(getBytesEncoder(), 8)]]),
     (value) => ({
       ...value,
       discriminator: ACCEPT_ADMIN_TRANSFER_DISCRIMINATOR,
@@ -88,7 +88,7 @@ export function getAcceptAdminTransferInstructionDataEncoder(): FixedSizeEncoder
 
 export function getAcceptAdminTransferInstructionDataDecoder(): FixedSizeDecoder<AcceptAdminTransferInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
@@ -105,7 +105,7 @@ export function getAcceptAdminTransferInstructionDataCodec(): FixedSizeCodec<
 export type AcceptAdminTransferAsyncInput<
   TAccountNewAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   newAdmin: TransactionSigner<TAccountNewAdmin>;
   config?: Address<TAccountConfig>;
@@ -116,7 +116,7 @@ export async function getAcceptAdminTransferInstructionAsync<
   TAccountNewAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: AcceptAdminTransferAsyncInput<
     TAccountNewAdmin,
@@ -163,10 +163,10 @@ export async function getAcceptAdminTransferInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.newAdmin),
@@ -175,13 +175,18 @@ export async function getAcceptAdminTransferInstructionAsync<
     ],
     data: getAcceptAdminTransferInstructionDataEncoder().encode({}),
     programAddress,
-  } as AcceptAdminTransferInstruction<TProgramAddress, TAccountNewAdmin, TAccountConfig, TAccountSystemProgram>);
+  } as AcceptAdminTransferInstruction<
+    TProgramAddress,
+    TAccountNewAdmin,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type AcceptAdminTransferInput<
   TAccountNewAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   newAdmin: TransactionSigner<TAccountNewAdmin>;
   config: Address<TAccountConfig>;
@@ -192,7 +197,7 @@ export function getAcceptAdminTransferInstruction<
   TAccountNewAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: AcceptAdminTransferInput<
     TAccountNewAdmin,
@@ -224,10 +229,10 @@ export function getAcceptAdminTransferInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.newAdmin),
@@ -236,12 +241,17 @@ export function getAcceptAdminTransferInstruction<
     ],
     data: getAcceptAdminTransferInstructionDataEncoder().encode({}),
     programAddress,
-  } as AcceptAdminTransferInstruction<TProgramAddress, TAccountNewAdmin, TAccountConfig, TAccountSystemProgram>);
+  } as AcceptAdminTransferInstruction<
+    TProgramAddress,
+    TAccountNewAdmin,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedAcceptAdminTransferInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -254,7 +264,7 @@ export type ParsedAcceptAdminTransferInstruction<
 
 export function parseAcceptAdminTransferInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -262,7 +272,7 @@ export function parseAcceptAdminTransferInstruction<
 ): ParsedAcceptAdminTransferInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {

@@ -37,7 +37,7 @@ import {
   type MaybeAccount,
   type MaybeEncodedAccount,
   type ReadonlyUint8Array,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export const ACCESS_DISCRIMINATOR = new Uint8Array([
   117, 154, 108, 210, 202, 83, 96, 222,
@@ -59,10 +59,10 @@ export type AccessArgs = { user: Address; isGranted: boolean; bump: number };
 export function getAccessEncoder(): FixedSizeEncoder<AccessArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["user", getAddressEncoder()],
-      ["isGranted", getBooleanEncoder()],
-      ["bump", getU8Encoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['user', getAddressEncoder()],
+      ['isGranted', getBooleanEncoder()],
+      ['bump', getU8Encoder()],
     ]),
     (value) => ({ ...value, discriminator: ACCESS_DISCRIMINATOR })
   );
@@ -70,10 +70,10 @@ export function getAccessEncoder(): FixedSizeEncoder<AccessArgs> {
 
 export function getAccessDecoder(): FixedSizeDecoder<Access> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["user", getAddressDecoder()],
-    ["isGranted", getBooleanDecoder()],
-    ["bump", getU8Decoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['user', getAddressDecoder()],
+    ['isGranted', getBooleanDecoder()],
+    ['bump', getU8Decoder()],
   ]);
 }
 

@@ -32,9 +32,9 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from "@solana/kit";
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+} from '@solana/kit';
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 
 export const PAUSE_DISCRIMINATOR = new Uint8Array([
   211, 22, 221, 251, 74, 121, 193, 47,
@@ -50,8 +50,8 @@ export type PauseInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = []
+    | AccountMeta<string> = '11111111111111111111111111111111',
+  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -66,7 +66,7 @@ export type PauseInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts
+      ...TRemainingAccounts,
     ]
   >;
 
@@ -80,8 +80,8 @@ export type PauseInstructionDataArgs = { toggle: boolean };
 export function getPauseInstructionDataEncoder(): FixedSizeEncoder<PauseInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["toggle", getBooleanEncoder()],
+      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
+      ['toggle', getBooleanEncoder()],
     ]),
     (value) => ({ ...value, discriminator: PAUSE_DISCRIMINATOR })
   );
@@ -89,8 +89,8 @@ export function getPauseInstructionDataEncoder(): FixedSizeEncoder<PauseInstruct
 
 export function getPauseInstructionDataDecoder(): FixedSizeDecoder<PauseInstructionData> {
   return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["toggle", getBooleanDecoder()],
+    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ['toggle', getBooleanDecoder()],
   ]);
 }
 
@@ -107,19 +107,19 @@ export function getPauseInstructionDataCodec(): FixedSizeCodec<
 export type PauseAsyncInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config?: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  toggle: PauseInstructionDataArgs["toggle"];
+  toggle: PauseInstructionDataArgs['toggle'];
 };
 
 export async function getPauseInstructionAsync<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: PauseAsyncInput<TAccountAdmin, TAccountConfig, TAccountSystemProgram>,
   config?: { programAddress?: TProgramAddress }
@@ -165,10 +165,10 @@ export async function getPauseInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -179,25 +179,30 @@ export async function getPauseInstructionAsync<
       args as PauseInstructionDataArgs
     ),
     programAddress,
-  } as PauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountSystemProgram>);
+  } as PauseInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type PauseInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string
+  TAccountSystemProgram extends string = string,
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  toggle: PauseInstructionDataArgs["toggle"];
+  toggle: PauseInstructionDataArgs['toggle'];
 };
 
 export function getPauseInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: PauseInput<TAccountAdmin, TAccountConfig, TAccountSystemProgram>,
   config?: { programAddress?: TProgramAddress }
@@ -228,10 +233,10 @@ export function getPauseInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -242,12 +247,17 @@ export function getPauseInstruction<
       args as PauseInstructionDataArgs
     ),
     programAddress,
-  } as PauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountSystemProgram>);
+  } as PauseInstruction<
+    TProgramAddress,
+    TAccountAdmin,
+    TAccountConfig,
+    TAccountSystemProgram
+  >);
 }
 
 export type ParsedPauseInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -260,7 +270,7 @@ export type ParsedPauseInstruction<
 
 export function parsePauseInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[]
+  TAccountMetas extends readonly AccountMeta[],
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -268,7 +278,7 @@ export function parsePauseInstruction<
 ): ParsedPauseInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
-    throw new Error("Not enough accounts");
+    throw new Error('Not enough accounts');
   }
   let accountIndex = 0;
   const getNextAccount = () => {

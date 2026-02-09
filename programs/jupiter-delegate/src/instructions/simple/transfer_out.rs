@@ -71,7 +71,7 @@ pub fn prorcess_transfer_out(ctx: Context<TransferOut>, amounts: u64) -> Result<
     );
     ctx.accounts.config.last_trade_timestamp = now;
 
-    // 4. 从 delegate 转账到 vault
+    // 4. 从 vault 转账到 to_token_account
     let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
     transfer_checked(
         CpiContext::new_with_signer(

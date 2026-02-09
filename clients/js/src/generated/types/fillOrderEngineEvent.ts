@@ -18,7 +18,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from "@solana/kit";
+} from '@solana/kit';
 
 export type FillOrderEngineEvent = {
   user: Address;
@@ -38,21 +38,21 @@ export type FillOrderEngineEventArgs = {
 
 export function getFillOrderEngineEventEncoder(): FixedSizeEncoder<FillOrderEngineEventArgs> {
   return getStructEncoder([
-    ["user", getAddressEncoder()],
-    ["inputMint", getAddressEncoder()],
-    ["outputMint", getAddressEncoder()],
-    ["inputAmount", getU64Encoder()],
-    ["operator", getAddressEncoder()],
+    ['user', getAddressEncoder()],
+    ['inputMint', getAddressEncoder()],
+    ['outputMint', getAddressEncoder()],
+    ['inputAmount', getU64Encoder()],
+    ['operator', getAddressEncoder()],
   ]);
 }
 
 export function getFillOrderEngineEventDecoder(): FixedSizeDecoder<FillOrderEngineEvent> {
   return getStructDecoder([
-    ["user", getAddressDecoder()],
-    ["inputMint", getAddressDecoder()],
-    ["outputMint", getAddressDecoder()],
-    ["inputAmount", getU64Decoder()],
-    ["operator", getAddressDecoder()],
+    ['user', getAddressDecoder()],
+    ['inputMint', getAddressDecoder()],
+    ['outputMint', getAddressDecoder()],
+    ['inputAmount', getU64Decoder()],
+    ['operator', getAddressDecoder()],
   ]);
 }
 

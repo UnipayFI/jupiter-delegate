@@ -11,20 +11,41 @@ use solana_pubkey::Pubkey;
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AdminTransferProposedEvent {
+pub struct TwoHopEvent {
     #[cfg_attr(
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub config: Pubkey,
+    pub user: Pubkey,
     #[cfg_attr(
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub current_admin: Pubkey,
+    pub step1_input_mint: Pubkey,
     #[cfg_attr(
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub proposed_admin: Pubkey,
+    pub step1_output_mint: Pubkey,
+    pub step1_input_amount: u64,
+    pub step1_output_amount: u64,
+    pub step1_action: String,
+    #[cfg_attr(
+        feature = "serde",
+        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
+    )]
+    pub step2_input_mint: Pubkey,
+    #[cfg_attr(
+        feature = "serde",
+        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
+    )]
+    pub step2_output_mint: Pubkey,
+    pub step2_input_amount: u64,
+    pub step2_output_amount: u64,
+    pub step2_action: String,
+    #[cfg_attr(
+        feature = "serde",
+        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
+    )]
+    pub operator: Pubkey,
 }

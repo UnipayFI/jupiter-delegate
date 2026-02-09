@@ -51,6 +51,7 @@ export function getTokenReceiveDiscriminatorBytes() {
 
 export type TokenReceiveInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TAccountConfig extends string | AccountMeta<string> = string,
   TAccountOutputMint extends string | AccountMeta<string> = string,
   TAccountOutputMintProgram extends string | AccountMeta<string> = string,
   TAccountExecutor extends string | AccountMeta<string> = string,
@@ -68,6 +69,9 @@ export type TokenReceiveInstruction<
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
     [
+      TAccountConfig extends string
+        ? ReadonlyAccount<TAccountConfig>
+        : TAccountConfig,
       TAccountOutputMint extends string
         ? ReadonlyAccount<TAccountOutputMint>
         : TAccountOutputMint,
@@ -125,6 +129,7 @@ export function getTokenReceiveInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type TokenReceiveAsyncInput<
+  TAccountConfig extends string = string,
   TAccountOutputMint extends string = string,
   TAccountOutputMintProgram extends string = string,
   TAccountExecutor extends string = string,
@@ -134,6 +139,7 @@ export type TokenReceiveAsyncInput<
   TAccountReceiver extends string = string,
   TAccountAccess extends string = string,
 > = {
+  config: Address<TAccountConfig>;
   outputMint: Address<TAccountOutputMint>;
   outputMintProgram: Address<TAccountOutputMintProgram>;
   executor: TransactionSigner<TAccountExecutor>;
@@ -145,6 +151,7 @@ export type TokenReceiveAsyncInput<
 };
 
 export async function getTokenReceiveInstructionAsync<
+  TAccountConfig extends string,
   TAccountOutputMint extends string,
   TAccountOutputMintProgram extends string,
   TAccountExecutor extends string,
@@ -156,6 +163,7 @@ export async function getTokenReceiveInstructionAsync<
   TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: TokenReceiveAsyncInput<
+    TAccountConfig,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
@@ -169,6 +177,7 @@ export async function getTokenReceiveInstructionAsync<
 ): Promise<
   TokenReceiveInstruction<
     TProgramAddress,
+    TAccountConfig,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
@@ -185,6 +194,7 @@ export async function getTokenReceiveInstructionAsync<
 
   // Original accounts.
   const originalAccounts = {
+    config: { value: input.config ?? null, isWritable: false },
     outputMint: { value: input.outputMint ?? null, isWritable: false },
     outputMintProgram: {
       value: input.outputMintProgram ?? null,
@@ -253,6 +263,7 @@ export async function getTokenReceiveInstructionAsync<
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
+      getAccountMeta(accounts.config),
       getAccountMeta(accounts.outputMint),
       getAccountMeta(accounts.outputMintProgram),
       getAccountMeta(accounts.executor),
@@ -266,6 +277,7 @@ export async function getTokenReceiveInstructionAsync<
     programAddress,
   } as TokenReceiveInstruction<
     TProgramAddress,
+    TAccountConfig,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
@@ -278,6 +290,7 @@ export async function getTokenReceiveInstructionAsync<
 }
 
 export type TokenReceiveInput<
+  TAccountConfig extends string = string,
   TAccountOutputMint extends string = string,
   TAccountOutputMintProgram extends string = string,
   TAccountExecutor extends string = string,
@@ -287,6 +300,7 @@ export type TokenReceiveInput<
   TAccountReceiver extends string = string,
   TAccountAccess extends string = string,
 > = {
+  config: Address<TAccountConfig>;
   outputMint: Address<TAccountOutputMint>;
   outputMintProgram: Address<TAccountOutputMintProgram>;
   executor: TransactionSigner<TAccountExecutor>;
@@ -298,6 +312,7 @@ export type TokenReceiveInput<
 };
 
 export function getTokenReceiveInstruction<
+  TAccountConfig extends string,
   TAccountOutputMint extends string,
   TAccountOutputMintProgram extends string,
   TAccountExecutor extends string,
@@ -309,6 +324,7 @@ export function getTokenReceiveInstruction<
   TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
 >(
   input: TokenReceiveInput<
+    TAccountConfig,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
@@ -321,6 +337,7 @@ export function getTokenReceiveInstruction<
   config?: { programAddress?: TProgramAddress }
 ): TokenReceiveInstruction<
   TProgramAddress,
+  TAccountConfig,
   TAccountOutputMint,
   TAccountOutputMintProgram,
   TAccountExecutor,
@@ -336,6 +353,7 @@ export function getTokenReceiveInstruction<
 
   // Original accounts.
   const originalAccounts = {
+    config: { value: input.config ?? null, isWritable: false },
     outputMint: { value: input.outputMint ?? null, isWritable: false },
     outputMintProgram: {
       value: input.outputMintProgram ?? null,
@@ -362,6 +380,7 @@ export function getTokenReceiveInstruction<
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
     accounts: [
+      getAccountMeta(accounts.config),
       getAccountMeta(accounts.outputMint),
       getAccountMeta(accounts.outputMintProgram),
       getAccountMeta(accounts.executor),
@@ -375,6 +394,7 @@ export function getTokenReceiveInstruction<
     programAddress,
   } as TokenReceiveInstruction<
     TProgramAddress,
+    TAccountConfig,
     TAccountOutputMint,
     TAccountOutputMintProgram,
     TAccountExecutor,
@@ -392,14 +412,15 @@ export type ParsedTokenReceiveInstruction<
 > = {
   programAddress: Address<TProgram>;
   accounts: {
-    outputMint: TAccountMetas[0];
-    outputMintProgram: TAccountMetas[1];
-    executor: TAccountMetas[2];
-    executorOutputTokenAccount: TAccountMetas[3];
-    receiverOutputTokenAccount: TAccountMetas[4];
-    delegate: TAccountMetas[5];
-    receiver: TAccountMetas[6];
-    access: TAccountMetas[7];
+    config: TAccountMetas[0];
+    outputMint: TAccountMetas[1];
+    outputMintProgram: TAccountMetas[2];
+    executor: TAccountMetas[3];
+    executorOutputTokenAccount: TAccountMetas[4];
+    receiverOutputTokenAccount: TAccountMetas[5];
+    delegate: TAccountMetas[6];
+    receiver: TAccountMetas[7];
+    access: TAccountMetas[8];
   };
   data: TokenReceiveInstructionData;
 };
@@ -412,7 +433,7 @@ export function parseTokenReceiveInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>
 ): ParsedTokenReceiveInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 8) {
+  if (instruction.accounts.length < 9) {
     // TODO: Coded error.
     throw new Error('Not enough accounts');
   }
@@ -425,6 +446,7 @@ export function parseTokenReceiveInstruction<
   return {
     programAddress: instruction.programAddress,
     accounts: {
+      config: getNextAccount(),
       outputMint: getNextAccount(),
       outputMintProgram: getNextAccount(),
       executor: getNextAccount(),

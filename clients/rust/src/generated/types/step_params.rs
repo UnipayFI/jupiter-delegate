@@ -6,17 +6,15 @@
 //!
 
 use crate::generated::types::StepAction;
-use borsh::BorshSerialize;
 use borsh::BorshDeserialize;
+use borsh::BorshSerialize;
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StepParams {
-pub action: StepAction,
-pub account_counts: u8,
-pub data: Vec<u8>,
-pub amount_in: u64,
-pub expect_amount_out: u64,
+    pub action: StepAction,
+    pub account_counts: u8,
+    pub data: Vec<u8>,
+    pub amount_in: u64,
+    pub expect_amount_out: u64,
 }
-
-

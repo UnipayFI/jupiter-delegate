@@ -40,6 +40,8 @@ pub struct TransferOut<'info> {
     pub to_token_account: InterfaceAccount<'info, TokenAccount>,
 
     pub token_program: Interface<'info, TokenInterface>,
+
+    pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
 pub fn prorcess_transfer_out(ctx: Context<TransferOut>, amounts: u64) -> Result<()> {

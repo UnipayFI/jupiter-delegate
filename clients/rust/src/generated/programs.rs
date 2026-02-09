@@ -7,7 +7,5 @@
 
 use solana_pubkey::{pubkey, Pubkey};
 
-
-  /// `jupiter_delegate` program ID.
-  pub const JUPITER_DELEGATE_ID: Pubkey = pubkey!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");
-
+/// `jupiter_delegate` program ID.
+pub const JUPITER_DELEGATE_ID: Pubkey = pubkey!("JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir");

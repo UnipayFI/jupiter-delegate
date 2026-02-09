@@ -4,10 +4,15 @@ use anchor_spl::token_interface::{
     transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked,
 };
 
-use crate::{constants::ACCESS_SEED, error::ErrorCode, state::Access};
+use crate::{
+    constants::ACCESS_SEED,
+    error::ErrorCode,
+    state::{Access, Config},
+};
 
 #[derive(Accounts)]
 pub struct TokenReceive<'info> {
+    pub config: Account<'info, Config>,
     pub output_mint: InterfaceAccount<'info, Mint>,
     pub output_mint_program: Interface<'info, TokenInterface>,
 
@@ -42,6 +47,17 @@ pub struct TokenReceive<'info> {
 }
 
 pub fn process_token_receive(ctx: Context<TokenReceive>) -> Result<()> {
+    // 0. 验证 executor 权限
+    require!(
+        ctx.accounts.executor.key() == ctx.accounts.config.operator
+            || ctx.accounts.executor.key() == ctx.accounts.config.admin,
+        ErrorCode::InvalidOperator
+    );
+    require!(
+        ctx.accounts.config.is_initialized,
+        ErrorCode::ConfigNotInitialized
+    );
+    require!(!ctx.accounts.config.is_paused, ErrorCode::ConfigPaused);
     // 1. 验证接收者代币账户存在
     require!(
         ctx.accounts.executor_output_token_account.amount > 0,

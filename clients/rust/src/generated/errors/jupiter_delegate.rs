@@ -94,6 +94,33 @@ pub enum JupiterDelegateError {
     /// 6027 - Invalid order engine data
     #[error("Invalid order engine data")]
     InvalidOrderEngineData = 0x178B,
+    /// 6028 - Two hop insufficient input amount
+    #[error("Two hop insufficient input amount")]
+    TwoHopInsufficientInputAmount = 0x178C,
+    /// 6029 - Two hop max slippage output amount exceeded
+    #[error("Two hop max slippage output amount exceeded")]
+    TwoHopMaxSlippageOutputAmountExceeded = 0x178D,
+    /// 6030 - Two hop invalid intermediate token amount
+    #[error("Two hop invalid intermediate token amount")]
+    TwoHopInvalidIntermediateTokenAmount = 0x178E,
+    /// 6031 - Executor output token account is insufficient
+    #[error("Executor output token account is insufficient")]
+    ExecutorOutputTokenAccountIsInsufficient = 0x178F,
+    /// 6032 - Fund vault output token account not found
+    #[error("Fund vault output token account not found")]
+    FundVaultOutputTokenAccountNotFound = 0x1790,
+    /// 6033 - Unsupported token program
+    #[error("Unsupported token program")]
+    UnsupportedTokenProgram = 0x1791,
+    /// 6034 - Delegate is not receiver
+    #[error("Delegate is not receiver")]
+    DelegateIsNotReceiver = 0x1792,
+    /// 6035 - Insufficient funds
+    #[error("Insufficient funds")]
+    InsufficientFunds = 0x1793,
+    /// 6036 - Invalid token account
+    #[error("Invalid token account")]
+    InvalidTokenAccount = 0x1794,
 }
 
 impl From<JupiterDelegateError> for solana_program_error::ProgramError {
@@ -101,4 +128,3 @@ impl From<JupiterDelegateError> for solana_program_error::ProgramError {
         solana_program_error::ProgramError::Custom(e as u32)
     }
 }
-

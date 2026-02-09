@@ -28,6 +28,8 @@ import {
   type ParsedRevokeAccessInstruction,
   type ParsedSwapInstruction,
   type ParsedTokenReceiveInstruction,
+  type ParsedTransferInInstruction,
+  type ParsedTransferOutInstruction,
   type ParsedTwoHopInstruction,
 } from '../instructions';
 
@@ -85,6 +87,8 @@ export enum JupiterDelegateInstruction {
   RevokeAccess,
   Swap,
   TokenReceive,
+  TransferIn,
+  TransferOut,
   TwoHop,
 }
 
@@ -250,6 +254,28 @@ export function identifyJupiterDelegateInstruction(
     containsBytes(
       data,
       fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([202, 139, 176, 95, 86, 130, 98, 69])
+      ),
+      0
+    )
+  ) {
+    return JupiterDelegateInstruction.TransferIn;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        new Uint8Array([202, 137, 44, 229, 158, 255, 205, 174])
+      ),
+      0
+    )
+  ) {
+    return JupiterDelegateInstruction.TransferOut;
+  }
+  if (
+    containsBytes(
+      data,
+      fixEncoderSize(getBytesEncoder(), 8).encode(
         new Uint8Array([82, 39, 54, 208, 18, 205, 214, 218])
       ),
       0
@@ -307,6 +333,12 @@ export type ParsedJupiterDelegateInstruction<
   | ({
       instructionType: JupiterDelegateInstruction.TokenReceive;
     } & ParsedTokenReceiveInstruction<TProgram>)
+  | ({
+      instructionType: JupiterDelegateInstruction.TransferIn;
+    } & ParsedTransferInInstruction<TProgram>)
+  | ({
+      instructionType: JupiterDelegateInstruction.TransferOut;
+    } & ParsedTransferOutInstruction<TProgram>)
   | ({
       instructionType: JupiterDelegateInstruction.TwoHop;
     } & ParsedTwoHopInstruction<TProgram>);

@@ -5,6 +5,7 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-pub(crate) mod jupiter_delegate;
-
-pub use self::jupiter_delegate::JupiterDelegateError;
+      pub(crate) mod jupiter_delegate;
+  
+      pub use self::jupiter_delegate::JupiterDelegateError;
+  

@@ -5,765 +5,728 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-use borsh::BorshDeserialize;
-use borsh::BorshSerialize;
 use solana_pubkey::Pubkey;
+use borsh::BorshSerialize;
+use borsh::BorshDeserialize;
 
 pub const SWAP_DISCRIMINATOR: [u8; 8] = [248, 198, 158, 145, 225, 117, 135, 200];
 
 /// Accounts.
 #[derive(Debug)]
 pub struct Swap {
-    pub input_mint: solana_pubkey::Pubkey,
-
-    pub input_mint_program: solana_pubkey::Pubkey,
-
-    pub output_mint: solana_pubkey::Pubkey,
-
-    pub output_mint_program: solana_pubkey::Pubkey,
-
-    pub operator: solana_pubkey::Pubkey,
-
-    pub vault: solana_pubkey::Pubkey,
-
-    pub vault_input_token_account: solana_pubkey::Pubkey,
-
-    pub config: solana_pubkey::Pubkey,
-
-    pub delegate_input_token_account: solana_pubkey::Pubkey,
-
-    pub access: solana_pubkey::Pubkey,
-
-    pub user: solana_pubkey::Pubkey,
-
-    pub jupiter_program: solana_pubkey::Pubkey,
-}
+      
+              
+          pub input_mint: solana_pubkey::Pubkey,
+          
+              
+          pub input_mint_program: solana_pubkey::Pubkey,
+          
+              
+          pub output_mint: solana_pubkey::Pubkey,
+          
+              
+          pub output_mint_program: solana_pubkey::Pubkey,
+          
+              
+          pub operator: solana_pubkey::Pubkey,
+          
+              
+          pub vault: solana_pubkey::Pubkey,
+          
+              
+          pub vault_input_token_account: solana_pubkey::Pubkey,
+          
+              
+          pub config: solana_pubkey::Pubkey,
+          
+              
+          pub delegate_input_token_account: solana_pubkey::Pubkey,
+          
+              
+          pub access: solana_pubkey::Pubkey,
+          
+              
+          pub user: solana_pubkey::Pubkey,
+          
+              
+          pub jupiter_program: solana_pubkey::Pubkey,
+      }
 
 impl Swap {
-    pub fn instruction(&self, args: SwapInstructionArgs) -> solana_instruction::Instruction {
-        self.instruction_with_remaining_accounts(args, &[])
-    }
-    #[allow(clippy::arithmetic_side_effects)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn instruction_with_remaining_accounts(
-        &self,
-        args: SwapInstructionArgs,
-        remaining_accounts: &[solana_instruction::AccountMeta],
-    ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+  pub fn instruction(&self, args: SwapInstructionArgs) -> solana_instruction::Instruction {
+    self.instruction_with_remaining_accounts(args, &[])
+  }
+  #[allow(clippy::arithmetic_side_effects)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn instruction_with_remaining_accounts(&self, args: SwapInstructionArgs, remaining_accounts: &[solana_instruction::AccountMeta]) -> solana_instruction::Instruction {
+    let mut accounts = Vec::with_capacity(12+ remaining_accounts.len());
+                            accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.input_mint,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.input_mint_program,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.output_mint,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.output_mint_program,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(self.operator, true));
-        accounts.push(solana_instruction::AccountMeta::new(self.vault, false));
-        accounts.push(solana_instruction::AccountMeta::new(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
+            self.operator,
+            true
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
+            self.vault,
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             self.vault_input_token_account,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(self.config, false));
-        accounts.push(solana_instruction::AccountMeta::new(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
+            self.config,
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             self.delegate_input_token_account,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.access,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
-            self.user, false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
+            self.user,
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.jupiter_program,
-            false,
-        ));
-        accounts.extend_from_slice(remaining_accounts);
-        let mut data = SwapInstructionData::new().try_to_vec().unwrap();
-        let mut args = args.try_to_vec().unwrap();
-        data.append(&mut args);
-
-        solana_instruction::Instruction {
-            program_id: crate::JUPITER_DELEGATE_ID,
-            accounts,
-            data,
-        }
+            false
+          ));
+                      accounts.extend_from_slice(remaining_accounts);
+    let mut data = SwapInstructionData::new().try_to_vec().unwrap();
+          let mut args = args.try_to_vec().unwrap();
+      data.append(&mut args);
+    
+    solana_instruction::Instruction {
+      program_id: crate::JUPITER_DELEGATE_ID,
+      accounts,
+      data,
     }
+  }
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct SwapInstructionData {
-    discriminator: [u8; 8],
-}
+ pub struct SwapInstructionData {
+            discriminator: [u8; 8],
+                        }
 
 impl SwapInstructionData {
-    pub fn new() -> Self {
-        Self {
-            discriminator: [248, 198, 158, 145, 225, 117, 135, 200],
-        }
-    }
+  pub fn new() -> Self {
+    Self {
+                        discriminator: [248, 198, 158, 145, 225, 117, 135, 200],
+                                                            }
+  }
 
     pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
-        borsh::to_vec(self)
-    }
-}
+    borsh::to_vec(self)
+  }
+  }
 
 impl Default for SwapInstructionData {
-    fn default() -> Self {
-        Self::new()
-    }
+  fn default() -> Self {
+    Self::new()
+  }
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct SwapInstructionArgs {
-    pub data: Vec<u8>,
-    pub in_amount: u64,
-    pub delegate: Pubkey,
-}
+ pub struct SwapInstructionArgs {
+                  pub data: Vec<u8>,
+                pub in_amount: u64,
+                pub delegate: Pubkey,
+      }
 
 impl SwapInstructionArgs {
-    pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
-        borsh::to_vec(self)
-    }
+  pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
+    borsh::to_vec(self)
+  }
 }
+
 
 /// Instruction builder for `Swap`.
 ///
 /// ### Accounts:
 ///
-///   0. `[]` input_mint
-///   1. `[]` input_mint_program
-///   2. `[]` output_mint
-///   3. `[]` output_mint_program
-///   4. `[writable, signer]` operator
-///   5. `[writable]` vault
-///   6. `[writable]` vault_input_token_account
-///   7. `[writable]` config
-///   8. `[writable]` delegate_input_token_account
-///   9. `[]` access
-///   10. `[]` user
-///   11. `[optional]` jupiter_program (default to `JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4`)
+          ///   0. `[]` input_mint
+          ///   1. `[]` input_mint_program
+          ///   2. `[]` output_mint
+          ///   3. `[]` output_mint_program
+                      ///   4. `[writable, signer]` operator
+                ///   5. `[writable]` vault
+                ///   6. `[writable]` vault_input_token_account
+                ///   7. `[writable]` config
+                ///   8. `[writable]` delegate_input_token_account
+          ///   9. `[]` access
+          ///   10. `[]` user
+                ///   11. `[optional]` jupiter_program (default to `JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4`)
 #[derive(Clone, Debug, Default)]
 pub struct SwapBuilder {
-    input_mint: Option<solana_pubkey::Pubkey>,
-    input_mint_program: Option<solana_pubkey::Pubkey>,
-    output_mint: Option<solana_pubkey::Pubkey>,
-    output_mint_program: Option<solana_pubkey::Pubkey>,
-    operator: Option<solana_pubkey::Pubkey>,
-    vault: Option<solana_pubkey::Pubkey>,
-    vault_input_token_account: Option<solana_pubkey::Pubkey>,
-    config: Option<solana_pubkey::Pubkey>,
-    delegate_input_token_account: Option<solana_pubkey::Pubkey>,
-    access: Option<solana_pubkey::Pubkey>,
-    user: Option<solana_pubkey::Pubkey>,
-    jupiter_program: Option<solana_pubkey::Pubkey>,
-    data: Option<Vec<u8>>,
-    in_amount: Option<u64>,
-    delegate: Option<Pubkey>,
-    __remaining_accounts: Vec<solana_instruction::AccountMeta>,
+            input_mint: Option<solana_pubkey::Pubkey>,
+                input_mint_program: Option<solana_pubkey::Pubkey>,
+                output_mint: Option<solana_pubkey::Pubkey>,
+                output_mint_program: Option<solana_pubkey::Pubkey>,
+                operator: Option<solana_pubkey::Pubkey>,
+                vault: Option<solana_pubkey::Pubkey>,
+                vault_input_token_account: Option<solana_pubkey::Pubkey>,
+                config: Option<solana_pubkey::Pubkey>,
+                delegate_input_token_account: Option<solana_pubkey::Pubkey>,
+                access: Option<solana_pubkey::Pubkey>,
+                user: Option<solana_pubkey::Pubkey>,
+                jupiter_program: Option<solana_pubkey::Pubkey>,
+                        data: Option<Vec<u8>>,
+                in_amount: Option<u64>,
+                delegate: Option<Pubkey>,
+        __remaining_accounts: Vec<solana_instruction::AccountMeta>,
 }
 
 impl SwapBuilder {
-    pub fn new() -> Self {
-        Self::default()
-    }
-    #[inline(always)]
+  pub fn new() -> Self {
+    Self::default()
+  }
+            #[inline(always)]
     pub fn input_mint(&mut self, input_mint: solana_pubkey::Pubkey) -> &mut Self {
-        self.input_mint = Some(input_mint);
-        self
+                        self.input_mint = Some(input_mint);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn input_mint_program(&mut self, input_mint_program: solana_pubkey::Pubkey) -> &mut Self {
-        self.input_mint_program = Some(input_mint_program);
-        self
+                        self.input_mint_program = Some(input_mint_program);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn output_mint(&mut self, output_mint: solana_pubkey::Pubkey) -> &mut Self {
-        self.output_mint = Some(output_mint);
-        self
+                        self.output_mint = Some(output_mint);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn output_mint_program(&mut self, output_mint_program: solana_pubkey::Pubkey) -> &mut Self {
-        self.output_mint_program = Some(output_mint_program);
-        self
+                        self.output_mint_program = Some(output_mint_program);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn operator(&mut self, operator: solana_pubkey::Pubkey) -> &mut Self {
-        self.operator = Some(operator);
-        self
+                        self.operator = Some(operator);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn vault(&mut self, vault: solana_pubkey::Pubkey) -> &mut Self {
-        self.vault = Some(vault);
-        self
+                        self.vault = Some(vault);
+                    self
     }
-    #[inline(always)]
-    pub fn vault_input_token_account(
-        &mut self,
-        vault_input_token_account: solana_pubkey::Pubkey,
-    ) -> &mut Self {
-        self.vault_input_token_account = Some(vault_input_token_account);
-        self
+            #[inline(always)]
+    pub fn vault_input_token_account(&mut self, vault_input_token_account: solana_pubkey::Pubkey) -> &mut Self {
+                        self.vault_input_token_account = Some(vault_input_token_account);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn config(&mut self, config: solana_pubkey::Pubkey) -> &mut Self {
-        self.config = Some(config);
-        self
+                        self.config = Some(config);
+                    self
     }
-    #[inline(always)]
-    pub fn delegate_input_token_account(
-        &mut self,
-        delegate_input_token_account: solana_pubkey::Pubkey,
-    ) -> &mut Self {
-        self.delegate_input_token_account = Some(delegate_input_token_account);
-        self
+            #[inline(always)]
+    pub fn delegate_input_token_account(&mut self, delegate_input_token_account: solana_pubkey::Pubkey) -> &mut Self {
+                        self.delegate_input_token_account = Some(delegate_input_token_account);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn access(&mut self, access: solana_pubkey::Pubkey) -> &mut Self {
-        self.access = Some(access);
-        self
+                        self.access = Some(access);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn user(&mut self, user: solana_pubkey::Pubkey) -> &mut Self {
-        self.user = Some(user);
-        self
+                        self.user = Some(user);
+                    self
     }
-    /// `[optional account, default to 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4']`
-    #[inline(always)]
+            /// `[optional account, default to 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4']`
+#[inline(always)]
     pub fn jupiter_program(&mut self, jupiter_program: solana_pubkey::Pubkey) -> &mut Self {
-        self.jupiter_program = Some(jupiter_program);
-        self
+                        self.jupiter_program = Some(jupiter_program);
+                    self
     }
-    #[inline(always)]
-    pub fn data(&mut self, data: Vec<u8>) -> &mut Self {
+                    #[inline(always)]
+      pub fn data(&mut self, data: Vec<u8>) -> &mut Self {
         self.data = Some(data);
         self
-    }
-    #[inline(always)]
-    pub fn in_amount(&mut self, in_amount: u64) -> &mut Self {
+      }
+                #[inline(always)]
+      pub fn in_amount(&mut self, in_amount: u64) -> &mut Self {
         self.in_amount = Some(in_amount);
         self
-    }
-    #[inline(always)]
-    pub fn delegate(&mut self, delegate: Pubkey) -> &mut Self {
+      }
+                #[inline(always)]
+      pub fn delegate(&mut self, delegate: Pubkey) -> &mut Self {
         self.delegate = Some(delegate);
         self
-    }
-    /// Add an additional account to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_account(&mut self, account: solana_instruction::AccountMeta) -> &mut Self {
-        self.__remaining_accounts.push(account);
-        self
-    }
-    /// Add additional accounts to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_accounts(
-        &mut self,
-        accounts: &[solana_instruction::AccountMeta],
-    ) -> &mut Self {
-        self.__remaining_accounts.extend_from_slice(accounts);
-        self
-    }
-    #[allow(clippy::clone_on_copy)]
-    pub fn instruction(&self) -> solana_instruction::Instruction {
-        let accounts = Swap {
-            input_mint: self.input_mint.expect("input_mint is not set"),
-            input_mint_program: self
-                .input_mint_program
-                .expect("input_mint_program is not set"),
-            output_mint: self.output_mint.expect("output_mint is not set"),
-            output_mint_program: self
-                .output_mint_program
-                .expect("output_mint_program is not set"),
-            operator: self.operator.expect("operator is not set"),
-            vault: self.vault.expect("vault is not set"),
-            vault_input_token_account: self
-                .vault_input_token_account
-                .expect("vault_input_token_account is not set"),
-            config: self.config.expect("config is not set"),
-            delegate_input_token_account: self
-                .delegate_input_token_account
-                .expect("delegate_input_token_account is not set"),
-            access: self.access.expect("access is not set"),
-            user: self.user.expect("user is not set"),
-            jupiter_program: self.jupiter_program.unwrap_or(solana_pubkey::pubkey!(
-                "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
-            )),
-        };
-        let args = SwapInstructionArgs {
-            data: self.data.clone().expect("data is not set"),
-            in_amount: self.in_amount.clone().expect("in_amount is not set"),
-            delegate: self.delegate.clone().expect("delegate is not set"),
-        };
-
-        accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
-    }
+      }
+        /// Add an additional account to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_account(&mut self, account: solana_instruction::AccountMeta) -> &mut Self {
+    self.__remaining_accounts.push(account);
+    self
+  }
+  /// Add additional accounts to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_accounts(&mut self, accounts: &[solana_instruction::AccountMeta]) -> &mut Self {
+    self.__remaining_accounts.extend_from_slice(accounts);
+    self
+  }
+  #[allow(clippy::clone_on_copy)]
+  pub fn instruction(&self) -> solana_instruction::Instruction {
+    let accounts = Swap {
+                              input_mint: self.input_mint.expect("input_mint is not set"),
+                                        input_mint_program: self.input_mint_program.expect("input_mint_program is not set"),
+                                        output_mint: self.output_mint.expect("output_mint is not set"),
+                                        output_mint_program: self.output_mint_program.expect("output_mint_program is not set"),
+                                        operator: self.operator.expect("operator is not set"),
+                                        vault: self.vault.expect("vault is not set"),
+                                        vault_input_token_account: self.vault_input_token_account.expect("vault_input_token_account is not set"),
+                                        config: self.config.expect("config is not set"),
+                                        delegate_input_token_account: self.delegate_input_token_account.expect("delegate_input_token_account is not set"),
+                                        access: self.access.expect("access is not set"),
+                                        user: self.user.expect("user is not set"),
+                                        jupiter_program: self.jupiter_program.unwrap_or(solana_pubkey::pubkey!("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4")),
+                      };
+          let args = SwapInstructionArgs {
+                                                              data: self.data.clone().expect("data is not set"),
+                                                                  in_amount: self.in_amount.clone().expect("in_amount is not set"),
+                                                                  delegate: self.delegate.clone().expect("delegate is not set"),
+                                    };
+    
+    accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
+  }
 }
 
-/// `swap` CPI accounts.
-pub struct SwapCpiAccounts<'a, 'b> {
-    pub input_mint: &'b solana_account_info::AccountInfo<'a>,
-
-    pub input_mint_program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub output_mint: &'b solana_account_info::AccountInfo<'a>,
-
-    pub output_mint_program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub operator: &'b solana_account_info::AccountInfo<'a>,
-
-    pub vault: &'b solana_account_info::AccountInfo<'a>,
-
-    pub vault_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-
-    pub config: &'b solana_account_info::AccountInfo<'a>,
-
-    pub delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-
-    pub access: &'b solana_account_info::AccountInfo<'a>,
-
-    pub user: &'b solana_account_info::AccountInfo<'a>,
-
-    pub jupiter_program: &'b solana_account_info::AccountInfo<'a>,
-}
+  /// `swap` CPI accounts.
+  pub struct SwapCpiAccounts<'a, 'b> {
+          
+                    
+              pub input_mint: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub input_mint_program: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub output_mint: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub output_mint_program: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub operator: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub vault: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub vault_input_token_account: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub config: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub access: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub user: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub jupiter_program: &'b solana_account_info::AccountInfo<'a>,
+            }
 
 /// `swap` CPI instruction.
 pub struct SwapCpi<'a, 'b> {
-    /// The program to invoke.
-    pub __program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub input_mint: &'b solana_account_info::AccountInfo<'a>,
-
-    pub input_mint_program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub output_mint: &'b solana_account_info::AccountInfo<'a>,
-
-    pub output_mint_program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub operator: &'b solana_account_info::AccountInfo<'a>,
-
-    pub vault: &'b solana_account_info::AccountInfo<'a>,
-
-    pub vault_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-
-    pub config: &'b solana_account_info::AccountInfo<'a>,
-
-    pub delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-
-    pub access: &'b solana_account_info::AccountInfo<'a>,
-
-    pub user: &'b solana_account_info::AccountInfo<'a>,
-
-    pub jupiter_program: &'b solana_account_info::AccountInfo<'a>,
-    /// The arguments for the instruction.
+  /// The program to invoke.
+  pub __program: &'b solana_account_info::AccountInfo<'a>,
+      
+              
+          pub input_mint: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub input_mint_program: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub output_mint: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub output_mint_program: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub operator: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub vault: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub vault_input_token_account: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub config: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub access: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub user: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub jupiter_program: &'b solana_account_info::AccountInfo<'a>,
+            /// The arguments for the instruction.
     pub __args: SwapInstructionArgs,
-}
+  }
 
 impl<'a, 'b> SwapCpi<'a, 'b> {
-    pub fn new(
-        program: &'b solana_account_info::AccountInfo<'a>,
-        accounts: SwapCpiAccounts<'a, 'b>,
-        args: SwapInstructionArgs,
-    ) -> Self {
-        Self {
-            __program: program,
-            input_mint: accounts.input_mint,
-            input_mint_program: accounts.input_mint_program,
-            output_mint: accounts.output_mint,
-            output_mint_program: accounts.output_mint_program,
-            operator: accounts.operator,
-            vault: accounts.vault,
-            vault_input_token_account: accounts.vault_input_token_account,
-            config: accounts.config,
-            delegate_input_token_account: accounts.delegate_input_token_account,
-            access: accounts.access,
-            user: accounts.user,
-            jupiter_program: accounts.jupiter_program,
-            __args: args,
-        }
-    }
-    #[inline(always)]
-    pub fn invoke(&self) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(&[], &[])
-    }
-    #[inline(always)]
-    pub fn invoke_with_remaining_accounts(
-        &self,
-        remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(&[], remaining_accounts)
-    }
-    #[inline(always)]
-    pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(signers_seeds, &[])
-    }
-    #[allow(clippy::arithmetic_side_effects)]
-    #[allow(clippy::clone_on_copy)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn invoke_signed_with_remaining_accounts(
-        &self,
-        signers_seeds: &[&[&[u8]]],
-        remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+  pub fn new(
+    program: &'b solana_account_info::AccountInfo<'a>,
+          accounts: SwapCpiAccounts<'a, 'b>,
+              args: SwapInstructionArgs,
+      ) -> Self {
+    Self {
+      __program: program,
+              input_mint: accounts.input_mint,
+              input_mint_program: accounts.input_mint_program,
+              output_mint: accounts.output_mint,
+              output_mint_program: accounts.output_mint_program,
+              operator: accounts.operator,
+              vault: accounts.vault,
+              vault_input_token_account: accounts.vault_input_token_account,
+              config: accounts.config,
+              delegate_input_token_account: accounts.delegate_input_token_account,
+              access: accounts.access,
+              user: accounts.user,
+              jupiter_program: accounts.jupiter_program,
+                    __args: args,
+          }
+  }
+  #[inline(always)]
+  pub fn invoke(&self) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(&[], &[])
+  }
+  #[inline(always)]
+  pub fn invoke_with_remaining_accounts(&self, remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(&[], remaining_accounts)
+  }
+  #[inline(always)]
+  pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(signers_seeds, &[])
+  }
+  #[allow(clippy::arithmetic_side_effects)]
+  #[allow(clippy::clone_on_copy)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn invoke_signed_with_remaining_accounts(
+    &self,
+    signers_seeds: &[&[&[u8]]],
+    remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]
+  ) -> solana_program_error::ProgramResult {
+    let mut accounts = Vec::with_capacity(12+ remaining_accounts.len());
+                            accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.input_mint.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.input_mint_program.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.output_mint.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.output_mint_program.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             *self.operator.key,
-            true,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(*self.vault.key, false));
-        accounts.push(solana_instruction::AccountMeta::new(
+            true
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
+            *self.vault.key,
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             *self.vault_input_token_account.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             *self.config.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             *self.delegate_input_token_account.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.access.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.user.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.jupiter_program.key,
-            false,
-        ));
-        remaining_accounts.iter().for_each(|remaining_account| {
-            accounts.push(solana_instruction::AccountMeta {
-                pubkey: *remaining_account.0.key,
-                is_signer: remaining_account.1,
-                is_writable: remaining_account.2,
-            })
-        });
-        let mut data = SwapInstructionData::new().try_to_vec().unwrap();
-        let mut args = self.__args.try_to_vec().unwrap();
-        data.append(&mut args);
+            false
+          ));
+                      remaining_accounts.iter().for_each(|remaining_account| {
+      accounts.push(solana_instruction::AccountMeta {
+          pubkey: *remaining_account.0.key,
+          is_signer: remaining_account.1,
+          is_writable: remaining_account.2,
+      })
+    });
+    let mut data = SwapInstructionData::new().try_to_vec().unwrap();
+          let mut args = self.__args.try_to_vec().unwrap();
+      data.append(&mut args);
+    
+    let instruction = solana_instruction::Instruction {
+      program_id: crate::JUPITER_DELEGATE_ID,
+      accounts,
+      data,
+    };
+    let mut account_infos = Vec::with_capacity(13 + remaining_accounts.len());
+    account_infos.push(self.__program.clone());
+                  account_infos.push(self.input_mint.clone());
+                        account_infos.push(self.input_mint_program.clone());
+                        account_infos.push(self.output_mint.clone());
+                        account_infos.push(self.output_mint_program.clone());
+                        account_infos.push(self.operator.clone());
+                        account_infos.push(self.vault.clone());
+                        account_infos.push(self.vault_input_token_account.clone());
+                        account_infos.push(self.config.clone());
+                        account_infos.push(self.delegate_input_token_account.clone());
+                        account_infos.push(self.access.clone());
+                        account_infos.push(self.user.clone());
+                        account_infos.push(self.jupiter_program.clone());
+              remaining_accounts.iter().for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
 
-        let instruction = solana_instruction::Instruction {
-            program_id: crate::JUPITER_DELEGATE_ID,
-            accounts,
-            data,
-        };
-        let mut account_infos = Vec::with_capacity(13 + remaining_accounts.len());
-        account_infos.push(self.__program.clone());
-        account_infos.push(self.input_mint.clone());
-        account_infos.push(self.input_mint_program.clone());
-        account_infos.push(self.output_mint.clone());
-        account_infos.push(self.output_mint_program.clone());
-        account_infos.push(self.operator.clone());
-        account_infos.push(self.vault.clone());
-        account_infos.push(self.vault_input_token_account.clone());
-        account_infos.push(self.config.clone());
-        account_infos.push(self.delegate_input_token_account.clone());
-        account_infos.push(self.access.clone());
-        account_infos.push(self.user.clone());
-        account_infos.push(self.jupiter_program.clone());
-        remaining_accounts
-            .iter()
-            .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
-
-        if signers_seeds.is_empty() {
-            solana_cpi::invoke(&instruction, &account_infos)
-        } else {
-            solana_cpi::invoke_signed(&instruction, &account_infos, signers_seeds)
-        }
+    if signers_seeds.is_empty() {
+      solana_cpi::invoke(&instruction, &account_infos)
+    } else {
+      solana_cpi::invoke_signed(&instruction, &account_infos, signers_seeds)
     }
+  }
 }
 
 /// Instruction builder for `Swap` via CPI.
 ///
 /// ### Accounts:
 ///
-///   0. `[]` input_mint
-///   1. `[]` input_mint_program
-///   2. `[]` output_mint
-///   3. `[]` output_mint_program
-///   4. `[writable, signer]` operator
-///   5. `[writable]` vault
-///   6. `[writable]` vault_input_token_account
-///   7. `[writable]` config
-///   8. `[writable]` delegate_input_token_account
-///   9. `[]` access
-///   10. `[]` user
-///   11. `[]` jupiter_program
+          ///   0. `[]` input_mint
+          ///   1. `[]` input_mint_program
+          ///   2. `[]` output_mint
+          ///   3. `[]` output_mint_program
+                      ///   4. `[writable, signer]` operator
+                ///   5. `[writable]` vault
+                ///   6. `[writable]` vault_input_token_account
+                ///   7. `[writable]` config
+                ///   8. `[writable]` delegate_input_token_account
+          ///   9. `[]` access
+          ///   10. `[]` user
+          ///   11. `[]` jupiter_program
 #[derive(Clone, Debug)]
 pub struct SwapCpiBuilder<'a, 'b> {
-    instruction: Box<SwapCpiBuilderInstruction<'a, 'b>>,
+  instruction: Box<SwapCpiBuilderInstruction<'a, 'b>>,
 }
 
 impl<'a, 'b> SwapCpiBuilder<'a, 'b> {
-    pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
-        let instruction = Box::new(SwapCpiBuilderInstruction {
-            __program: program,
-            input_mint: None,
-            input_mint_program: None,
-            output_mint: None,
-            output_mint_program: None,
-            operator: None,
-            vault: None,
-            vault_input_token_account: None,
-            config: None,
-            delegate_input_token_account: None,
-            access: None,
-            user: None,
-            jupiter_program: None,
-            data: None,
-            in_amount: None,
-            delegate: None,
-            __remaining_accounts: Vec::new(),
-        });
-        Self { instruction }
+  pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
+    let instruction = Box::new(SwapCpiBuilderInstruction {
+      __program: program,
+              input_mint: None,
+              input_mint_program: None,
+              output_mint: None,
+              output_mint_program: None,
+              operator: None,
+              vault: None,
+              vault_input_token_account: None,
+              config: None,
+              delegate_input_token_account: None,
+              access: None,
+              user: None,
+              jupiter_program: None,
+                                            data: None,
+                                in_amount: None,
+                                delegate: None,
+                    __remaining_accounts: Vec::new(),
+    });
+    Self { instruction }
+  }
+      #[inline(always)]
+    pub fn input_mint(&mut self, input_mint: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.input_mint = Some(input_mint);
+                    self
     }
-    #[inline(always)]
-    pub fn input_mint(
-        &mut self,
-        input_mint: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.input_mint = Some(input_mint);
-        self
+      #[inline(always)]
+    pub fn input_mint_program(&mut self, input_mint_program: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.input_mint_program = Some(input_mint_program);
+                    self
     }
-    #[inline(always)]
-    pub fn input_mint_program(
-        &mut self,
-        input_mint_program: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.input_mint_program = Some(input_mint_program);
-        self
+      #[inline(always)]
+    pub fn output_mint(&mut self, output_mint: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.output_mint = Some(output_mint);
+                    self
     }
-    #[inline(always)]
-    pub fn output_mint(
-        &mut self,
-        output_mint: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.output_mint = Some(output_mint);
-        self
+      #[inline(always)]
+    pub fn output_mint_program(&mut self, output_mint_program: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.output_mint_program = Some(output_mint_program);
+                    self
     }
-    #[inline(always)]
-    pub fn output_mint_program(
-        &mut self,
-        output_mint_program: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.output_mint_program = Some(output_mint_program);
-        self
-    }
-    #[inline(always)]
+      #[inline(always)]
     pub fn operator(&mut self, operator: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.operator = Some(operator);
-        self
+                        self.instruction.operator = Some(operator);
+                    self
     }
-    #[inline(always)]
+      #[inline(always)]
     pub fn vault(&mut self, vault: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.vault = Some(vault);
-        self
+                        self.instruction.vault = Some(vault);
+                    self
     }
-    #[inline(always)]
-    pub fn vault_input_token_account(
-        &mut self,
-        vault_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.vault_input_token_account = Some(vault_input_token_account);
-        self
+      #[inline(always)]
+    pub fn vault_input_token_account(&mut self, vault_input_token_account: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.vault_input_token_account = Some(vault_input_token_account);
+                    self
     }
-    #[inline(always)]
+      #[inline(always)]
     pub fn config(&mut self, config: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.config = Some(config);
-        self
+                        self.instruction.config = Some(config);
+                    self
     }
-    #[inline(always)]
-    pub fn delegate_input_token_account(
-        &mut self,
-        delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.delegate_input_token_account = Some(delegate_input_token_account);
-        self
+      #[inline(always)]
+    pub fn delegate_input_token_account(&mut self, delegate_input_token_account: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.delegate_input_token_account = Some(delegate_input_token_account);
+                    self
     }
-    #[inline(always)]
+      #[inline(always)]
     pub fn access(&mut self, access: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.access = Some(access);
-        self
+                        self.instruction.access = Some(access);
+                    self
     }
-    #[inline(always)]
+      #[inline(always)]
     pub fn user(&mut self, user: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.user = Some(user);
-        self
+                        self.instruction.user = Some(user);
+                    self
     }
-    #[inline(always)]
-    pub fn jupiter_program(
-        &mut self,
-        jupiter_program: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.jupiter_program = Some(jupiter_program);
-        self
+      #[inline(always)]
+    pub fn jupiter_program(&mut self, jupiter_program: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.jupiter_program = Some(jupiter_program);
+                    self
     }
-    #[inline(always)]
-    pub fn data(&mut self, data: Vec<u8>) -> &mut Self {
+                    #[inline(always)]
+      pub fn data(&mut self, data: Vec<u8>) -> &mut Self {
         self.instruction.data = Some(data);
         self
-    }
-    #[inline(always)]
-    pub fn in_amount(&mut self, in_amount: u64) -> &mut Self {
+      }
+                #[inline(always)]
+      pub fn in_amount(&mut self, in_amount: u64) -> &mut Self {
         self.instruction.in_amount = Some(in_amount);
         self
-    }
-    #[inline(always)]
-    pub fn delegate(&mut self, delegate: Pubkey) -> &mut Self {
+      }
+                #[inline(always)]
+      pub fn delegate(&mut self, delegate: Pubkey) -> &mut Self {
         self.instruction.delegate = Some(delegate);
         self
-    }
-    /// Add an additional account to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_account(
-        &mut self,
-        account: &'b solana_account_info::AccountInfo<'a>,
-        is_writable: bool,
-        is_signer: bool,
-    ) -> &mut Self {
-        self.instruction
-            .__remaining_accounts
-            .push((account, is_writable, is_signer));
-        self
-    }
-    /// Add additional accounts to the instruction.
-    ///
-    /// Each account is represented by a tuple of the `AccountInfo`, a `bool` indicating whether the account is writable or not,
-    /// and a `bool` indicating whether the account is a signer or not.
-    #[inline(always)]
-    pub fn add_remaining_accounts(
-        &mut self,
-        accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> &mut Self {
-        self.instruction
-            .__remaining_accounts
-            .extend_from_slice(accounts);
-        self
-    }
-    #[inline(always)]
-    pub fn invoke(&self) -> solana_program_error::ProgramResult {
-        self.invoke_signed(&[])
-    }
-    #[allow(clippy::clone_on_copy)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
-        let args = SwapInstructionArgs {
-            data: self.instruction.data.clone().expect("data is not set"),
-            in_amount: self
-                .instruction
-                .in_amount
-                .clone()
-                .expect("in_amount is not set"),
-            delegate: self
-                .instruction
-                .delegate
-                .clone()
-                .expect("delegate is not set"),
-        };
+      }
+        /// Add an additional account to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_account(&mut self, account: &'b solana_account_info::AccountInfo<'a>, is_writable: bool, is_signer: bool) -> &mut Self {
+    self.instruction.__remaining_accounts.push((account, is_writable, is_signer));
+    self
+  }
+  /// Add additional accounts to the instruction.
+  ///
+  /// Each account is represented by a tuple of the `AccountInfo`, a `bool` indicating whether the account is writable or not,
+  /// and a `bool` indicating whether the account is a signer or not.
+  #[inline(always)]
+  pub fn add_remaining_accounts(&mut self, accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]) -> &mut Self {
+    self.instruction.__remaining_accounts.extend_from_slice(accounts);
+    self
+  }
+  #[inline(always)]
+  pub fn invoke(&self) -> solana_program_error::ProgramResult {
+    self.invoke_signed(&[])
+  }
+  #[allow(clippy::clone_on_copy)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
+          let args = SwapInstructionArgs {
+                                                              data: self.instruction.data.clone().expect("data is not set"),
+                                                                  in_amount: self.instruction.in_amount.clone().expect("in_amount is not set"),
+                                                                  delegate: self.instruction.delegate.clone().expect("delegate is not set"),
+                                    };
         let instruction = SwapCpi {
-            __program: self.instruction.__program,
-
-            input_mint: self.instruction.input_mint.expect("input_mint is not set"),
-
-            input_mint_program: self
-                .instruction
-                .input_mint_program
-                .expect("input_mint_program is not set"),
-
-            output_mint: self
-                .instruction
-                .output_mint
-                .expect("output_mint is not set"),
-
-            output_mint_program: self
-                .instruction
-                .output_mint_program
-                .expect("output_mint_program is not set"),
-
-            operator: self.instruction.operator.expect("operator is not set"),
-
-            vault: self.instruction.vault.expect("vault is not set"),
-
-            vault_input_token_account: self
-                .instruction
-                .vault_input_token_account
-                .expect("vault_input_token_account is not set"),
-
-            config: self.instruction.config.expect("config is not set"),
-
-            delegate_input_token_account: self
-                .instruction
-                .delegate_input_token_account
-                .expect("delegate_input_token_account is not set"),
-
-            access: self.instruction.access.expect("access is not set"),
-
-            user: self.instruction.user.expect("user is not set"),
-
-            jupiter_program: self
-                .instruction
-                .jupiter_program
-                .expect("jupiter_program is not set"),
-            __args: args,
-        };
-        instruction.invoke_signed_with_remaining_accounts(
-            signers_seeds,
-            &self.instruction.__remaining_accounts,
-        )
-    }
+        __program: self.instruction.__program,
+                  
+          input_mint: self.instruction.input_mint.expect("input_mint is not set"),
+                  
+          input_mint_program: self.instruction.input_mint_program.expect("input_mint_program is not set"),
+                  
+          output_mint: self.instruction.output_mint.expect("output_mint is not set"),
+                  
+          output_mint_program: self.instruction.output_mint_program.expect("output_mint_program is not set"),
+                  
+          operator: self.instruction.operator.expect("operator is not set"),
+                  
+          vault: self.instruction.vault.expect("vault is not set"),
+                  
+          vault_input_token_account: self.instruction.vault_input_token_account.expect("vault_input_token_account is not set"),
+                  
+          config: self.instruction.config.expect("config is not set"),
+                  
+          delegate_input_token_account: self.instruction.delegate_input_token_account.expect("delegate_input_token_account is not set"),
+                  
+          access: self.instruction.access.expect("access is not set"),
+                  
+          user: self.instruction.user.expect("user is not set"),
+                  
+          jupiter_program: self.instruction.jupiter_program.expect("jupiter_program is not set"),
+                          __args: args,
+            };
+    instruction.invoke_signed_with_remaining_accounts(signers_seeds, &self.instruction.__remaining_accounts)
+  }
 }
 
 #[derive(Clone, Debug)]
 struct SwapCpiBuilderInstruction<'a, 'b> {
-    __program: &'b solana_account_info::AccountInfo<'a>,
-    input_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
-    input_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
-    output_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
-    output_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
-    operator: Option<&'b solana_account_info::AccountInfo<'a>>,
-    vault: Option<&'b solana_account_info::AccountInfo<'a>>,
-    vault_input_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
-    config: Option<&'b solana_account_info::AccountInfo<'a>>,
-    delegate_input_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
-    access: Option<&'b solana_account_info::AccountInfo<'a>>,
-    user: Option<&'b solana_account_info::AccountInfo<'a>>,
-    jupiter_program: Option<&'b solana_account_info::AccountInfo<'a>>,
-    data: Option<Vec<u8>>,
-    in_amount: Option<u64>,
-    delegate: Option<Pubkey>,
-    /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
-    __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
+  __program: &'b solana_account_info::AccountInfo<'a>,
+            input_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
+                input_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
+                output_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
+                output_mint_program: Option<&'b solana_account_info::AccountInfo<'a>>,
+                operator: Option<&'b solana_account_info::AccountInfo<'a>>,
+                vault: Option<&'b solana_account_info::AccountInfo<'a>>,
+                vault_input_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+                config: Option<&'b solana_account_info::AccountInfo<'a>>,
+                delegate_input_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+                access: Option<&'b solana_account_info::AccountInfo<'a>>,
+                user: Option<&'b solana_account_info::AccountInfo<'a>>,
+                jupiter_program: Option<&'b solana_account_info::AccountInfo<'a>>,
+                        data: Option<Vec<u8>>,
+                in_amount: Option<u64>,
+                delegate: Option<Pubkey>,
+        /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
+  __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
 }
+

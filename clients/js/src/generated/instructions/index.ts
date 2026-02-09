@@ -20,4 +20,6 @@ export * from './proposeNewAdmin';
 export * from './revokeAccess';
 export * from './swap';
 export * from './tokenReceive';
+export * from './transferIn';
+export * from './transferOut';
 export * from './twoHop';

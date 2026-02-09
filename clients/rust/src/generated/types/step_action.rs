@@ -5,35 +5,26 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
+use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 
-#[derive(
-    BorshSerialize,
-    BorshDeserialize,
-    Clone,
-    Debug,
-    Eq,
-    PartialEq,
-    Copy,
-    PartialOrd,
-    Hash,
-    FromPrimitive,
-)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq, Copy, PartialOrd, Hash, FromPrimitive)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StepAction {
-    JupiterSharedAccountsRoute,
-    JupiterSharedAccountsRouteV2,
-    JupiterRoute,
-    JupiterRouteV2,
-    JupiterOrderEngineFill,
-    OkxSwapTobV3,
-    OkxSwapV3,
-    OkxSwapTobV3WithReceiver,
-    OkxSwap,
-    DFlowSwap,
-    DFlowSwap2,
-    JlpPerpetualsAddLiquidity2,
-    JlpPerpetualsRemoveLiquidity2,
+JupiterSharedAccountsRoute,
+JupiterSharedAccountsRouteV2,
+JupiterRoute,
+JupiterRouteV2,
+JupiterOrderEngineFill,
+OkxSwapTobV3,
+OkxSwapV3,
+OkxSwapTobV3WithReceiver,
+OkxSwap,
+DFlowSwap,
+DFlowSwap2,
+JlpPerpetualsAddLiquidity2,
+JlpPerpetualsRemoveLiquidity2,
 }
+
+

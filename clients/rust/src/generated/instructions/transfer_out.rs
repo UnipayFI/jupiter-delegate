@@ -15,8 +15,6 @@ pub const TRANSFER_OUT_DISCRIMINATOR: [u8; 8] = [202, 137, 44, 229, 158, 255, 20
 pub struct TransferOut {
     pub operator: solana_pubkey::Pubkey,
 
-    pub payer: solana_pubkey::Pubkey,
-
     pub config: solana_pubkey::Pubkey,
 
     pub vault: solana_pubkey::Pubkey,
@@ -43,9 +41,8 @@ impl TransferOut {
         args: TransferOutInstructionArgs,
         remaining_accounts: &[solana_instruction::AccountMeta],
     ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(8 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new(self.operator, true));
-        accounts.push(solana_instruction::AccountMeta::new(self.payer, true));
         accounts.push(solana_instruction::AccountMeta::new(self.config, false));
         accounts.push(solana_instruction::AccountMeta::new(self.vault, false));
         accounts.push(solana_instruction::AccountMeta::new_readonly(
@@ -122,18 +119,16 @@ impl TransferOutInstructionArgs {
 /// ### Accounts:
 ///
 ///   0. `[writable, signer]` operator
-///   1. `[writable, signer]` payer
-///   2. `[writable]` config
-///   3. `[writable]` vault
-///   4. `[]` token_mint
-///   5. `[]` from_token_account
-///   6. `[writable]` to_token_account
-///   7. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
-///   8. `[optional]` associated_token_program (default to `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`)
+///   1. `[writable]` config
+///   2. `[writable]` vault
+///   3. `[]` token_mint
+///   4. `[]` from_token_account
+///   5. `[writable]` to_token_account
+///   6. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
+///   7. `[optional]` associated_token_program (default to `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`)
 #[derive(Clone, Debug, Default)]
 pub struct TransferOutBuilder {
     operator: Option<solana_pubkey::Pubkey>,
-    payer: Option<solana_pubkey::Pubkey>,
     config: Option<solana_pubkey::Pubkey>,
     vault: Option<solana_pubkey::Pubkey>,
     token_mint: Option<solana_pubkey::Pubkey>,
@@ -152,11 +147,6 @@ impl TransferOutBuilder {
     #[inline(always)]
     pub fn operator(&mut self, operator: solana_pubkey::Pubkey) -> &mut Self {
         self.operator = Some(operator);
-        self
-    }
-    #[inline(always)]
-    pub fn payer(&mut self, payer: solana_pubkey::Pubkey) -> &mut Self {
-        self.payer = Some(payer);
         self
     }
     #[inline(always)]
@@ -223,7 +213,6 @@ impl TransferOutBuilder {
     pub fn instruction(&self) -> solana_instruction::Instruction {
         let accounts = TransferOut {
             operator: self.operator.expect("operator is not set"),
-            payer: self.payer.expect("payer is not set"),
             config: self.config.expect("config is not set"),
             vault: self.vault.expect("vault is not set"),
             token_mint: self.token_mint.expect("token_mint is not set"),
@@ -250,8 +239,6 @@ impl TransferOutBuilder {
 pub struct TransferOutCpiAccounts<'a, 'b> {
     pub operator: &'b solana_account_info::AccountInfo<'a>,
 
-    pub payer: &'b solana_account_info::AccountInfo<'a>,
-
     pub config: &'b solana_account_info::AccountInfo<'a>,
 
     pub vault: &'b solana_account_info::AccountInfo<'a>,
@@ -273,8 +260,6 @@ pub struct TransferOutCpi<'a, 'b> {
     pub __program: &'b solana_account_info::AccountInfo<'a>,
 
     pub operator: &'b solana_account_info::AccountInfo<'a>,
-
-    pub payer: &'b solana_account_info::AccountInfo<'a>,
 
     pub config: &'b solana_account_info::AccountInfo<'a>,
 
@@ -302,7 +287,6 @@ impl<'a, 'b> TransferOutCpi<'a, 'b> {
         Self {
             __program: program,
             operator: accounts.operator,
-            payer: accounts.payer,
             config: accounts.config,
             vault: accounts.vault,
             token_mint: accounts.token_mint,
@@ -336,12 +320,11 @@ impl<'a, 'b> TransferOutCpi<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
         remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
     ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(8 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new(
             *self.operator.key,
             true,
         ));
-        accounts.push(solana_instruction::AccountMeta::new(*self.payer.key, true));
         accounts.push(solana_instruction::AccountMeta::new(
             *self.config.key,
             false,
@@ -383,10 +366,9 @@ impl<'a, 'b> TransferOutCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(10 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(9 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.operator.clone());
-        account_infos.push(self.payer.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.vault.clone());
         account_infos.push(self.token_mint.clone());
@@ -411,14 +393,13 @@ impl<'a, 'b> TransferOutCpi<'a, 'b> {
 /// ### Accounts:
 ///
 ///   0. `[writable, signer]` operator
-///   1. `[writable, signer]` payer
-///   2. `[writable]` config
-///   3. `[writable]` vault
-///   4. `[]` token_mint
-///   5. `[]` from_token_account
-///   6. `[writable]` to_token_account
-///   7. `[]` token_program
-///   8. `[]` associated_token_program
+///   1. `[writable]` config
+///   2. `[writable]` vault
+///   3. `[]` token_mint
+///   4. `[]` from_token_account
+///   5. `[writable]` to_token_account
+///   6. `[]` token_program
+///   7. `[]` associated_token_program
 #[derive(Clone, Debug)]
 pub struct TransferOutCpiBuilder<'a, 'b> {
     instruction: Box<TransferOutCpiBuilderInstruction<'a, 'b>>,
@@ -429,7 +410,6 @@ impl<'a, 'b> TransferOutCpiBuilder<'a, 'b> {
         let instruction = Box::new(TransferOutCpiBuilderInstruction {
             __program: program,
             operator: None,
-            payer: None,
             config: None,
             vault: None,
             token_mint: None,
@@ -445,11 +425,6 @@ impl<'a, 'b> TransferOutCpiBuilder<'a, 'b> {
     #[inline(always)]
     pub fn operator(&mut self, operator: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
         self.instruction.operator = Some(operator);
-        self
-    }
-    #[inline(always)]
-    pub fn payer(&mut self, payer: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.payer = Some(payer);
         self
     }
     #[inline(always)]
@@ -553,8 +528,6 @@ impl<'a, 'b> TransferOutCpiBuilder<'a, 'b> {
 
             operator: self.instruction.operator.expect("operator is not set"),
 
-            payer: self.instruction.payer.expect("payer is not set"),
-
             config: self.instruction.config.expect("config is not set"),
 
             vault: self.instruction.vault.expect("vault is not set"),
@@ -593,7 +566,6 @@ impl<'a, 'b> TransferOutCpiBuilder<'a, 'b> {
 struct TransferOutCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_account_info::AccountInfo<'a>,
     operator: Option<&'b solana_account_info::AccountInfo<'a>>,
-    payer: Option<&'b solana_account_info::AccountInfo<'a>>,
     config: Option<&'b solana_account_info::AccountInfo<'a>>,
     vault: Option<&'b solana_account_info::AccountInfo<'a>>,
     token_mint: Option<&'b solana_account_info::AccountInfo<'a>>,

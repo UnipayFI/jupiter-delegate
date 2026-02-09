@@ -38,13 +38,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const SWAP_DISCRIMINATOR = new Uint8Array([
   248, 198, 158, 145, 225, 117, 135, 200,
@@ -71,8 +71,8 @@ export type SwapInstruction<
   TAccountUser extends string | AccountMeta<string> = string,
   TAccountJupiterProgram extends
     | string
-    | AccountMeta<string> = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -114,7 +114,7 @@ export type SwapInstruction<
       TAccountJupiterProgram extends string
         ? ReadonlyAccount<TAccountJupiterProgram>
         : TAccountJupiterProgram,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -134,10 +134,10 @@ export type SwapInstructionDataArgs = {
 export function getSwapInstructionDataEncoder(): Encoder<SwapInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-      ['inAmount', getU64Encoder()],
-      ['delegate', getAddressEncoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ["inAmount", getU64Encoder()],
+      ["delegate", getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: SWAP_DISCRIMINATOR })
   );
@@ -145,10 +145,10 @@ export function getSwapInstructionDataEncoder(): Encoder<SwapInstructionDataArgs
 
 export function getSwapInstructionDataDecoder(): Decoder<SwapInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ['inAmount', getU64Decoder()],
-    ['delegate', getAddressDecoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ["inAmount", getU64Decoder()],
+    ["delegate", getAddressDecoder()],
   ]);
 }
 
@@ -174,7 +174,7 @@ export type SwapAsyncInput<
   TAccountDelegateInputTokenAccount extends string = string,
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
-  TAccountJupiterProgram extends string = string,
+  TAccountJupiterProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -188,9 +188,9 @@ export type SwapAsyncInput<
   access?: Address<TAccountAccess>;
   user: Address<TAccountUser>;
   jupiterProgram?: Address<TAccountJupiterProgram>;
-  data: SwapInstructionDataArgs['data'];
-  inAmount: SwapInstructionDataArgs['inAmount'];
-  delegate: SwapInstructionDataArgs['delegate'];
+  data: SwapInstructionDataArgs["data"];
+  inAmount: SwapInstructionDataArgs["inAmount"];
+  delegate: SwapInstructionDataArgs["delegate"];
 };
 
 export async function getSwapInstructionAsync<
@@ -206,7 +206,7 @@ export async function getSwapInstructionAsync<
   TAccountAccess extends string,
   TAccountUser extends string,
   TAccountJupiterProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: SwapAsyncInput<
     TAccountInputMint,
@@ -296,7 +296,7 @@ export async function getSwapInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -322,10 +322,10 @@ export async function getSwapInstructionAsync<
   }
   if (!accounts.jupiterProgram.value) {
     accounts.jupiterProgram.value =
-      'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4' as Address<'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4'>;
+      "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4" as Address<"JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -345,21 +345,7 @@ export async function getSwapInstructionAsync<
       args as SwapInstructionDataArgs
     ),
     programAddress,
-  } as SwapInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountVaultInputTokenAccount,
-    TAccountConfig,
-    TAccountDelegateInputTokenAccount,
-    TAccountAccess,
-    TAccountUser,
-    TAccountJupiterProgram
-  >);
+  } as SwapInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountVaultInputTokenAccount, TAccountConfig, TAccountDelegateInputTokenAccount, TAccountAccess, TAccountUser, TAccountJupiterProgram>);
 }
 
 export type SwapInput<
@@ -374,7 +360,7 @@ export type SwapInput<
   TAccountDelegateInputTokenAccount extends string = string,
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
-  TAccountJupiterProgram extends string = string,
+  TAccountJupiterProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -388,9 +374,9 @@ export type SwapInput<
   access: Address<TAccountAccess>;
   user: Address<TAccountUser>;
   jupiterProgram?: Address<TAccountJupiterProgram>;
-  data: SwapInstructionDataArgs['data'];
-  inAmount: SwapInstructionDataArgs['inAmount'];
-  delegate: SwapInstructionDataArgs['delegate'];
+  data: SwapInstructionDataArgs["data"];
+  inAmount: SwapInstructionDataArgs["inAmount"];
+  delegate: SwapInstructionDataArgs["delegate"];
 };
 
 export function getSwapInstruction<
@@ -406,7 +392,7 @@ export function getSwapInstruction<
   TAccountAccess extends string,
   TAccountUser extends string,
   TAccountJupiterProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: SwapInput<
     TAccountInputMint,
@@ -480,10 +466,10 @@ export function getSwapInstruction<
   // Resolve default values.
   if (!accounts.jupiterProgram.value) {
     accounts.jupiterProgram.value =
-      'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4' as Address<'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4'>;
+      "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4" as Address<"JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -503,26 +489,12 @@ export function getSwapInstruction<
       args as SwapInstructionDataArgs
     ),
     programAddress,
-  } as SwapInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountVaultInputTokenAccount,
-    TAccountConfig,
-    TAccountDelegateInputTokenAccount,
-    TAccountAccess,
-    TAccountUser,
-    TAccountJupiterProgram
-  >);
+  } as SwapInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountVaultInputTokenAccount, TAccountConfig, TAccountDelegateInputTokenAccount, TAccountAccess, TAccountUser, TAccountJupiterProgram>);
 }
 
 export type ParsedSwapInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -544,7 +516,7 @@ export type ParsedSwapInstruction<
 
 export function parseSwapInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -552,7 +524,7 @@ export function parseSwapInstruction<
 ): ParsedSwapInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 12) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

@@ -16,7 +16,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type ModifyOperatorEvent = { config: Address; operator: Address };
 
@@ -24,15 +24,15 @@ export type ModifyOperatorEventArgs = ModifyOperatorEvent;
 
 export function getModifyOperatorEventEncoder(): FixedSizeEncoder<ModifyOperatorEventArgs> {
   return getStructEncoder([
-    ['config', getAddressEncoder()],
-    ['operator', getAddressEncoder()],
+    ["config", getAddressEncoder()],
+    ["operator", getAddressEncoder()],
   ]);
 }
 
 export function getModifyOperatorEventDecoder(): FixedSizeDecoder<ModifyOperatorEvent> {
   return getStructDecoder([
-    ['config', getAddressDecoder()],
-    ['operator', getAddressDecoder()],
+    ["config", getAddressDecoder()],
+    ["operator", getAddressDecoder()],
   ]);
 }
 

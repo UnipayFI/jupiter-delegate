@@ -32,9 +32,9 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
 
 export const MODIFY_COOLDOWN_DURATION_DISCRIMINATOR = new Uint8Array([
   100, 67, 104, 193, 216, 5, 89, 106,
@@ -52,8 +52,8 @@ export type ModifyCooldownDurationInstruction<
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = '11111111111111111111111111111111',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "11111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -68,7 +68,7 @@ export type ModifyCooldownDurationInstruction<
       TAccountSystemProgram extends string
         ? ReadonlyAccount<TAccountSystemProgram>
         : TAccountSystemProgram,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -84,8 +84,8 @@ export type ModifyCooldownDurationInstructionDataArgs = {
 export function getModifyCooldownDurationInstructionDataEncoder(): FixedSizeEncoder<ModifyCooldownDurationInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['cooldownDuration', getI64Encoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["cooldownDuration", getI64Encoder()],
     ]),
     (value) => ({
       ...value,
@@ -96,8 +96,8 @@ export function getModifyCooldownDurationInstructionDataEncoder(): FixedSizeEnco
 
 export function getModifyCooldownDurationInstructionDataDecoder(): FixedSizeDecoder<ModifyCooldownDurationInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['cooldownDuration', getI64Decoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["cooldownDuration", getI64Decoder()],
   ]);
 }
 
@@ -114,19 +114,19 @@ export function getModifyCooldownDurationInstructionDataCodec(): FixedSizeCodec<
 export type ModifyCooldownDurationAsyncInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string,
+  TAccountSystemProgram extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config?: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  cooldownDuration: ModifyCooldownDurationInstructionDataArgs['cooldownDuration'];
+  cooldownDuration: ModifyCooldownDurationInstructionDataArgs["cooldownDuration"];
 };
 
 export async function getModifyCooldownDurationInstructionAsync<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: ModifyCooldownDurationAsyncInput<
     TAccountAdmin,
@@ -176,10 +176,10 @@ export async function getModifyCooldownDurationInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -190,30 +190,25 @@ export async function getModifyCooldownDurationInstructionAsync<
       args as ModifyCooldownDurationInstructionDataArgs
     ),
     programAddress,
-  } as ModifyCooldownDurationInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountSystemProgram
-  >);
+  } as ModifyCooldownDurationInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountSystemProgram>);
 }
 
 export type ModifyCooldownDurationInput<
   TAccountAdmin extends string = string,
   TAccountConfig extends string = string,
-  TAccountSystemProgram extends string = string,
+  TAccountSystemProgram extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
-  cooldownDuration: ModifyCooldownDurationInstructionDataArgs['cooldownDuration'];
+  cooldownDuration: ModifyCooldownDurationInstructionDataArgs["cooldownDuration"];
 };
 
 export function getModifyCooldownDurationInstruction<
   TAccountAdmin extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: ModifyCooldownDurationInput<
     TAccountAdmin,
@@ -248,10 +243,10 @@ export function getModifyCooldownDurationInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -262,17 +257,12 @@ export function getModifyCooldownDurationInstruction<
       args as ModifyCooldownDurationInstructionDataArgs
     ),
     programAddress,
-  } as ModifyCooldownDurationInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountSystemProgram
-  >);
+  } as ModifyCooldownDurationInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountSystemProgram>);
 }
 
 export type ParsedModifyCooldownDurationInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -285,7 +275,7 @@ export type ParsedModifyCooldownDurationInstruction<
 
 export function parseModifyCooldownDurationInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -293,7 +283,7 @@ export function parseModifyCooldownDurationInstruction<
 ): ParsedModifyCooldownDurationInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

@@ -24,7 +24,7 @@ import {
   type Codec,
   type Decoder,
   type Encoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type OkxAggregatorEvent = {
   user: Address;
@@ -46,29 +46,29 @@ export type OkxAggregatorEventArgs = {
 
 export function getOkxAggregatorEventEncoder(): Encoder<OkxAggregatorEventArgs> {
   return getStructEncoder([
-    ['user', getAddressEncoder()],
-    ['inputMint', getAddressEncoder()],
-    ['outputMint', getAddressEncoder()],
-    ['inputAmount', getU64Encoder()],
+    ["user", getAddressEncoder()],
+    ["inputMint", getAddressEncoder()],
+    ["outputMint", getAddressEncoder()],
+    ["inputAmount", getU64Encoder()],
     [
-      'instructionName',
+      "instructionName",
       addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
     ],
-    ['operator', getAddressEncoder()],
+    ["operator", getAddressEncoder()],
   ]);
 }
 
 export function getOkxAggregatorEventDecoder(): Decoder<OkxAggregatorEvent> {
   return getStructDecoder([
-    ['user', getAddressDecoder()],
-    ['inputMint', getAddressDecoder()],
-    ['outputMint', getAddressDecoder()],
-    ['inputAmount', getU64Decoder()],
+    ["user", getAddressDecoder()],
+    ["inputMint", getAddressDecoder()],
+    ["outputMint", getAddressDecoder()],
+    ["inputAmount", getU64Decoder()],
     [
-      'instructionName',
+      "instructionName",
       addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder()),
     ],
-    ['operator', getAddressDecoder()],
+    ["operator", getAddressDecoder()],
   ]);
 }
 

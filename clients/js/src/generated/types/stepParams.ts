@@ -24,13 +24,13 @@ import {
   type Decoder,
   type Encoder,
   type ReadonlyUint8Array,
-} from '@solana/kit';
+} from "@solana/kit";
 import {
   getStepActionDecoder,
   getStepActionEncoder,
   type StepAction,
   type StepActionArgs,
-} from '.';
+} from ".";
 
 export type StepParams = {
   action: StepAction;
@@ -50,21 +50,21 @@ export type StepParamsArgs = {
 
 export function getStepParamsEncoder(): Encoder<StepParamsArgs> {
   return getStructEncoder([
-    ['action', getStepActionEncoder()],
-    ['accountCounts', getU8Encoder()],
-    ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-    ['amountIn', getU64Encoder()],
-    ['expectAmountOut', getU64Encoder()],
+    ["action", getStepActionEncoder()],
+    ["accountCounts", getU8Encoder()],
+    ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+    ["amountIn", getU64Encoder()],
+    ["expectAmountOut", getU64Encoder()],
   ]);
 }
 
 export function getStepParamsDecoder(): Decoder<StepParams> {
   return getStructDecoder([
-    ['action', getStepActionDecoder()],
-    ['accountCounts', getU8Decoder()],
-    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ['amountIn', getU64Decoder()],
-    ['expectAmountOut', getU64Decoder()],
+    ["action", getStepActionDecoder()],
+    ["accountCounts", getU8Decoder()],
+    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ["amountIn", getU64Decoder()],
+    ["expectAmountOut", getU64Decoder()],
   ]);
 }
 

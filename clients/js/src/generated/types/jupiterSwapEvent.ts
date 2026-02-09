@@ -18,7 +18,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type JupiterSwapEvent = {
   user: Address;
@@ -38,21 +38,21 @@ export type JupiterSwapEventArgs = {
 
 export function getJupiterSwapEventEncoder(): FixedSizeEncoder<JupiterSwapEventArgs> {
   return getStructEncoder([
-    ['user', getAddressEncoder()],
-    ['inputMint', getAddressEncoder()],
-    ['outputMint', getAddressEncoder()],
-    ['inputAmount', getU64Encoder()],
-    ['operator', getAddressEncoder()],
+    ["user", getAddressEncoder()],
+    ["inputMint", getAddressEncoder()],
+    ["outputMint", getAddressEncoder()],
+    ["inputAmount", getU64Encoder()],
+    ["operator", getAddressEncoder()],
   ]);
 }
 
 export function getJupiterSwapEventDecoder(): FixedSizeDecoder<JupiterSwapEvent> {
   return getStructDecoder([
-    ['user', getAddressDecoder()],
-    ['inputMint', getAddressDecoder()],
-    ['outputMint', getAddressDecoder()],
-    ['inputAmount', getU64Decoder()],
-    ['operator', getAddressDecoder()],
+    ["user", getAddressDecoder()],
+    ["inputMint", getAddressDecoder()],
+    ["outputMint", getAddressDecoder()],
+    ["inputAmount", getU64Decoder()],
+    ["operator", getAddressDecoder()],
   ]);
 }
 

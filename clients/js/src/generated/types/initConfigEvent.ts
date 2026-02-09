@@ -18,7 +18,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type InitConfigEvent = {
   admin: Address;
@@ -34,17 +34,17 @@ export type InitConfigEventArgs = {
 
 export function getInitConfigEventEncoder(): FixedSizeEncoder<InitConfigEventArgs> {
   return getStructEncoder([
-    ['admin', getAddressEncoder()],
-    ['vault', getAddressEncoder()],
-    ['cooldownDuration', getI64Encoder()],
+    ["admin", getAddressEncoder()],
+    ["vault", getAddressEncoder()],
+    ["cooldownDuration", getI64Encoder()],
   ]);
 }
 
 export function getInitConfigEventDecoder(): FixedSizeDecoder<InitConfigEvent> {
   return getStructDecoder([
-    ['admin', getAddressDecoder()],
-    ['vault', getAddressDecoder()],
-    ['cooldownDuration', getI64Decoder()],
+    ["admin", getAddressDecoder()],
+    ["vault", getAddressDecoder()],
+    ["cooldownDuration", getI64Decoder()],
   ]);
 }
 

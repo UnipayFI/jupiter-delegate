@@ -34,9 +34,9 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
+import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
 
 export const INIT_CONFIG_DISCRIMINATOR = new Uint8Array([
   23, 235, 115, 232, 168, 96, 1, 231,
@@ -53,11 +53,11 @@ export type InitConfigInstruction<
   TAccountVault extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = '11111111111111111111111111111111',
+    | AccountMeta<string> = "11111111111111111111111111111111",
   TAccountRent extends
     | string
-    | AccountMeta<string> = 'SysvarRent111111111111111111111111111111111',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "SysvarRent111111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -78,7 +78,7 @@ export type InitConfigInstruction<
       TAccountRent extends string
         ? ReadonlyAccount<TAccountRent>
         : TAccountRent,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -96,9 +96,9 @@ export type InitConfigInstructionDataArgs = {
 export function getInitConfigInstructionDataEncoder(): FixedSizeEncoder<InitConfigInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['operator', getAddressEncoder()],
-      ['cooldownDuration', getI64Encoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["operator", getAddressEncoder()],
+      ["cooldownDuration", getI64Encoder()],
     ]),
     (value) => ({ ...value, discriminator: INIT_CONFIG_DISCRIMINATOR })
   );
@@ -106,9 +106,9 @@ export function getInitConfigInstructionDataEncoder(): FixedSizeEncoder<InitConf
 
 export function getInitConfigInstructionDataDecoder(): FixedSizeDecoder<InitConfigInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['operator', getAddressDecoder()],
-    ['cooldownDuration', getI64Decoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["operator", getAddressDecoder()],
+    ["cooldownDuration", getI64Decoder()],
   ]);
 }
 
@@ -127,15 +127,15 @@ export type InitConfigAsyncInput<
   TAccountConfig extends string = string,
   TAccountVault extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string,
+  TAccountRent extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config?: Address<TAccountConfig>;
   vault?: Address<TAccountVault>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  operator: InitConfigInstructionDataArgs['operator'];
-  cooldownDuration: InitConfigInstructionDataArgs['cooldownDuration'];
+  operator: InitConfigInstructionDataArgs["operator"];
+  cooldownDuration: InitConfigInstructionDataArgs["cooldownDuration"];
 };
 
 export async function getInitConfigInstructionAsync<
@@ -144,7 +144,7 @@ export async function getInitConfigInstructionAsync<
   TAccountVault extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: InitConfigAsyncInput<
     TAccountAdmin,
@@ -213,14 +213,14 @@ export async function getInitConfigInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
+      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -233,14 +233,7 @@ export async function getInitConfigInstructionAsync<
       args as InitConfigInstructionDataArgs
     ),
     programAddress,
-  } as InitConfigInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountVault,
-    TAccountSystemProgram,
-    TAccountRent
-  >);
+  } as InitConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountVault, TAccountSystemProgram, TAccountRent>);
 }
 
 export type InitConfigInput<
@@ -248,15 +241,15 @@ export type InitConfigInput<
   TAccountConfig extends string = string,
   TAccountVault extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string,
+  TAccountRent extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   vault: Address<TAccountVault>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  operator: InitConfigInstructionDataArgs['operator'];
-  cooldownDuration: InitConfigInstructionDataArgs['cooldownDuration'];
+  operator: InitConfigInstructionDataArgs["operator"];
+  cooldownDuration: InitConfigInstructionDataArgs["cooldownDuration"];
 };
 
 export function getInitConfigInstruction<
@@ -265,7 +258,7 @@ export function getInitConfigInstruction<
   TAccountVault extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: InitConfigInput<
     TAccountAdmin,
@@ -306,14 +299,14 @@ export function getInitConfigInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
+      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -326,19 +319,12 @@ export function getInitConfigInstruction<
       args as InitConfigInstructionDataArgs
     ),
     programAddress,
-  } as InitConfigInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountVault,
-    TAccountSystemProgram,
-    TAccountRent
-  >);
+  } as InitConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountVault, TAccountSystemProgram, TAccountRent>);
 }
 
 export type ParsedInitConfigInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -353,7 +339,7 @@ export type ParsedInitConfigInstruction<
 
 export function parseInitConfigInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -361,7 +347,7 @@ export function parseInitConfigInstruction<
 ): ParsedInitConfigInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

@@ -32,13 +32,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectSome,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const GRANT_ACCESS_DISCRIMINATOR = new Uint8Array([
   66, 88, 87, 113, 39, 22, 27, 165,
@@ -57,11 +57,11 @@ export type GrantAccessInstruction<
   TAccountAccess extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends
     | string
-    | AccountMeta<string> = '11111111111111111111111111111111',
+    | AccountMeta<string> = "11111111111111111111111111111111",
   TAccountRent extends
     | string
-    | AccountMeta<string> = 'SysvarRent111111111111111111111111111111111',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "SysvarRent111111111111111111111111111111111",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -82,7 +82,7 @@ export type GrantAccessInstruction<
       TAccountRent extends string
         ? ReadonlyAccount<TAccountRent>
         : TAccountRent,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -96,8 +96,8 @@ export type GrantAccessInstructionDataArgs = { user: Address };
 export function getGrantAccessInstructionDataEncoder(): FixedSizeEncoder<GrantAccessInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['user', getAddressEncoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["user", getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: GRANT_ACCESS_DISCRIMINATOR })
   );
@@ -105,8 +105,8 @@ export function getGrantAccessInstructionDataEncoder(): FixedSizeEncoder<GrantAc
 
 export function getGrantAccessInstructionDataDecoder(): FixedSizeDecoder<GrantAccessInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['user', getAddressDecoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["user", getAddressDecoder()],
   ]);
 }
 
@@ -125,14 +125,14 @@ export type GrantAccessAsyncInput<
   TAccountConfig extends string = string,
   TAccountAccess extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string,
+  TAccountRent extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   access?: Address<TAccountAccess>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  user: GrantAccessInstructionDataArgs['user'];
+  user: GrantAccessInstructionDataArgs["user"];
 };
 
 export async function getGrantAccessInstructionAsync<
@@ -141,7 +141,7 @@ export async function getGrantAccessInstructionAsync<
   TAccountAccess extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: GrantAccessAsyncInput<
     TAccountAdmin,
@@ -198,14 +198,14 @@ export async function getGrantAccessInstructionAsync<
   }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
+      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -218,14 +218,7 @@ export async function getGrantAccessInstructionAsync<
       args as GrantAccessInstructionDataArgs
     ),
     programAddress,
-  } as GrantAccessInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountSystemProgram,
-    TAccountRent
-  >);
+  } as GrantAccessInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountAccess, TAccountSystemProgram, TAccountRent>);
 }
 
 export type GrantAccessInput<
@@ -233,14 +226,14 @@ export type GrantAccessInput<
   TAccountConfig extends string = string,
   TAccountAccess extends string = string,
   TAccountSystemProgram extends string = string,
-  TAccountRent extends string = string,
+  TAccountRent extends string = string
 > = {
   admin: TransactionSigner<TAccountAdmin>;
   config: Address<TAccountConfig>;
   access: Address<TAccountAccess>;
   systemProgram?: Address<TAccountSystemProgram>;
   rent?: Address<TAccountRent>;
-  user: GrantAccessInstructionDataArgs['user'];
+  user: GrantAccessInstructionDataArgs["user"];
 };
 
 export function getGrantAccessInstruction<
@@ -249,7 +242,7 @@ export function getGrantAccessInstruction<
   TAccountAccess extends string,
   TAccountSystemProgram extends string,
   TAccountRent extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: GrantAccessInput<
     TAccountAdmin,
@@ -290,14 +283,14 @@ export function getGrantAccessInstruction<
   // Resolve default values.
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
   if (!accounts.rent.value) {
     accounts.rent.value =
-      'SysvarRent111111111111111111111111111111111' as Address<'SysvarRent111111111111111111111111111111111'>;
+      "SysvarRent111111111111111111111111111111111" as Address<"SysvarRent111111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.admin),
@@ -310,19 +303,12 @@ export function getGrantAccessInstruction<
       args as GrantAccessInstructionDataArgs
     ),
     programAddress,
-  } as GrantAccessInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountSystemProgram,
-    TAccountRent
-  >);
+  } as GrantAccessInstruction<TProgramAddress, TAccountAdmin, TAccountConfig, TAccountAccess, TAccountSystemProgram, TAccountRent>);
 }
 
 export type ParsedGrantAccessInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -337,7 +323,7 @@ export type ParsedGrantAccessInstruction<
 
 export function parseGrantAccessInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -345,7 +331,7 @@ export function parseGrantAccessInstruction<
 ): ParsedGrantAccessInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

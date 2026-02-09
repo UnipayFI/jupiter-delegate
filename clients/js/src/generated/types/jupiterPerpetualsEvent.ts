@@ -24,7 +24,7 @@ import {
   type Codec,
   type Decoder,
   type Encoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type JupiterPerpetualsEvent = {
   user: Address;
@@ -46,23 +46,23 @@ export type JupiterPerpetualsEventArgs = {
 
 export function getJupiterPerpetualsEventEncoder(): Encoder<JupiterPerpetualsEventArgs> {
   return getStructEncoder([
-    ['user', getAddressEncoder()],
-    ['inputMint', getAddressEncoder()],
-    ['outputMint', getAddressEncoder()],
-    ['inputAmount', getU64Encoder()],
-    ['action', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
-    ['operator', getAddressEncoder()],
+    ["user", getAddressEncoder()],
+    ["inputMint", getAddressEncoder()],
+    ["outputMint", getAddressEncoder()],
+    ["inputAmount", getU64Encoder()],
+    ["action", addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
+    ["operator", getAddressEncoder()],
   ]);
 }
 
 export function getJupiterPerpetualsEventDecoder(): Decoder<JupiterPerpetualsEvent> {
   return getStructDecoder([
-    ['user', getAddressDecoder()],
-    ['inputMint', getAddressDecoder()],
-    ['outputMint', getAddressDecoder()],
-    ['inputAmount', getU64Decoder()],
-    ['action', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
-    ['operator', getAddressDecoder()],
+    ["user", getAddressDecoder()],
+    ["inputMint", getAddressDecoder()],
+    ["outputMint", getAddressDecoder()],
+    ["inputAmount", getU64Decoder()],
+    ["action", addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
+    ["operator", getAddressDecoder()],
   ]);
 }
 

@@ -11,8 +11,8 @@ import {
   type Address,
   type SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM,
   type SolanaError,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 
 /** Unauthorized: Unauthorized */
 export const JUPITER_DELEGATE_ERROR__UNAUTHORIZED = 0x1770; // 6000
@@ -131,7 +131,7 @@ export type JupiterDelegateError =
 let jupiterDelegateErrorMessages:
   | Record<JupiterDelegateError, string>
   | undefined;
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   jupiterDelegateErrorMessages = {
     [JUPITER_DELEGATE_ERROR__ACCESS_ALREADY_GRANTED]: `Access is already granted`,
     [JUPITER_DELEGATE_ERROR__ACCESS_NOT_GRANTED]: `Access is not granted`,
@@ -176,17 +176,17 @@ if (process.env.NODE_ENV !== 'production') {
 export function getJupiterDelegateErrorMessage(
   code: JupiterDelegateError
 ): string {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     return (
       jupiterDelegateErrorMessages as Record<JupiterDelegateError, string>
     )[code];
   }
 
-  return 'Error message not available in production bundles.';
+  return "Error message not available in production bundles.";
 }
 
 export function isJupiterDelegateError<
-  TProgramErrorCode extends JupiterDelegateError,
+  TProgramErrorCode extends JupiterDelegateError
 >(
   error: unknown,
   transactionMessage: {

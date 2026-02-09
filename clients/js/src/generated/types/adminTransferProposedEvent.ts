@@ -16,7 +16,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type AdminTransferProposedEvent = {
   config: Address;
@@ -28,17 +28,17 @@ export type AdminTransferProposedEventArgs = AdminTransferProposedEvent;
 
 export function getAdminTransferProposedEventEncoder(): FixedSizeEncoder<AdminTransferProposedEventArgs> {
   return getStructEncoder([
-    ['config', getAddressEncoder()],
-    ['currentAdmin', getAddressEncoder()],
-    ['proposedAdmin', getAddressEncoder()],
+    ["config", getAddressEncoder()],
+    ["currentAdmin", getAddressEncoder()],
+    ["proposedAdmin", getAddressEncoder()],
   ]);
 }
 
 export function getAdminTransferProposedEventDecoder(): FixedSizeDecoder<AdminTransferProposedEvent> {
   return getStructDecoder([
-    ['config', getAddressDecoder()],
-    ['currentAdmin', getAddressDecoder()],
-    ['proposedAdmin', getAddressDecoder()],
+    ["config", getAddressDecoder()],
+    ["currentAdmin", getAddressDecoder()],
+    ["proposedAdmin", getAddressDecoder()],
   ]);
 }
 

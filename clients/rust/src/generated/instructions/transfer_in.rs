@@ -13,13 +13,15 @@ pub const TRANSFER_IN_DISCRIMINATOR: [u8; 8] = [202, 139, 176, 95, 86, 130, 98, 
 /// Accounts.
 #[derive(Debug)]
 pub struct TransferIn {
-    pub authority: solana_pubkey::Pubkey,
+    pub operator: solana_pubkey::Pubkey,
 
-    pub payer: solana_pubkey::Pubkey,
+    pub authority: solana_pubkey::Pubkey,
 
     pub token_mint: solana_pubkey::Pubkey,
 
     pub from_token_account: solana_pubkey::Pubkey,
+
+    pub config: solana_pubkey::Pubkey,
 
     pub vault: solana_pubkey::Pubkey,
 
@@ -43,15 +45,19 @@ impl TransferIn {
         args: TransferInInstructionArgs,
         remaining_accounts: &[solana_instruction::AccountMeta],
     ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
-        accounts.push(solana_instruction::AccountMeta::new(self.authority, true));
-        accounts.push(solana_instruction::AccountMeta::new(self.payer, true));
+        let mut accounts = Vec::with_capacity(10 + remaining_accounts.len());
+        accounts.push(solana_instruction::AccountMeta::new(self.operator, true));
+        accounts.push(solana_instruction::AccountMeta::new(self.authority, false));
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.token_mint,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
             self.from_token_account,
+            false,
+        ));
+        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            self.config,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(self.vault, false));
@@ -124,21 +130,23 @@ impl TransferInInstructionArgs {
 ///
 /// ### Accounts:
 ///
-///   0. `[writable, signer]` authority
-///   1. `[writable, signer]` payer
+///   0. `[writable, signer]` operator
+///   1. `[writable]` authority
 ///   2. `[]` token_mint
 ///   3. `[writable]` from_token_account
-///   4. `[writable]` vault
-///   5. `[writable]` to_token_account
-///   6. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
-///   7. `[optional]` associated_token_program (default to `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`)
-///   8. `[optional]` system_program (default to `11111111111111111111111111111111`)
+///   4. `[]` config
+///   5. `[writable]` vault
+///   6. `[writable]` to_token_account
+///   7. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
+///   8. `[optional]` associated_token_program (default to `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`)
+///   9. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
 pub struct TransferInBuilder {
+    operator: Option<solana_pubkey::Pubkey>,
     authority: Option<solana_pubkey::Pubkey>,
-    payer: Option<solana_pubkey::Pubkey>,
     token_mint: Option<solana_pubkey::Pubkey>,
     from_token_account: Option<solana_pubkey::Pubkey>,
+    config: Option<solana_pubkey::Pubkey>,
     vault: Option<solana_pubkey::Pubkey>,
     to_token_account: Option<solana_pubkey::Pubkey>,
     token_program: Option<solana_pubkey::Pubkey>,
@@ -153,13 +161,13 @@ impl TransferInBuilder {
         Self::default()
     }
     #[inline(always)]
-    pub fn authority(&mut self, authority: solana_pubkey::Pubkey) -> &mut Self {
-        self.authority = Some(authority);
+    pub fn operator(&mut self, operator: solana_pubkey::Pubkey) -> &mut Self {
+        self.operator = Some(operator);
         self
     }
     #[inline(always)]
-    pub fn payer(&mut self, payer: solana_pubkey::Pubkey) -> &mut Self {
-        self.payer = Some(payer);
+    pub fn authority(&mut self, authority: solana_pubkey::Pubkey) -> &mut Self {
+        self.authority = Some(authority);
         self
     }
     #[inline(always)]
@@ -170,6 +178,11 @@ impl TransferInBuilder {
     #[inline(always)]
     pub fn from_token_account(&mut self, from_token_account: solana_pubkey::Pubkey) -> &mut Self {
         self.from_token_account = Some(from_token_account);
+        self
+    }
+    #[inline(always)]
+    pub fn config(&mut self, config: solana_pubkey::Pubkey) -> &mut Self {
+        self.config = Some(config);
         self
     }
     #[inline(always)]
@@ -226,12 +239,13 @@ impl TransferInBuilder {
     #[allow(clippy::clone_on_copy)]
     pub fn instruction(&self) -> solana_instruction::Instruction {
         let accounts = TransferIn {
+            operator: self.operator.expect("operator is not set"),
             authority: self.authority.expect("authority is not set"),
-            payer: self.payer.expect("payer is not set"),
             token_mint: self.token_mint.expect("token_mint is not set"),
             from_token_account: self
                 .from_token_account
                 .expect("from_token_account is not set"),
+            config: self.config.expect("config is not set"),
             vault: self.vault.expect("vault is not set"),
             to_token_account: self.to_token_account.expect("to_token_account is not set"),
             token_program: self.token_program.unwrap_or(solana_pubkey::pubkey!(
@@ -254,13 +268,15 @@ impl TransferInBuilder {
 
 /// `transfer_in` CPI accounts.
 pub struct TransferInCpiAccounts<'a, 'b> {
-    pub authority: &'b solana_account_info::AccountInfo<'a>,
+    pub operator: &'b solana_account_info::AccountInfo<'a>,
 
-    pub payer: &'b solana_account_info::AccountInfo<'a>,
+    pub authority: &'b solana_account_info::AccountInfo<'a>,
 
     pub token_mint: &'b solana_account_info::AccountInfo<'a>,
 
     pub from_token_account: &'b solana_account_info::AccountInfo<'a>,
+
+    pub config: &'b solana_account_info::AccountInfo<'a>,
 
     pub vault: &'b solana_account_info::AccountInfo<'a>,
 
@@ -278,13 +294,15 @@ pub struct TransferInCpi<'a, 'b> {
     /// The program to invoke.
     pub __program: &'b solana_account_info::AccountInfo<'a>,
 
-    pub authority: &'b solana_account_info::AccountInfo<'a>,
+    pub operator: &'b solana_account_info::AccountInfo<'a>,
 
-    pub payer: &'b solana_account_info::AccountInfo<'a>,
+    pub authority: &'b solana_account_info::AccountInfo<'a>,
 
     pub token_mint: &'b solana_account_info::AccountInfo<'a>,
 
     pub from_token_account: &'b solana_account_info::AccountInfo<'a>,
+
+    pub config: &'b solana_account_info::AccountInfo<'a>,
 
     pub vault: &'b solana_account_info::AccountInfo<'a>,
 
@@ -307,10 +325,11 @@ impl<'a, 'b> TransferInCpi<'a, 'b> {
     ) -> Self {
         Self {
             __program: program,
+            operator: accounts.operator,
             authority: accounts.authority,
-            payer: accounts.payer,
             token_mint: accounts.token_mint,
             from_token_account: accounts.from_token_account,
+            config: accounts.config,
             vault: accounts.vault,
             to_token_account: accounts.to_token_account,
             token_program: accounts.token_program,
@@ -342,18 +361,25 @@ impl<'a, 'b> TransferInCpi<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
         remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
     ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(9 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(10 + remaining_accounts.len());
         accounts.push(solana_instruction::AccountMeta::new(
-            *self.authority.key,
+            *self.operator.key,
             true,
         ));
-        accounts.push(solana_instruction::AccountMeta::new(*self.payer.key, true));
+        accounts.push(solana_instruction::AccountMeta::new(
+            *self.authority.key,
+            false,
+        ));
         accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.token_mint.key,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(
             *self.from_token_account.key,
+            false,
+        ));
+        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            *self.config.key,
             false,
         ));
         accounts.push(solana_instruction::AccountMeta::new(*self.vault.key, false));
@@ -389,12 +415,13 @@ impl<'a, 'b> TransferInCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(10 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(11 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
+        account_infos.push(self.operator.clone());
         account_infos.push(self.authority.clone());
-        account_infos.push(self.payer.clone());
         account_infos.push(self.token_mint.clone());
         account_infos.push(self.from_token_account.clone());
+        account_infos.push(self.config.clone());
         account_infos.push(self.vault.clone());
         account_infos.push(self.to_token_account.clone());
         account_infos.push(self.token_program.clone());
@@ -416,15 +443,16 @@ impl<'a, 'b> TransferInCpi<'a, 'b> {
 ///
 /// ### Accounts:
 ///
-///   0. `[writable, signer]` authority
-///   1. `[writable, signer]` payer
+///   0. `[writable, signer]` operator
+///   1. `[writable]` authority
 ///   2. `[]` token_mint
 ///   3. `[writable]` from_token_account
-///   4. `[writable]` vault
-///   5. `[writable]` to_token_account
-///   6. `[]` token_program
-///   7. `[]` associated_token_program
-///   8. `[]` system_program
+///   4. `[]` config
+///   5. `[writable]` vault
+///   6. `[writable]` to_token_account
+///   7. `[]` token_program
+///   8. `[]` associated_token_program
+///   9. `[]` system_program
 #[derive(Clone, Debug)]
 pub struct TransferInCpiBuilder<'a, 'b> {
     instruction: Box<TransferInCpiBuilderInstruction<'a, 'b>>,
@@ -434,10 +462,11 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
     pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
         let instruction = Box::new(TransferInCpiBuilderInstruction {
             __program: program,
+            operator: None,
             authority: None,
-            payer: None,
             token_mint: None,
             from_token_account: None,
+            config: None,
             vault: None,
             to_token_account: None,
             token_program: None,
@@ -449,13 +478,13 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
         Self { instruction }
     }
     #[inline(always)]
-    pub fn authority(&mut self, authority: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.authority = Some(authority);
+    pub fn operator(&mut self, operator: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.operator = Some(operator);
         self
     }
     #[inline(always)]
-    pub fn payer(&mut self, payer: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.payer = Some(payer);
+    pub fn authority(&mut self, authority: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.authority = Some(authority);
         self
     }
     #[inline(always)]
@@ -472,6 +501,11 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
         from_token_account: &'b solana_account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.from_token_account = Some(from_token_account);
+        self
+    }
+    #[inline(always)]
+    pub fn config(&mut self, config: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.config = Some(config);
         self
     }
     #[inline(always)]
@@ -560,9 +594,9 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
         let instruction = TransferInCpi {
             __program: self.instruction.__program,
 
-            authority: self.instruction.authority.expect("authority is not set"),
+            operator: self.instruction.operator.expect("operator is not set"),
 
-            payer: self.instruction.payer.expect("payer is not set"),
+            authority: self.instruction.authority.expect("authority is not set"),
 
             token_mint: self.instruction.token_mint.expect("token_mint is not set"),
 
@@ -570,6 +604,8 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
                 .instruction
                 .from_token_account
                 .expect("from_token_account is not set"),
+
+            config: self.instruction.config.expect("config is not set"),
 
             vault: self.instruction.vault.expect("vault is not set"),
 
@@ -604,10 +640,11 @@ impl<'a, 'b> TransferInCpiBuilder<'a, 'b> {
 #[derive(Clone, Debug)]
 struct TransferInCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_account_info::AccountInfo<'a>,
+    operator: Option<&'b solana_account_info::AccountInfo<'a>>,
     authority: Option<&'b solana_account_info::AccountInfo<'a>>,
-    payer: Option<&'b solana_account_info::AccountInfo<'a>>,
     token_mint: Option<&'b solana_account_info::AccountInfo<'a>>,
     from_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
+    config: Option<&'b solana_account_info::AccountInfo<'a>>,
     vault: Option<&'b solana_account_info::AccountInfo<'a>>,
     to_token_account: Option<&'b solana_account_info::AccountInfo<'a>>,
     token_program: Option<&'b solana_account_info::AccountInfo<'a>>,

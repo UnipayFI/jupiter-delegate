@@ -6,5 +6,5 @@
  * @see https://github.com/codama-idl/codama
  */
 
-export * from './access';
-export * from './config';
+export * from "./access";
+export * from "./config";

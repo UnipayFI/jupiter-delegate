@@ -38,13 +38,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const FILL_ORDER_ENGINE_DISCRIMINATOR = new Uint8Array([
   182, 236, 4, 68, 64, 15, 189, 85,
@@ -77,8 +77,8 @@ export type FillOrderEngineInstruction<
     | AccountMeta<string> = string,
   TAccountJupiterOrderEngineProgram extends
     | string
-    | AccountMeta<string> = '61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -126,7 +126,7 @@ export type FillOrderEngineInstruction<
       TAccountJupiterOrderEngineProgram extends string
         ? ReadonlyAccount<TAccountJupiterOrderEngineProgram>
         : TAccountJupiterOrderEngineProgram,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -146,10 +146,10 @@ export type FillOrderEngineInstructionDataArgs = {
 export function getFillOrderEngineInstructionDataEncoder(): Encoder<FillOrderEngineInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-      ['inAmount', getU64Encoder()],
-      ['delegate', getAddressEncoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ["inAmount", getU64Encoder()],
+      ["delegate", getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: FILL_ORDER_ENGINE_DISCRIMINATOR })
   );
@@ -157,10 +157,10 @@ export function getFillOrderEngineInstructionDataEncoder(): Encoder<FillOrderEng
 
 export function getFillOrderEngineInstructionDataDecoder(): Decoder<FillOrderEngineInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ['inAmount', getU64Decoder()],
-    ['delegate', getAddressDecoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ["inAmount", getU64Decoder()],
+    ["delegate", getAddressDecoder()],
   ]);
 }
 
@@ -188,7 +188,7 @@ export type FillOrderEngineAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountJupiterOrderEngineProgram extends string = string,
+  TAccountJupiterOrderEngineProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -204,9 +204,9 @@ export type FillOrderEngineAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
   jupiterOrderEngineProgram?: Address<TAccountJupiterOrderEngineProgram>;
-  data: FillOrderEngineInstructionDataArgs['data'];
-  inAmount: FillOrderEngineInstructionDataArgs['inAmount'];
-  delegate: FillOrderEngineInstructionDataArgs['delegate'];
+  data: FillOrderEngineInstructionDataArgs["data"];
+  inAmount: FillOrderEngineInstructionDataArgs["inAmount"];
+  delegate: FillOrderEngineInstructionDataArgs["delegate"];
 };
 
 export async function getFillOrderEngineInstructionAsync<
@@ -224,7 +224,7 @@ export async function getFillOrderEngineInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountJupiterOrderEngineProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: FillOrderEngineAsyncInput<
     TAccountInputMint,
@@ -329,7 +329,7 @@ export async function getFillOrderEngineInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -342,7 +342,7 @@ export async function getFillOrderEngineInstructionAsync<
   if (!accounts.vaultOutputTokenAccount.value) {
     accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -369,7 +369,7 @@ export async function getFillOrderEngineInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.user.value)),
         getAddressEncoder().encode(
@@ -381,10 +381,10 @@ export async function getFillOrderEngineInstructionAsync<
   }
   if (!accounts.jupiterOrderEngineProgram.value) {
     accounts.jupiterOrderEngineProgram.value =
-      '61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH' as Address<'61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH'>;
+      "61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH" as Address<"61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -406,23 +406,7 @@ export async function getFillOrderEngineInstructionAsync<
       args as FillOrderEngineInstructionDataArgs
     ),
     programAddress,
-  } as FillOrderEngineInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountDelegateInputTokenAccount,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountJupiterOrderEngineProgram
-  >);
+  } as FillOrderEngineInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountDelegateInputTokenAccount, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountJupiterOrderEngineProgram>);
 }
 
 export type FillOrderEngineInput<
@@ -439,7 +423,7 @@ export type FillOrderEngineInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountJupiterOrderEngineProgram extends string = string,
+  TAccountJupiterOrderEngineProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -455,9 +439,9 @@ export type FillOrderEngineInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
   jupiterOrderEngineProgram?: Address<TAccountJupiterOrderEngineProgram>;
-  data: FillOrderEngineInstructionDataArgs['data'];
-  inAmount: FillOrderEngineInstructionDataArgs['inAmount'];
-  delegate: FillOrderEngineInstructionDataArgs['delegate'];
+  data: FillOrderEngineInstructionDataArgs["data"];
+  inAmount: FillOrderEngineInstructionDataArgs["inAmount"];
+  delegate: FillOrderEngineInstructionDataArgs["delegate"];
 };
 
 export function getFillOrderEngineInstruction<
@@ -475,7 +459,7 @@ export function getFillOrderEngineInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountJupiterOrderEngineProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: FillOrderEngineInput<
     TAccountInputMint,
@@ -564,10 +548,10 @@ export function getFillOrderEngineInstruction<
   // Resolve default values.
   if (!accounts.jupiterOrderEngineProgram.value) {
     accounts.jupiterOrderEngineProgram.value =
-      '61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH' as Address<'61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH'>;
+      "61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH" as Address<"61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -589,28 +573,12 @@ export function getFillOrderEngineInstruction<
       args as FillOrderEngineInstructionDataArgs
     ),
     programAddress,
-  } as FillOrderEngineInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountDelegateInputTokenAccount,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountJupiterOrderEngineProgram
-  >);
+  } as FillOrderEngineInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountDelegateInputTokenAccount, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountJupiterOrderEngineProgram>);
 }
 
 export type ParsedFillOrderEngineInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -634,7 +602,7 @@ export type ParsedFillOrderEngineInstruction<
 
 export function parseFillOrderEngineInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -642,7 +610,7 @@ export function parseFillOrderEngineInstruction<
 ): ParsedFillOrderEngineInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

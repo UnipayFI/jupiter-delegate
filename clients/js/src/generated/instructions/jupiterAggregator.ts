@@ -40,13 +40,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const JUPITER_AGGREGATOR_DISCRIMINATOR = new Uint8Array([
   62, 105, 65, 121, 81, 228, 149, 1,
@@ -79,8 +79,8 @@ export type JupiterAggregatorInstruction<
     | AccountMeta<string> = string,
   TAccountJupiterProgram extends
     | string
-    | AccountMeta<string> = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -128,7 +128,7 @@ export type JupiterAggregatorInstruction<
       TAccountJupiterProgram extends string
         ? ReadonlyAccount<TAccountJupiterProgram>
         : TAccountJupiterProgram,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -150,14 +150,14 @@ export type JupiterAggregatorInstructionDataArgs = {
 export function getJupiterAggregatorInstructionDataEncoder(): Encoder<JupiterAggregatorInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
-      ['inAmount', getU64Encoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ["inAmount", getU64Encoder()],
       [
-        'instructionName',
+        "instructionName",
         addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
       ],
-      ['delegate', getAddressEncoder()],
+      ["delegate", getAddressEncoder()],
     ]),
     (value) => ({ ...value, discriminator: JUPITER_AGGREGATOR_DISCRIMINATOR })
   );
@@ -165,14 +165,14 @@ export function getJupiterAggregatorInstructionDataEncoder(): Encoder<JupiterAgg
 
 export function getJupiterAggregatorInstructionDataDecoder(): Decoder<JupiterAggregatorInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
-    ['inAmount', getU64Decoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ["inAmount", getU64Decoder()],
     [
-      'instructionName',
+      "instructionName",
       addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder()),
     ],
-    ['delegate', getAddressDecoder()],
+    ["delegate", getAddressDecoder()],
   ]);
 }
 
@@ -200,7 +200,7 @@ export type JupiterAggregatorAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountJupiterProgram extends string = string,
+  TAccountJupiterProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -216,10 +216,10 @@ export type JupiterAggregatorAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
   jupiterProgram?: Address<TAccountJupiterProgram>;
-  data: JupiterAggregatorInstructionDataArgs['data'];
-  inAmount: JupiterAggregatorInstructionDataArgs['inAmount'];
-  instructionName: JupiterAggregatorInstructionDataArgs['instructionName'];
-  delegate: JupiterAggregatorInstructionDataArgs['delegate'];
+  data: JupiterAggregatorInstructionDataArgs["data"];
+  inAmount: JupiterAggregatorInstructionDataArgs["inAmount"];
+  instructionName: JupiterAggregatorInstructionDataArgs["instructionName"];
+  delegate: JupiterAggregatorInstructionDataArgs["delegate"];
 };
 
 export async function getJupiterAggregatorInstructionAsync<
@@ -237,7 +237,7 @@ export async function getJupiterAggregatorInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountJupiterProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: JupiterAggregatorAsyncInput<
     TAccountInputMint,
@@ -339,7 +339,7 @@ export async function getJupiterAggregatorInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -352,7 +352,7 @@ export async function getJupiterAggregatorInstructionAsync<
   if (!accounts.vaultOutputTokenAccount.value) {
     accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -379,7 +379,7 @@ export async function getJupiterAggregatorInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.user.value)),
         getAddressEncoder().encode(
@@ -391,10 +391,10 @@ export async function getJupiterAggregatorInstructionAsync<
   }
   if (!accounts.jupiterProgram.value) {
     accounts.jupiterProgram.value =
-      'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4' as Address<'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4'>;
+      "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4" as Address<"JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -416,23 +416,7 @@ export async function getJupiterAggregatorInstructionAsync<
       args as JupiterAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as JupiterAggregatorInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountJupiterProgram
-  >);
+  } as JupiterAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountJupiterProgram>);
 }
 
 export type JupiterAggregatorInput<
@@ -449,7 +433,7 @@ export type JupiterAggregatorInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountJupiterProgram extends string = string,
+  TAccountJupiterProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -465,10 +449,10 @@ export type JupiterAggregatorInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
   jupiterProgram?: Address<TAccountJupiterProgram>;
-  data: JupiterAggregatorInstructionDataArgs['data'];
-  inAmount: JupiterAggregatorInstructionDataArgs['inAmount'];
-  instructionName: JupiterAggregatorInstructionDataArgs['instructionName'];
-  delegate: JupiterAggregatorInstructionDataArgs['delegate'];
+  data: JupiterAggregatorInstructionDataArgs["data"];
+  inAmount: JupiterAggregatorInstructionDataArgs["inAmount"];
+  instructionName: JupiterAggregatorInstructionDataArgs["instructionName"];
+  delegate: JupiterAggregatorInstructionDataArgs["delegate"];
 };
 
 export function getJupiterAggregatorInstruction<
@@ -486,7 +470,7 @@ export function getJupiterAggregatorInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountJupiterProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: JupiterAggregatorInput<
     TAccountInputMint,
@@ -572,10 +556,10 @@ export function getJupiterAggregatorInstruction<
   // Resolve default values.
   if (!accounts.jupiterProgram.value) {
     accounts.jupiterProgram.value =
-      'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4' as Address<'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4'>;
+      "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4" as Address<"JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -597,28 +581,12 @@ export function getJupiterAggregatorInstruction<
       args as JupiterAggregatorInstructionDataArgs
     ),
     programAddress,
-  } as JupiterAggregatorInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountJupiterProgram
-  >);
+  } as JupiterAggregatorInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountJupiterProgram>);
 }
 
 export type ParsedJupiterAggregatorInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -642,7 +610,7 @@ export type ParsedJupiterAggregatorInstruction<
 
 export function parseJupiterAggregatorInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -650,7 +618,7 @@ export function parseJupiterAggregatorInstruction<
 ): ParsedJupiterAggregatorInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

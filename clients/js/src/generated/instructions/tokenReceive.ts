@@ -31,13 +31,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const TOKEN_RECEIVE_DISCRIMINATOR = new Uint8Array([
   53, 89, 50, 230, 122, 75, 217, 28,
@@ -64,7 +64,7 @@ export type TokenReceiveInstruction<
   TAccountDelegate extends string | AccountMeta<string> = string,
   TAccountReceiver extends string | AccountMeta<string> = string,
   TAccountAccess extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -97,7 +97,7 @@ export type TokenReceiveInstruction<
       TAccountAccess extends string
         ? ReadonlyAccount<TAccountAccess>
         : TAccountAccess,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -107,14 +107,14 @@ export type TokenReceiveInstructionDataArgs = {};
 
 export function getTokenReceiveInstructionDataEncoder(): FixedSizeEncoder<TokenReceiveInstructionDataArgs> {
   return transformEncoder(
-    getStructEncoder([['discriminator', fixEncoderSize(getBytesEncoder(), 8)]]),
+    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
     (value) => ({ ...value, discriminator: TOKEN_RECEIVE_DISCRIMINATOR })
   );
 }
 
 export function getTokenReceiveInstructionDataDecoder(): FixedSizeDecoder<TokenReceiveInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
   ]);
 }
 
@@ -137,7 +137,7 @@ export type TokenReceiveAsyncInput<
   TAccountReceiverOutputTokenAccount extends string = string,
   TAccountDelegate extends string = string,
   TAccountReceiver extends string = string,
-  TAccountAccess extends string = string,
+  TAccountAccess extends string = string
 > = {
   config: Address<TAccountConfig>;
   outputMint: Address<TAccountOutputMint>;
@@ -160,7 +160,7 @@ export async function getTokenReceiveInstructionAsync<
   TAccountDelegate extends string,
   TAccountReceiver extends string,
   TAccountAccess extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: TokenReceiveAsyncInput<
     TAccountConfig,
@@ -222,7 +222,7 @@ export async function getTokenReceiveInstructionAsync<
   if (!accounts.executorOutputTokenAccount.value) {
     accounts.executorOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.executor.value)),
         getAddressEncoder().encode(
@@ -235,7 +235,7 @@ export async function getTokenReceiveInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.receiver.value)),
         getAddressEncoder().encode(
@@ -260,7 +260,7 @@ export async function getTokenReceiveInstructionAsync<
     });
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.config),
@@ -275,18 +275,7 @@ export async function getTokenReceiveInstructionAsync<
     ],
     data: getTokenReceiveInstructionDataEncoder().encode({}),
     programAddress,
-  } as TokenReceiveInstruction<
-    TProgramAddress,
-    TAccountConfig,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountExecutor,
-    TAccountExecutorOutputTokenAccount,
-    TAccountReceiverOutputTokenAccount,
-    TAccountDelegate,
-    TAccountReceiver,
-    TAccountAccess
-  >);
+  } as TokenReceiveInstruction<TProgramAddress, TAccountConfig, TAccountOutputMint, TAccountOutputMintProgram, TAccountExecutor, TAccountExecutorOutputTokenAccount, TAccountReceiverOutputTokenAccount, TAccountDelegate, TAccountReceiver, TAccountAccess>);
 }
 
 export type TokenReceiveInput<
@@ -298,7 +287,7 @@ export type TokenReceiveInput<
   TAccountReceiverOutputTokenAccount extends string = string,
   TAccountDelegate extends string = string,
   TAccountReceiver extends string = string,
-  TAccountAccess extends string = string,
+  TAccountAccess extends string = string
 > = {
   config: Address<TAccountConfig>;
   outputMint: Address<TAccountOutputMint>;
@@ -321,7 +310,7 @@ export function getTokenReceiveInstruction<
   TAccountDelegate extends string,
   TAccountReceiver extends string,
   TAccountAccess extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: TokenReceiveInput<
     TAccountConfig,
@@ -377,7 +366,7 @@ export function getTokenReceiveInstruction<
     ResolvedAccount
   >;
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.config),
@@ -392,23 +381,12 @@ export function getTokenReceiveInstruction<
     ],
     data: getTokenReceiveInstructionDataEncoder().encode({}),
     programAddress,
-  } as TokenReceiveInstruction<
-    TProgramAddress,
-    TAccountConfig,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountExecutor,
-    TAccountExecutorOutputTokenAccount,
-    TAccountReceiverOutputTokenAccount,
-    TAccountDelegate,
-    TAccountReceiver,
-    TAccountAccess
-  >);
+  } as TokenReceiveInstruction<TProgramAddress, TAccountConfig, TAccountOutputMint, TAccountOutputMintProgram, TAccountExecutor, TAccountExecutorOutputTokenAccount, TAccountReceiverOutputTokenAccount, TAccountDelegate, TAccountReceiver, TAccountAccess>);
 }
 
 export type ParsedTokenReceiveInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -427,7 +405,7 @@ export type ParsedTokenReceiveInstruction<
 
 export function parseTokenReceiveInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -435,7 +413,7 @@ export function parseTokenReceiveInstruction<
 ): ParsedTokenReceiveInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 9) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

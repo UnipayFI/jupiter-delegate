@@ -24,7 +24,7 @@ import {
   type Codec,
   type Decoder,
   type Encoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type TwoHopEvent = {
   user: Address;
@@ -58,35 +58,35 @@ export type TwoHopEventArgs = {
 
 export function getTwoHopEventEncoder(): Encoder<TwoHopEventArgs> {
   return getStructEncoder([
-    ['user', getAddressEncoder()],
-    ['step1InputMint', getAddressEncoder()],
-    ['step1OutputMint', getAddressEncoder()],
-    ['step1InputAmount', getU64Encoder()],
-    ['step1OutputAmount', getU64Encoder()],
-    ['step1Action', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
-    ['step2InputMint', getAddressEncoder()],
-    ['step2OutputMint', getAddressEncoder()],
-    ['step2InputAmount', getU64Encoder()],
-    ['step2OutputAmount', getU64Encoder()],
-    ['step2Action', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
-    ['operator', getAddressEncoder()],
+    ["user", getAddressEncoder()],
+    ["step1InputMint", getAddressEncoder()],
+    ["step1OutputMint", getAddressEncoder()],
+    ["step1InputAmount", getU64Encoder()],
+    ["step1OutputAmount", getU64Encoder()],
+    ["step1Action", addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
+    ["step2InputMint", getAddressEncoder()],
+    ["step2OutputMint", getAddressEncoder()],
+    ["step2InputAmount", getU64Encoder()],
+    ["step2OutputAmount", getU64Encoder()],
+    ["step2Action", addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
+    ["operator", getAddressEncoder()],
   ]);
 }
 
 export function getTwoHopEventDecoder(): Decoder<TwoHopEvent> {
   return getStructDecoder([
-    ['user', getAddressDecoder()],
-    ['step1InputMint', getAddressDecoder()],
-    ['step1OutputMint', getAddressDecoder()],
-    ['step1InputAmount', getU64Decoder()],
-    ['step1OutputAmount', getU64Decoder()],
-    ['step1Action', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
-    ['step2InputMint', getAddressDecoder()],
-    ['step2OutputMint', getAddressDecoder()],
-    ['step2InputAmount', getU64Decoder()],
-    ['step2OutputAmount', getU64Decoder()],
-    ['step2Action', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
-    ['operator', getAddressDecoder()],
+    ["user", getAddressDecoder()],
+    ["step1InputMint", getAddressDecoder()],
+    ["step1OutputMint", getAddressDecoder()],
+    ["step1InputAmount", getU64Decoder()],
+    ["step1OutputAmount", getU64Decoder()],
+    ["step1Action", addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
+    ["step2InputMint", getAddressDecoder()],
+    ["step2OutputMint", getAddressDecoder()],
+    ["step2InputAmount", getU64Decoder()],
+    ["step2OutputAmount", getU64Decoder()],
+    ["step2Action", addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
+    ["operator", getAddressDecoder()],
   ]);
 }
 

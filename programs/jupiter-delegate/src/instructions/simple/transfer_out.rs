@@ -11,9 +11,6 @@ pub struct TransferOut<'info> {
     pub operator: Signer<'info>,
 
     #[account(mut)]
-    pub payer: Signer<'info>,
-
-    #[account(mut)]
     pub config: Box<Account<'info, Config>>,
 
     #[account(

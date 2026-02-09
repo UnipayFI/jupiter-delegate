@@ -36,13 +36,13 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 
 export const JUPITER_PERPETUALS_DISCRIMINATOR = new Uint8Array([
   44, 20, 13, 72, 65, 168, 15, 194,
@@ -75,8 +75,8 @@ export type JupiterPerpetualsInstruction<
     | AccountMeta<string> = string,
   TAccountPerpetualsProgram extends
     | string
-    | AccountMeta<string> = 'PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu',
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    | AccountMeta<string> = "PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu",
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -124,7 +124,7 @@ export type JupiterPerpetualsInstruction<
       TAccountPerpetualsProgram extends string
         ? ReadonlyAccount<TAccountPerpetualsProgram>
         : TAccountPerpetualsProgram,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -142,9 +142,9 @@ export type JupiterPerpetualsInstructionDataArgs = {
 export function getJupiterPerpetualsInstructionDataEncoder(): Encoder<JupiterPerpetualsInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['delegate', getAddressEncoder()],
-      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["delegate", getAddressEncoder()],
+      ["data", addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
     ]),
     (value) => ({ ...value, discriminator: JUPITER_PERPETUALS_DISCRIMINATOR })
   );
@@ -152,9 +152,9 @@ export function getJupiterPerpetualsInstructionDataEncoder(): Encoder<JupiterPer
 
 export function getJupiterPerpetualsInstructionDataDecoder(): Decoder<JupiterPerpetualsInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['delegate', getAddressDecoder()],
-    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["delegate", getAddressDecoder()],
+    ["data", addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
   ]);
 }
 
@@ -182,7 +182,7 @@ export type JupiterPerpetualsAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountPerpetualsProgram extends string = string,
+  TAccountPerpetualsProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -198,8 +198,8 @@ export type JupiterPerpetualsAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount?: Address<TAccountReceiverOutputTokenAccount>;
   perpetualsProgram?: Address<TAccountPerpetualsProgram>;
-  delegate: JupiterPerpetualsInstructionDataArgs['delegate'];
-  data: JupiterPerpetualsInstructionDataArgs['data'];
+  delegate: JupiterPerpetualsInstructionDataArgs["delegate"];
+  data: JupiterPerpetualsInstructionDataArgs["data"];
 };
 
 export async function getJupiterPerpetualsInstructionAsync<
@@ -217,7 +217,7 @@ export async function getJupiterPerpetualsInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountPerpetualsProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: JupiterPerpetualsAsyncInput<
     TAccountInputMint,
@@ -322,7 +322,7 @@ export async function getJupiterPerpetualsInstructionAsync<
   if (!accounts.vaultInputTokenAccount.value) {
     accounts.vaultInputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -335,7 +335,7 @@ export async function getJupiterPerpetualsInstructionAsync<
   if (!accounts.vaultOutputTokenAccount.value) {
     accounts.vaultOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -362,7 +362,7 @@ export async function getJupiterPerpetualsInstructionAsync<
   if (!accounts.receiverOutputTokenAccount.value) {
     accounts.receiverOutputTokenAccount.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.user.value)),
         getAddressEncoder().encode(
@@ -374,10 +374,10 @@ export async function getJupiterPerpetualsInstructionAsync<
   }
   if (!accounts.perpetualsProgram.value) {
     accounts.perpetualsProgram.value =
-      'PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu' as Address<'PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu'>;
+      "PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu" as Address<"PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -399,23 +399,7 @@ export async function getJupiterPerpetualsInstructionAsync<
       args as JupiterPerpetualsInstructionDataArgs
     ),
     programAddress,
-  } as JupiterPerpetualsInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountPerpetualsProgram
-  >);
+  } as JupiterPerpetualsInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountPerpetualsProgram>);
 }
 
 export type JupiterPerpetualsInput<
@@ -432,7 +416,7 @@ export type JupiterPerpetualsInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccount extends string = string,
-  TAccountPerpetualsProgram extends string = string,
+  TAccountPerpetualsProgram extends string = string
 > = {
   inputMint: Address<TAccountInputMint>;
   inputMintProgram: Address<TAccountInputMintProgram>;
@@ -448,8 +432,8 @@ export type JupiterPerpetualsInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccount: Address<TAccountReceiverOutputTokenAccount>;
   perpetualsProgram?: Address<TAccountPerpetualsProgram>;
-  delegate: JupiterPerpetualsInstructionDataArgs['delegate'];
-  data: JupiterPerpetualsInstructionDataArgs['data'];
+  delegate: JupiterPerpetualsInstructionDataArgs["delegate"];
+  data: JupiterPerpetualsInstructionDataArgs["data"];
 };
 
 export function getJupiterPerpetualsInstruction<
@@ -467,7 +451,7 @@ export function getJupiterPerpetualsInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccount extends string,
   TAccountPerpetualsProgram extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: JupiterPerpetualsInput<
     TAccountInputMint,
@@ -556,10 +540,10 @@ export function getJupiterPerpetualsInstruction<
   // Resolve default values.
   if (!accounts.perpetualsProgram.value) {
     accounts.perpetualsProgram.value =
-      'PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu' as Address<'PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu'>;
+      "PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu" as Address<"PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMint),
@@ -581,28 +565,12 @@ export function getJupiterPerpetualsInstruction<
       args as JupiterPerpetualsInstructionDataArgs
     ),
     programAddress,
-  } as JupiterPerpetualsInstruction<
-    TProgramAddress,
-    TAccountInputMint,
-    TAccountInputMintProgram,
-    TAccountOutputMint,
-    TAccountOutputMintProgram,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccount,
-    TAccountVaultOutputTokenAccount,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccount,
-    TAccountPerpetualsProgram
-  >);
+  } as JupiterPerpetualsInstruction<TProgramAddress, TAccountInputMint, TAccountInputMintProgram, TAccountOutputMint, TAccountOutputMintProgram, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccount, TAccountVaultOutputTokenAccount, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccount, TAccountPerpetualsProgram>);
 }
 
 export type ParsedJupiterPerpetualsInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -626,7 +594,7 @@ export type ParsedJupiterPerpetualsInstruction<
 
 export function parseJupiterPerpetualsInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -634,7 +602,7 @@ export function parseJupiterPerpetualsInstruction<
 ): ParsedJupiterPerpetualsInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 14) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

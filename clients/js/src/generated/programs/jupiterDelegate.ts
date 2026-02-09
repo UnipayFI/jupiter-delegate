@@ -12,7 +12,7 @@ import {
   getBytesEncoder,
   type Address,
   type ReadonlyUint8Array,
-} from '@solana/kit';
+} from "@solana/kit";
 import {
   type ParsedAcceptAdminTransferInstruction,
   type ParsedDflowAggregatorInstruction,
@@ -31,10 +31,10 @@ import {
   type ParsedTransferInInstruction,
   type ParsedTransferOutInstruction,
   type ParsedTwoHopInstruction,
-} from '../instructions';
+} from "../instructions";
 
 export const JUPITER_DELEGATE_PROGRAM_ADDRESS =
-  'JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir' as Address<'JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir'>;
+  "JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir" as Address<"JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir">;
 
 export enum JupiterDelegateAccount {
   Access,
@@ -44,7 +44,7 @@ export enum JupiterDelegateAccount {
 export function identifyJupiterDelegateAccount(
   account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): JupiterDelegateAccount {
-  const data = 'data' in account ? account.data : account;
+  const data = "data" in account ? account.data : account;
   if (
     containsBytes(
       data,
@@ -68,7 +68,7 @@ export function identifyJupiterDelegateAccount(
     return JupiterDelegateAccount.Config;
   }
   throw new Error(
-    'The provided account could not be identified as a jupiterDelegate account.'
+    "The provided account could not be identified as a jupiterDelegate account."
   );
 }
 
@@ -95,7 +95,7 @@ export enum JupiterDelegateInstruction {
 export function identifyJupiterDelegateInstruction(
   instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
 ): JupiterDelegateInstruction {
-  const data = 'data' in instruction ? instruction.data : instruction;
+  const data = "data" in instruction ? instruction.data : instruction;
   if (
     containsBytes(
       data,
@@ -284,12 +284,12 @@ export function identifyJupiterDelegateInstruction(
     return JupiterDelegateInstruction.TwoHop;
   }
   throw new Error(
-    'The provided instruction could not be identified as a jupiterDelegate instruction.'
+    "The provided instruction could not be identified as a jupiterDelegate instruction."
   );
 }
 
 export type ParsedJupiterDelegateInstruction<
-  TProgram extends string = 'JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir',
+  TProgram extends string = "JPDGXJky3iRkPmJx3cixg5cxJGGwP9kXBJzMpT5GLir"
 > =
   | ({
       instructionType: JupiterDelegateInstruction.AcceptAdminTransfer;

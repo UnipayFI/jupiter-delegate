@@ -18,7 +18,7 @@ import {
   type FixedSizeCodec,
   type FixedSizeDecoder,
   type FixedSizeEncoder,
-} from '@solana/kit';
+} from "@solana/kit";
 
 export type PauseEvent = { config: Address; toggle: boolean };
 
@@ -26,15 +26,15 @@ export type PauseEventArgs = PauseEvent;
 
 export function getPauseEventEncoder(): FixedSizeEncoder<PauseEventArgs> {
   return getStructEncoder([
-    ['config', getAddressEncoder()],
-    ['toggle', getBooleanEncoder()],
+    ["config", getAddressEncoder()],
+    ["toggle", getBooleanEncoder()],
   ]);
 }
 
 export function getPauseEventDecoder(): FixedSizeDecoder<PauseEvent> {
   return getStructDecoder([
-    ['config', getAddressDecoder()],
-    ['toggle', getBooleanDecoder()],
+    ["config", getAddressDecoder()],
+    ["toggle", getBooleanDecoder()],
   ]);
 }
 

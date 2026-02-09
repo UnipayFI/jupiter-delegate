@@ -32,19 +32,19 @@ import {
   type TransactionSigner,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from '../programs';
+} from "@solana/kit";
+import { JUPITER_DELEGATE_PROGRAM_ADDRESS } from "../programs";
 import {
   expectAddress,
   getAccountMetaFactory,
   type ResolvedAccount,
-} from '../shared';
+} from "../shared";
 import {
   getStepParamsDecoder,
   getStepParamsEncoder,
   type StepParams,
   type StepParamsArgs,
-} from '../types';
+} from "../types";
 
 export const TWO_HOP_DISCRIMINATOR = new Uint8Array([
   82, 39, 54, 208, 18, 205, 214, 218,
@@ -90,7 +90,7 @@ export type TwoHopInstruction<
   TAccountReceiverOutputTokenAccountTwo extends
     | string
     | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+  TRemainingAccounts extends readonly AccountMeta<string>[] = []
 > = Instruction<TProgram> &
   InstructionWithData<ReadonlyUint8Array> &
   InstructionWithAccounts<
@@ -156,7 +156,7 @@ export type TwoHopInstruction<
       TAccountReceiverOutputTokenAccountTwo extends string
         ? WritableAccount<TAccountReceiverOutputTokenAccountTwo>
         : TAccountReceiverOutputTokenAccountTwo,
-      ...TRemainingAccounts,
+      ...TRemainingAccounts
     ]
   >;
 
@@ -176,10 +176,10 @@ export type TwoHopInstructionDataArgs = {
 export function getTwoHopInstructionDataEncoder(): Encoder<TwoHopInstructionDataArgs> {
   return transformEncoder(
     getStructEncoder([
-      ['discriminator', fixEncoderSize(getBytesEncoder(), 8)],
-      ['delegate', getAddressEncoder()],
-      ['step1', getStepParamsEncoder()],
-      ['step2', getStepParamsEncoder()],
+      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+      ["delegate", getAddressEncoder()],
+      ["step1", getStepParamsEncoder()],
+      ["step2", getStepParamsEncoder()],
     ]),
     (value) => ({ ...value, discriminator: TWO_HOP_DISCRIMINATOR })
   );
@@ -187,10 +187,10 @@ export function getTwoHopInstructionDataEncoder(): Encoder<TwoHopInstructionData
 
 export function getTwoHopInstructionDataDecoder(): Decoder<TwoHopInstructionData> {
   return getStructDecoder([
-    ['discriminator', fixDecoderSize(getBytesDecoder(), 8)],
-    ['delegate', getAddressDecoder()],
-    ['step1', getStepParamsDecoder()],
-    ['step2', getStepParamsDecoder()],
+    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+    ["delegate", getAddressDecoder()],
+    ["step1", getStepParamsDecoder()],
+    ["step2", getStepParamsDecoder()],
   ]);
 }
 
@@ -224,7 +224,7 @@ export type TwoHopAsyncInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccountOne extends string = string,
-  TAccountReceiverOutputTokenAccountTwo extends string = string,
+  TAccountReceiverOutputTokenAccountTwo extends string = string
 > = {
   inputMintOne: Address<TAccountInputMintOne>;
   inputMintProgramOne: Address<TAccountInputMintProgramOne>;
@@ -246,9 +246,9 @@ export type TwoHopAsyncInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccountOne?: Address<TAccountReceiverOutputTokenAccountOne>;
   receiverOutputTokenAccountTwo?: Address<TAccountReceiverOutputTokenAccountTwo>;
-  delegate: TwoHopInstructionDataArgs['delegate'];
-  step1: TwoHopInstructionDataArgs['step1'];
-  step2: TwoHopInstructionDataArgs['step2'];
+  delegate: TwoHopInstructionDataArgs["delegate"];
+  step1: TwoHopInstructionDataArgs["step1"];
+  step2: TwoHopInstructionDataArgs["step2"];
 };
 
 export async function getTwoHopInstructionAsync<
@@ -272,7 +272,7 @@ export async function getTwoHopInstructionAsync<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccountOne extends string,
   TAccountReceiverOutputTokenAccountTwo extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: TwoHopAsyncInput<
     TAccountInputMintOne,
@@ -407,7 +407,7 @@ export async function getTwoHopInstructionAsync<
   if (!accounts.vaultInputTokenAccountOne.value) {
     accounts.vaultInputTokenAccountOne.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -420,7 +420,7 @@ export async function getTwoHopInstructionAsync<
   if (!accounts.vaultOutputTokenAccountOne.value) {
     accounts.vaultOutputTokenAccountOne.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -433,7 +433,7 @@ export async function getTwoHopInstructionAsync<
   if (!accounts.vaultInputTokenAccountTwo.value) {
     accounts.vaultInputTokenAccountTwo.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -446,7 +446,7 @@ export async function getTwoHopInstructionAsync<
   if (!accounts.vaultOutputTokenAccountTwo.value) {
     accounts.vaultOutputTokenAccountTwo.value = await getProgramDerivedAddress({
       programAddress:
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
       seeds: [
         getAddressEncoder().encode(expectAddress(accounts.vault.value)),
         getAddressEncoder().encode(
@@ -474,7 +474,7 @@ export async function getTwoHopInstructionAsync<
     accounts.receiverOutputTokenAccountOne.value =
       await getProgramDerivedAddress({
         programAddress:
-          'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+          "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
         seeds: [
           getAddressEncoder().encode(expectAddress(accounts.user.value)),
           getAddressEncoder().encode(
@@ -490,7 +490,7 @@ export async function getTwoHopInstructionAsync<
     accounts.receiverOutputTokenAccountTwo.value =
       await getProgramDerivedAddress({
         programAddress:
-          'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL' as Address<'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'>,
+          "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" as Address<"ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL">,
         seeds: [
           getAddressEncoder().encode(expectAddress(accounts.user.value)),
           getAddressEncoder().encode(
@@ -503,7 +503,7 @@ export async function getTwoHopInstructionAsync<
       });
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMintOne),
@@ -531,29 +531,7 @@ export async function getTwoHopInstructionAsync<
       args as TwoHopInstructionDataArgs
     ),
     programAddress,
-  } as TwoHopInstruction<
-    TProgramAddress,
-    TAccountInputMintOne,
-    TAccountInputMintProgramOne,
-    TAccountOutputMintOne,
-    TAccountOutputMintProgramOne,
-    TAccountInputMintTwo,
-    TAccountInputMintProgramTwo,
-    TAccountOutputMintTwo,
-    TAccountOutputMintProgramTwo,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccountOne,
-    TAccountVaultOutputTokenAccountOne,
-    TAccountVaultInputTokenAccountTwo,
-    TAccountVaultOutputTokenAccountTwo,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccountOne,
-    TAccountReceiverOutputTokenAccountTwo
-  >);
+  } as TwoHopInstruction<TProgramAddress, TAccountInputMintOne, TAccountInputMintProgramOne, TAccountOutputMintOne, TAccountOutputMintProgramOne, TAccountInputMintTwo, TAccountInputMintProgramTwo, TAccountOutputMintTwo, TAccountOutputMintProgramTwo, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccountOne, TAccountVaultOutputTokenAccountOne, TAccountVaultInputTokenAccountTwo, TAccountVaultOutputTokenAccountTwo, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccountOne, TAccountReceiverOutputTokenAccountTwo>);
 }
 
 export type TwoHopInput<
@@ -576,7 +554,7 @@ export type TwoHopInput<
   TAccountAccess extends string = string,
   TAccountUser extends string = string,
   TAccountReceiverOutputTokenAccountOne extends string = string,
-  TAccountReceiverOutputTokenAccountTwo extends string = string,
+  TAccountReceiverOutputTokenAccountTwo extends string = string
 > = {
   inputMintOne: Address<TAccountInputMintOne>;
   inputMintProgramOne: Address<TAccountInputMintProgramOne>;
@@ -598,9 +576,9 @@ export type TwoHopInput<
   user: Address<TAccountUser>;
   receiverOutputTokenAccountOne: Address<TAccountReceiverOutputTokenAccountOne>;
   receiverOutputTokenAccountTwo: Address<TAccountReceiverOutputTokenAccountTwo>;
-  delegate: TwoHopInstructionDataArgs['delegate'];
-  step1: TwoHopInstructionDataArgs['step1'];
-  step2: TwoHopInstructionDataArgs['step2'];
+  delegate: TwoHopInstructionDataArgs["delegate"];
+  step1: TwoHopInstructionDataArgs["step1"];
+  step2: TwoHopInstructionDataArgs["step2"];
 };
 
 export function getTwoHopInstruction<
@@ -624,7 +602,7 @@ export function getTwoHopInstruction<
   TAccountUser extends string,
   TAccountReceiverOutputTokenAccountOne extends string,
   TAccountReceiverOutputTokenAccountTwo extends string,
-  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
+  TProgramAddress extends Address = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS
 >(
   input: TwoHopInput<
     TAccountInputMintOne,
@@ -740,7 +718,7 @@ export function getTwoHopInstruction<
   // Original args.
   const args = { ...input };
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.inputMintOne),
@@ -768,34 +746,12 @@ export function getTwoHopInstruction<
       args as TwoHopInstructionDataArgs
     ),
     programAddress,
-  } as TwoHopInstruction<
-    TProgramAddress,
-    TAccountInputMintOne,
-    TAccountInputMintProgramOne,
-    TAccountOutputMintOne,
-    TAccountOutputMintProgramOne,
-    TAccountInputMintTwo,
-    TAccountInputMintProgramTwo,
-    TAccountOutputMintTwo,
-    TAccountOutputMintProgramTwo,
-    TAccountOperator,
-    TAccountVault,
-    TAccountDelegateInputTokenAccount,
-    TAccountVaultInputTokenAccountOne,
-    TAccountVaultOutputTokenAccountOne,
-    TAccountVaultInputTokenAccountTwo,
-    TAccountVaultOutputTokenAccountTwo,
-    TAccountConfig,
-    TAccountAccess,
-    TAccountUser,
-    TAccountReceiverOutputTokenAccountOne,
-    TAccountReceiverOutputTokenAccountTwo
-  >);
+  } as TwoHopInstruction<TProgramAddress, TAccountInputMintOne, TAccountInputMintProgramOne, TAccountOutputMintOne, TAccountOutputMintProgramOne, TAccountInputMintTwo, TAccountInputMintProgramTwo, TAccountOutputMintTwo, TAccountOutputMintProgramTwo, TAccountOperator, TAccountVault, TAccountDelegateInputTokenAccount, TAccountVaultInputTokenAccountOne, TAccountVaultOutputTokenAccountOne, TAccountVaultInputTokenAccountTwo, TAccountVaultOutputTokenAccountTwo, TAccountConfig, TAccountAccess, TAccountUser, TAccountReceiverOutputTokenAccountOne, TAccountReceiverOutputTokenAccountTwo>);
 }
 
 export type ParsedTwoHopInstruction<
   TProgram extends string = typeof JUPITER_DELEGATE_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[]
 > = {
   programAddress: Address<TProgram>;
   accounts: {
@@ -825,7 +781,7 @@ export type ParsedTwoHopInstruction<
 
 export function parseTwoHopInstruction<
   TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+  TAccountMetas extends readonly AccountMeta[]
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
@@ -833,7 +789,7 @@ export function parseTwoHopInstruction<
 ): ParsedTwoHopInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 20) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {

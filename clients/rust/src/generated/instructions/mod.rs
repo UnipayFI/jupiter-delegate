@@ -5,34 +5,33 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-pub(crate) mod r#accept_admin_transfer;
-pub(crate) mod r#dflow_aggregator;
-pub(crate) mod r#fill_order_engine;
-pub(crate) mod r#grant_access;
-pub(crate) mod r#init_config;
-pub(crate) mod r#jupiter_aggregator;
-pub(crate) mod r#jupiter_perpetuals;
-pub(crate) mod r#modify_cooldown_duration;
-pub(crate) mod r#okx_aggregator;
-pub(crate) mod r#pause;
-pub(crate) mod r#propose_new_admin;
-pub(crate) mod r#revoke_access;
-pub(crate) mod r#swap;
-pub(crate) mod r#token_receive;
-pub(crate) mod r#two_hop;
+  pub(crate) mod r#accept_admin_transfer;
+  pub(crate) mod r#dflow_aggregator;
+  pub(crate) mod r#fill_order_engine;
+  pub(crate) mod r#grant_access;
+  pub(crate) mod r#init_config;
+  pub(crate) mod r#jupiter_aggregator;
+  pub(crate) mod r#jupiter_perpetuals;
+  pub(crate) mod r#modify_cooldown_duration;
+  pub(crate) mod r#okx_aggregator;
+  pub(crate) mod r#pause;
+  pub(crate) mod r#propose_new_admin;
+  pub(crate) mod r#revoke_access;
+  pub(crate) mod r#swap;
+  pub(crate) mod r#two_hop;
 
-pub use self::r#accept_admin_transfer::*;
-pub use self::r#dflow_aggregator::*;
-pub use self::r#fill_order_engine::*;
-pub use self::r#grant_access::*;
-pub use self::r#init_config::*;
-pub use self::r#jupiter_aggregator::*;
-pub use self::r#jupiter_perpetuals::*;
-pub use self::r#modify_cooldown_duration::*;
-pub use self::r#okx_aggregator::*;
-pub use self::r#pause::*;
-pub use self::r#propose_new_admin::*;
-pub use self::r#revoke_access::*;
-pub use self::r#swap::*;
-pub use self::r#token_receive::*;
-pub use self::r#two_hop::*;
+  pub use self::r#accept_admin_transfer::*;
+  pub use self::r#dflow_aggregator::*;
+  pub use self::r#fill_order_engine::*;
+  pub use self::r#grant_access::*;
+  pub use self::r#init_config::*;
+  pub use self::r#jupiter_aggregator::*;
+  pub use self::r#jupiter_perpetuals::*;
+  pub use self::r#modify_cooldown_duration::*;
+  pub use self::r#okx_aggregator::*;
+  pub use self::r#pause::*;
+  pub use self::r#propose_new_admin::*;
+  pub use self::r#revoke_access::*;
+  pub use self::r#swap::*;
+  pub use self::r#two_hop::*;
+

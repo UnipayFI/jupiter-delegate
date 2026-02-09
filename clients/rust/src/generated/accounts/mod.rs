@@ -5,8 +5,9 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-pub(crate) mod r#access;
-pub(crate) mod r#config;
+  pub(crate) mod r#access;
+  pub(crate) mod r#config;
 
-pub use self::r#access::*;
-pub use self::r#config::*;
+  pub use self::r#access::*;
+  pub use self::r#config::*;
+

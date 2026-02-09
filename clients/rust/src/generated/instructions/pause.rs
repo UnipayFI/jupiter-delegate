@@ -5,375 +5,362 @@
 //! <https://github.com/codama-idl/codama>
 //!
 
-use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
+use borsh::BorshDeserialize;
 
 pub const PAUSE_DISCRIMINATOR: [u8; 8] = [211, 22, 221, 251, 74, 121, 193, 47];
 
 /// Accounts.
 #[derive(Debug)]
 pub struct Pause {
-    pub admin: solana_pubkey::Pubkey,
-
-    pub config: solana_pubkey::Pubkey,
-
-    pub system_program: solana_pubkey::Pubkey,
-}
+      
+              
+          pub admin: solana_pubkey::Pubkey,
+          
+              
+          pub config: solana_pubkey::Pubkey,
+          
+              
+          pub system_program: solana_pubkey::Pubkey,
+      }
 
 impl Pause {
-    pub fn instruction(&self, args: PauseInstructionArgs) -> solana_instruction::Instruction {
-        self.instruction_with_remaining_accounts(args, &[])
-    }
-    #[allow(clippy::arithmetic_side_effects)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn instruction_with_remaining_accounts(
-        &self,
-        args: PauseInstructionArgs,
-        remaining_accounts: &[solana_instruction::AccountMeta],
-    ) -> solana_instruction::Instruction {
-        let mut accounts = Vec::with_capacity(3 + remaining_accounts.len());
-        accounts.push(solana_instruction::AccountMeta::new(self.admin, true));
-        accounts.push(solana_instruction::AccountMeta::new(self.config, false));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+  pub fn instruction(&self, args: PauseInstructionArgs) -> solana_instruction::Instruction {
+    self.instruction_with_remaining_accounts(args, &[])
+  }
+  #[allow(clippy::arithmetic_side_effects)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn instruction_with_remaining_accounts(&self, args: PauseInstructionArgs, remaining_accounts: &[solana_instruction::AccountMeta]) -> solana_instruction::Instruction {
+    let mut accounts = Vec::with_capacity(3+ remaining_accounts.len());
+                            accounts.push(solana_instruction::AccountMeta::new(
+            self.admin,
+            true
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
+            self.config,
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             self.system_program,
-            false,
-        ));
-        accounts.extend_from_slice(remaining_accounts);
-        let mut data = PauseInstructionData::new().try_to_vec().unwrap();
-        let mut args = args.try_to_vec().unwrap();
-        data.append(&mut args);
-
-        solana_instruction::Instruction {
-            program_id: crate::JUPITER_DELEGATE_ID,
-            accounts,
-            data,
-        }
+            false
+          ));
+                      accounts.extend_from_slice(remaining_accounts);
+    let mut data = PauseInstructionData::new().try_to_vec().unwrap();
+          let mut args = args.try_to_vec().unwrap();
+      data.append(&mut args);
+    
+    solana_instruction::Instruction {
+      program_id: crate::JUPITER_DELEGATE_ID,
+      accounts,
+      data,
     }
+  }
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct PauseInstructionData {
-    discriminator: [u8; 8],
-}
+ pub struct PauseInstructionData {
+            discriminator: [u8; 8],
+            }
 
 impl PauseInstructionData {
-    pub fn new() -> Self {
-        Self {
-            discriminator: [211, 22, 221, 251, 74, 121, 193, 47],
-        }
-    }
+  pub fn new() -> Self {
+    Self {
+                        discriminator: [211, 22, 221, 251, 74, 121, 193, 47],
+                                }
+  }
 
     pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
-        borsh::to_vec(self)
-    }
-}
+    borsh::to_vec(self)
+  }
+  }
 
 impl Default for PauseInstructionData {
-    fn default() -> Self {
-        Self::new()
-    }
+  fn default() -> Self {
+    Self::new()
+  }
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct PauseInstructionArgs {
-    pub toggle: bool,
-}
+ pub struct PauseInstructionArgs {
+                  pub toggle: bool,
+      }
 
 impl PauseInstructionArgs {
-    pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
-        borsh::to_vec(self)
-    }
+  pub(crate) fn try_to_vec(&self) -> Result<Vec<u8>, std::io::Error> {
+    borsh::to_vec(self)
+  }
 }
+
 
 /// Instruction builder for `Pause`.
 ///
 /// ### Accounts:
 ///
-///   0. `[writable, signer]` admin
-///   1. `[writable]` config
-///   2. `[optional]` system_program (default to `11111111111111111111111111111111`)
+                      ///   0. `[writable, signer]` admin
+                ///   1. `[writable]` config
+                ///   2. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
 pub struct PauseBuilder {
-    admin: Option<solana_pubkey::Pubkey>,
-    config: Option<solana_pubkey::Pubkey>,
-    system_program: Option<solana_pubkey::Pubkey>,
-    toggle: Option<bool>,
-    __remaining_accounts: Vec<solana_instruction::AccountMeta>,
+            admin: Option<solana_pubkey::Pubkey>,
+                config: Option<solana_pubkey::Pubkey>,
+                system_program: Option<solana_pubkey::Pubkey>,
+                        toggle: Option<bool>,
+        __remaining_accounts: Vec<solana_instruction::AccountMeta>,
 }
 
 impl PauseBuilder {
-    pub fn new() -> Self {
-        Self::default()
-    }
-    #[inline(always)]
+  pub fn new() -> Self {
+    Self::default()
+  }
+            #[inline(always)]
     pub fn admin(&mut self, admin: solana_pubkey::Pubkey) -> &mut Self {
-        self.admin = Some(admin);
-        self
+                        self.admin = Some(admin);
+                    self
     }
-    #[inline(always)]
+            #[inline(always)]
     pub fn config(&mut self, config: solana_pubkey::Pubkey) -> &mut Self {
-        self.config = Some(config);
-        self
+                        self.config = Some(config);
+                    self
     }
-    /// `[optional account, default to '11111111111111111111111111111111']`
-    #[inline(always)]
+            /// `[optional account, default to '11111111111111111111111111111111']`
+#[inline(always)]
     pub fn system_program(&mut self, system_program: solana_pubkey::Pubkey) -> &mut Self {
-        self.system_program = Some(system_program);
-        self
+                        self.system_program = Some(system_program);
+                    self
     }
-    #[inline(always)]
-    pub fn toggle(&mut self, toggle: bool) -> &mut Self {
+                    #[inline(always)]
+      pub fn toggle(&mut self, toggle: bool) -> &mut Self {
         self.toggle = Some(toggle);
         self
-    }
-    /// Add an additional account to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_account(&mut self, account: solana_instruction::AccountMeta) -> &mut Self {
-        self.__remaining_accounts.push(account);
-        self
-    }
-    /// Add additional accounts to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_accounts(
-        &mut self,
-        accounts: &[solana_instruction::AccountMeta],
-    ) -> &mut Self {
-        self.__remaining_accounts.extend_from_slice(accounts);
-        self
-    }
-    #[allow(clippy::clone_on_copy)]
-    pub fn instruction(&self) -> solana_instruction::Instruction {
-        let accounts = Pause {
-            admin: self.admin.expect("admin is not set"),
-            config: self.config.expect("config is not set"),
-            system_program: self
-                .system_program
-                .unwrap_or(solana_pubkey::pubkey!("11111111111111111111111111111111")),
-        };
-        let args = PauseInstructionArgs {
-            toggle: self.toggle.clone().expect("toggle is not set"),
-        };
-
-        accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
-    }
+      }
+        /// Add an additional account to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_account(&mut self, account: solana_instruction::AccountMeta) -> &mut Self {
+    self.__remaining_accounts.push(account);
+    self
+  }
+  /// Add additional accounts to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_accounts(&mut self, accounts: &[solana_instruction::AccountMeta]) -> &mut Self {
+    self.__remaining_accounts.extend_from_slice(accounts);
+    self
+  }
+  #[allow(clippy::clone_on_copy)]
+  pub fn instruction(&self) -> solana_instruction::Instruction {
+    let accounts = Pause {
+                              admin: self.admin.expect("admin is not set"),
+                                        config: self.config.expect("config is not set"),
+                                        system_program: self.system_program.unwrap_or(solana_pubkey::pubkey!("11111111111111111111111111111111")),
+                      };
+          let args = PauseInstructionArgs {
+                                                              toggle: self.toggle.clone().expect("toggle is not set"),
+                                    };
+    
+    accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
+  }
 }
 
-/// `pause` CPI accounts.
-pub struct PauseCpiAccounts<'a, 'b> {
-    pub admin: &'b solana_account_info::AccountInfo<'a>,
-
-    pub config: &'b solana_account_info::AccountInfo<'a>,
-
-    pub system_program: &'b solana_account_info::AccountInfo<'a>,
-}
+  /// `pause` CPI accounts.
+  pub struct PauseCpiAccounts<'a, 'b> {
+          
+                    
+              pub admin: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub config: &'b solana_account_info::AccountInfo<'a>,
+                
+                    
+              pub system_program: &'b solana_account_info::AccountInfo<'a>,
+            }
 
 /// `pause` CPI instruction.
 pub struct PauseCpi<'a, 'b> {
-    /// The program to invoke.
-    pub __program: &'b solana_account_info::AccountInfo<'a>,
-
-    pub admin: &'b solana_account_info::AccountInfo<'a>,
-
-    pub config: &'b solana_account_info::AccountInfo<'a>,
-
-    pub system_program: &'b solana_account_info::AccountInfo<'a>,
-    /// The arguments for the instruction.
+  /// The program to invoke.
+  pub __program: &'b solana_account_info::AccountInfo<'a>,
+      
+              
+          pub admin: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub config: &'b solana_account_info::AccountInfo<'a>,
+          
+              
+          pub system_program: &'b solana_account_info::AccountInfo<'a>,
+            /// The arguments for the instruction.
     pub __args: PauseInstructionArgs,
-}
+  }
 
 impl<'a, 'b> PauseCpi<'a, 'b> {
-    pub fn new(
-        program: &'b solana_account_info::AccountInfo<'a>,
-        accounts: PauseCpiAccounts<'a, 'b>,
-        args: PauseInstructionArgs,
-    ) -> Self {
-        Self {
-            __program: program,
-            admin: accounts.admin,
-            config: accounts.config,
-            system_program: accounts.system_program,
-            __args: args,
-        }
-    }
-    #[inline(always)]
-    pub fn invoke(&self) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(&[], &[])
-    }
-    #[inline(always)]
-    pub fn invoke_with_remaining_accounts(
-        &self,
-        remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(&[], remaining_accounts)
-    }
-    #[inline(always)]
-    pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
-        self.invoke_signed_with_remaining_accounts(signers_seeds, &[])
-    }
-    #[allow(clippy::arithmetic_side_effects)]
-    #[allow(clippy::clone_on_copy)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn invoke_signed_with_remaining_accounts(
-        &self,
-        signers_seeds: &[&[&[u8]]],
-        remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> solana_program_error::ProgramResult {
-        let mut accounts = Vec::with_capacity(3 + remaining_accounts.len());
-        accounts.push(solana_instruction::AccountMeta::new(*self.admin.key, true));
-        accounts.push(solana_instruction::AccountMeta::new(
+  pub fn new(
+    program: &'b solana_account_info::AccountInfo<'a>,
+          accounts: PauseCpiAccounts<'a, 'b>,
+              args: PauseInstructionArgs,
+      ) -> Self {
+    Self {
+      __program: program,
+              admin: accounts.admin,
+              config: accounts.config,
+              system_program: accounts.system_program,
+                    __args: args,
+          }
+  }
+  #[inline(always)]
+  pub fn invoke(&self) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(&[], &[])
+  }
+  #[inline(always)]
+  pub fn invoke_with_remaining_accounts(&self, remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(&[], remaining_accounts)
+  }
+  #[inline(always)]
+  pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
+    self.invoke_signed_with_remaining_accounts(signers_seeds, &[])
+  }
+  #[allow(clippy::arithmetic_side_effects)]
+  #[allow(clippy::clone_on_copy)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn invoke_signed_with_remaining_accounts(
+    &self,
+    signers_seeds: &[&[&[u8]]],
+    remaining_accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]
+  ) -> solana_program_error::ProgramResult {
+    let mut accounts = Vec::with_capacity(3+ remaining_accounts.len());
+                            accounts.push(solana_instruction::AccountMeta::new(
+            *self.admin.key,
+            true
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new(
             *self.config.key,
-            false,
-        ));
-        accounts.push(solana_instruction::AccountMeta::new_readonly(
+            false
+          ));
+                                          accounts.push(solana_instruction::AccountMeta::new_readonly(
             *self.system_program.key,
-            false,
-        ));
-        remaining_accounts.iter().for_each(|remaining_account| {
-            accounts.push(solana_instruction::AccountMeta {
-                pubkey: *remaining_account.0.key,
-                is_signer: remaining_account.1,
-                is_writable: remaining_account.2,
-            })
-        });
-        let mut data = PauseInstructionData::new().try_to_vec().unwrap();
-        let mut args = self.__args.try_to_vec().unwrap();
-        data.append(&mut args);
+            false
+          ));
+                      remaining_accounts.iter().for_each(|remaining_account| {
+      accounts.push(solana_instruction::AccountMeta {
+          pubkey: *remaining_account.0.key,
+          is_signer: remaining_account.1,
+          is_writable: remaining_account.2,
+      })
+    });
+    let mut data = PauseInstructionData::new().try_to_vec().unwrap();
+          let mut args = self.__args.try_to_vec().unwrap();
+      data.append(&mut args);
+    
+    let instruction = solana_instruction::Instruction {
+      program_id: crate::JUPITER_DELEGATE_ID,
+      accounts,
+      data,
+    };
+    let mut account_infos = Vec::with_capacity(4 + remaining_accounts.len());
+    account_infos.push(self.__program.clone());
+                  account_infos.push(self.admin.clone());
+                        account_infos.push(self.config.clone());
+                        account_infos.push(self.system_program.clone());
+              remaining_accounts.iter().for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
 
-        let instruction = solana_instruction::Instruction {
-            program_id: crate::JUPITER_DELEGATE_ID,
-            accounts,
-            data,
-        };
-        let mut account_infos = Vec::with_capacity(4 + remaining_accounts.len());
-        account_infos.push(self.__program.clone());
-        account_infos.push(self.admin.clone());
-        account_infos.push(self.config.clone());
-        account_infos.push(self.system_program.clone());
-        remaining_accounts
-            .iter()
-            .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
-
-        if signers_seeds.is_empty() {
-            solana_cpi::invoke(&instruction, &account_infos)
-        } else {
-            solana_cpi::invoke_signed(&instruction, &account_infos, signers_seeds)
-        }
+    if signers_seeds.is_empty() {
+      solana_cpi::invoke(&instruction, &account_infos)
+    } else {
+      solana_cpi::invoke_signed(&instruction, &account_infos, signers_seeds)
     }
+  }
 }
 
 /// Instruction builder for `Pause` via CPI.
 ///
 /// ### Accounts:
 ///
-///   0. `[writable, signer]` admin
-///   1. `[writable]` config
-///   2. `[]` system_program
+                      ///   0. `[writable, signer]` admin
+                ///   1. `[writable]` config
+          ///   2. `[]` system_program
 #[derive(Clone, Debug)]
 pub struct PauseCpiBuilder<'a, 'b> {
-    instruction: Box<PauseCpiBuilderInstruction<'a, 'b>>,
+  instruction: Box<PauseCpiBuilderInstruction<'a, 'b>>,
 }
 
 impl<'a, 'b> PauseCpiBuilder<'a, 'b> {
-    pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
-        let instruction = Box::new(PauseCpiBuilderInstruction {
-            __program: program,
-            admin: None,
-            config: None,
-            system_program: None,
-            toggle: None,
-            __remaining_accounts: Vec::new(),
-        });
-        Self { instruction }
-    }
-    #[inline(always)]
+  pub fn new(program: &'b solana_account_info::AccountInfo<'a>) -> Self {
+    let instruction = Box::new(PauseCpiBuilderInstruction {
+      __program: program,
+              admin: None,
+              config: None,
+              system_program: None,
+                                            toggle: None,
+                    __remaining_accounts: Vec::new(),
+    });
+    Self { instruction }
+  }
+      #[inline(always)]
     pub fn admin(&mut self, admin: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.admin = Some(admin);
-        self
+                        self.instruction.admin = Some(admin);
+                    self
     }
-    #[inline(always)]
+      #[inline(always)]
     pub fn config(&mut self, config: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.config = Some(config);
-        self
+                        self.instruction.config = Some(config);
+                    self
     }
-    #[inline(always)]
-    pub fn system_program(
-        &mut self,
-        system_program: &'b solana_account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.system_program = Some(system_program);
-        self
+      #[inline(always)]
+    pub fn system_program(&mut self, system_program: &'b solana_account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.system_program = Some(system_program);
+                    self
     }
-    #[inline(always)]
-    pub fn toggle(&mut self, toggle: bool) -> &mut Self {
+                    #[inline(always)]
+      pub fn toggle(&mut self, toggle: bool) -> &mut Self {
         self.instruction.toggle = Some(toggle);
         self
-    }
-    /// Add an additional account to the instruction.
-    #[inline(always)]
-    pub fn add_remaining_account(
-        &mut self,
-        account: &'b solana_account_info::AccountInfo<'a>,
-        is_writable: bool,
-        is_signer: bool,
-    ) -> &mut Self {
-        self.instruction
-            .__remaining_accounts
-            .push((account, is_writable, is_signer));
-        self
-    }
-    /// Add additional accounts to the instruction.
-    ///
-    /// Each account is represented by a tuple of the `AccountInfo`, a `bool` indicating whether the account is writable or not,
-    /// and a `bool` indicating whether the account is a signer or not.
-    #[inline(always)]
-    pub fn add_remaining_accounts(
-        &mut self,
-        accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)],
-    ) -> &mut Self {
-        self.instruction
-            .__remaining_accounts
-            .extend_from_slice(accounts);
-        self
-    }
-    #[inline(always)]
-    pub fn invoke(&self) -> solana_program_error::ProgramResult {
-        self.invoke_signed(&[])
-    }
-    #[allow(clippy::clone_on_copy)]
-    #[allow(clippy::vec_init_then_push)]
-    pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
-        let args = PauseInstructionArgs {
-            toggle: self.instruction.toggle.clone().expect("toggle is not set"),
-        };
+      }
+        /// Add an additional account to the instruction.
+  #[inline(always)]
+  pub fn add_remaining_account(&mut self, account: &'b solana_account_info::AccountInfo<'a>, is_writable: bool, is_signer: bool) -> &mut Self {
+    self.instruction.__remaining_accounts.push((account, is_writable, is_signer));
+    self
+  }
+  /// Add additional accounts to the instruction.
+  ///
+  /// Each account is represented by a tuple of the `AccountInfo`, a `bool` indicating whether the account is writable or not,
+  /// and a `bool` indicating whether the account is a signer or not.
+  #[inline(always)]
+  pub fn add_remaining_accounts(&mut self, accounts: &[(&'b solana_account_info::AccountInfo<'a>, bool, bool)]) -> &mut Self {
+    self.instruction.__remaining_accounts.extend_from_slice(accounts);
+    self
+  }
+  #[inline(always)]
+  pub fn invoke(&self) -> solana_program_error::ProgramResult {
+    self.invoke_signed(&[])
+  }
+  #[allow(clippy::clone_on_copy)]
+  #[allow(clippy::vec_init_then_push)]
+  pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program_error::ProgramResult {
+          let args = PauseInstructionArgs {
+                                                              toggle: self.instruction.toggle.clone().expect("toggle is not set"),
+                                    };
         let instruction = PauseCpi {
-            __program: self.instruction.__program,
-
-            admin: self.instruction.admin.expect("admin is not set"),
-
-            config: self.instruction.config.expect("config is not set"),
-
-            system_program: self
-                .instruction
-                .system_program
-                .expect("system_program is not set"),
-            __args: args,
-        };
-        instruction.invoke_signed_with_remaining_accounts(
-            signers_seeds,
-            &self.instruction.__remaining_accounts,
-        )
-    }
+        __program: self.instruction.__program,
+                  
+          admin: self.instruction.admin.expect("admin is not set"),
+                  
+          config: self.instruction.config.expect("config is not set"),
+                  
+          system_program: self.instruction.system_program.expect("system_program is not set"),
+                          __args: args,
+            };
+    instruction.invoke_signed_with_remaining_accounts(signers_seeds, &self.instruction.__remaining_accounts)
+  }
 }
 
 #[derive(Clone, Debug)]
 struct PauseCpiBuilderInstruction<'a, 'b> {
-    __program: &'b solana_account_info::AccountInfo<'a>,
-    admin: Option<&'b solana_account_info::AccountInfo<'a>>,
-    config: Option<&'b solana_account_info::AccountInfo<'a>>,
-    system_program: Option<&'b solana_account_info::AccountInfo<'a>>,
-    toggle: Option<bool>,
-    /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
-    __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
+  __program: &'b solana_account_info::AccountInfo<'a>,
+            admin: Option<&'b solana_account_info::AccountInfo<'a>>,
+                config: Option<&'b solana_account_info::AccountInfo<'a>>,
+                system_program: Option<&'b solana_account_info::AccountInfo<'a>>,
+                        toggle: Option<bool>,
+        /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
+  __remaining_accounts: Vec<(&'b solana_account_info::AccountInfo<'a>, bool, bool)>,
 }
+

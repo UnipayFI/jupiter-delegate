@@ -67,10 +67,7 @@ pub mod jupiter_delegate {
         process_revoke_access(ctx, user)
     }
 
-    pub fn swap(
-        _ctx: Context<JupiterSwap>, 
-        _params: JupiterSwapParams
-    ) -> Result<()> {
+    pub fn swap(_ctx: Context<JupiterSwap>, _params: JupiterSwapParams) -> Result<()> {
         // process_jupiter_swap(ctx, params)
         Ok(())
     }
@@ -143,5 +140,13 @@ pub mod jupiter_delegate {
 
     pub fn token_receive(ctx: Context<TokenReceive>) -> Result<()> {
         process_token_receive(ctx)
+    }
+
+    pub fn transfer_in(ctx: Context<TransferIn>, amounts: u64) -> Result<()> {
+        prorcess_transfer_in(ctx, amounts)
+    }
+
+    pub fn transfer_out(ctx: Context<TransferOut>, amounts: u64) -> Result<()> {
+        prorcess_transfer_out(ctx, amounts)
     }
 }

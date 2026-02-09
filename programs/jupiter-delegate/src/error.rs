@@ -95,4 +95,9 @@ pub enum ErrorCode {
     // DelegateIsNotReceiver
     #[msg("Delegate is not receiver")]
     DelegateIsNotReceiver,
+
+    #[msg("Insufficient funds")]
+    InsufficientFunds,
+    #[msg("Invalid token account")]
+    InvalidTokenAccount,
 }

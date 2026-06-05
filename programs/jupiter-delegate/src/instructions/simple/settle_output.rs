@@ -1,0 +1,141 @@
+use anchor_lang::prelude::*;
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
+};
+
+use crate::{
+    constants::{ACCESS_SEED, CONFIG_SEED, VAULT_SEED},
+    error::ErrorCode,
+    state::{Access, Config},
+};
+
+#[derive(Accounts)]
+pub struct SettleOutput<'info> {
+    #[account(
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump,
+    )]
+    pub config: Account<'info, Config>,
+    pub output_mint: InterfaceAccount<'info, Mint>,
+    pub output_mint_program: Interface<'info, TokenInterface>,
+
+    #[account(mut)]
+    pub executor: Signer<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = output_mint,
+        associated_token::authority = executor,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub executor_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        init_if_needed,
+        payer = executor,
+        associated_token::mint = output_mint,
+        associated_token::authority = receiver,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub receiver_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        seeds = [VAULT_SEED.as_bytes()],
+        bump
+    )]
+    pub vault: SystemAccount<'info>,
+
+    #[account(
+        init_if_needed,
+        payer = executor,
+        associated_token::mint = output_mint,
+        associated_token::authority = vault,
+        associated_token::token_program = output_mint_program,
+    )]
+    pub vault_output_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    /// CHECK: This is the delegate account.
+    #[account(mut)]
+    pub delegate: UncheckedAccount<'info>,
+    /// CHECK: This is the receiver account.
+    #[account(mut)]
+    pub receiver: UncheckedAccount<'info>,
+
+    #[account(
+        seeds = [ACCESS_SEED.as_bytes(), receiver.key().as_ref()],
+        bump,
+        constraint = access.is_granted @ ErrorCode::AccessNotGranted
+    )]
+    pub access: Account<'info, Access>,
+
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub system_program: Program<'info, System>,
+}
+
+pub fn process_settle_output(
+    ctx: Context<SettleOutput>,
+    pre_balance: u64,
+    min_amount: u64,
+) -> Result<()> {
+    require!(
+        ctx.accounts.executor.key() == ctx.accounts.config.operator
+            || ctx.accounts.executor.key() == ctx.accounts.config.admin,
+        ErrorCode::InvalidOperator
+    );
+    require!(
+        ctx.accounts.config.is_initialized,
+        ErrorCode::ConfigNotInitialized
+    );
+    require!(!ctx.accounts.config.is_paused, ErrorCode::ConfigPaused);
+    require!(
+        ctx.accounts.delegate.key() == ctx.accounts.receiver.key(),
+        ErrorCode::DelegateIsNotReceiver
+    );
+
+    let current_balance = ctx.accounts.executor_output_token_account.amount;
+    require!(
+        current_balance >= pre_balance,
+        ErrorCode::SettlementOutputBalanceDecreased
+    );
+    let settlement_amount = current_balance
+        .checked_sub(pre_balance)
+        .ok_or(ErrorCode::SettlementOutputBalanceDecreased)?;
+    require!(
+        settlement_amount > 0 && settlement_amount >= min_amount,
+        ErrorCode::SettlementAmountTooSmall
+    );
+
+    transfer_checked(
+        CpiContext::new(
+            ctx.accounts.output_mint_program.to_account_info(),
+            TransferChecked {
+                from: ctx.accounts.executor_output_token_account.to_account_info(),
+                to: ctx.accounts.vault_output_token_account.to_account_info(),
+                authority: ctx.accounts.executor.to_account_info(),
+                mint: ctx.accounts.output_mint.to_account_info(),
+            },
+        ),
+        settlement_amount,
+        ctx.accounts.output_mint.decimals,
+    )?;
+
+    let signed_seeds = &[VAULT_SEED.as_bytes(), &[ctx.bumps.vault]];
+    transfer_checked(
+        CpiContext::new_with_signer(
+            ctx.accounts.output_mint_program.to_account_info(),
+            TransferChecked {
+                from: ctx.accounts.vault_output_token_account.to_account_info(),
+                to: ctx.accounts.receiver_output_token_account.to_account_info(),
+                authority: ctx.accounts.vault.to_account_info(),
+                mint: ctx.accounts.output_mint.to_account_info(),
+            },
+            &[signed_seeds],
+        ),
+        settlement_amount,
+        ctx.accounts.output_mint.decimals,
+    )?;
+
+    Ok(())
+}

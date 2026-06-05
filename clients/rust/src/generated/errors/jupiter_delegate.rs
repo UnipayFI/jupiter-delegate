@@ -121,6 +121,12 @@ pub enum JupiterDelegateError {
     /// 6036 - Invalid token account
     #[error("Invalid token account")]
     InvalidTokenAccount = 0x1794,
+    /// 6037 - Settlement output balance decreased
+    #[error("Settlement output balance decreased")]
+    SettlementOutputBalanceDecreased = 0x1795,
+    /// 6038 - Settlement amount is too small
+    #[error("Settlement amount is too small")]
+    SettlementAmountTooSmall = 0x1796,
 }
 
 impl From<JupiterDelegateError> for solana_program_error::ProgramError {

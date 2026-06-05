@@ -100,4 +100,9 @@ pub enum ErrorCode {
     InsufficientFunds,
     #[msg("Invalid token account")]
     InvalidTokenAccount,
+
+    #[msg("Settlement output balance decreased")]
+    SettlementOutputBalanceDecreased,
+    #[msg("Settlement amount is too small")]
+    SettlementAmountTooSmall,
 }

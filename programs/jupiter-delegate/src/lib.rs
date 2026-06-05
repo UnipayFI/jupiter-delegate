@@ -108,7 +108,8 @@ pub mod jupiter_delegate {
         ctx: Context<'_, '_, '_, 'a, OkxAggregator<'a>>,
         params: OkxAggregatorParams,
     ) -> Result<()> {
-        process_okx_aggregator(ctx, params)
+        // process_okx_aggregator(ctx, params)
+        Ok(())
     }
 
     pub fn two_hop<'a>(
@@ -148,5 +149,13 @@ pub mod jupiter_delegate {
 
     pub fn transfer_out(ctx: Context<TransferOut>, amounts: u64) -> Result<()> {
         prorcess_transfer_out(ctx, amounts)
+    }
+
+    pub fn settle_output(
+        ctx: Context<SettleOutput>,
+        pre_balance: u64,
+        min_amount: u64,
+    ) -> Result<()> {
+        process_settle_output(ctx, pre_balance, min_amount)
     }
 }
